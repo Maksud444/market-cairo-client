@@ -81,19 +81,19 @@ export const listingsAPI = {
 
 // Users API
 export const usersAPI = {
-  getProfile: () => api.get('/users/me'),
+  getProfile: () => api.get('/auth/me'),
   getProfileById: (id) => api.get(`/users/${id}`),
   getListings: (id, params) => api.get(`/users/${id}/listings`, { params }),
   getMyListings: (params) => api.get('/users/me/listings', { params }),
-  getMySoldListings: (params) => api.get('/users/me/sold', { params }),
+  getMySoldListings: (params) => api.get('/users/me/listings', { params: { ...params, status: 'sold' } }),
   getFavorites: () => api.get('/users/me/favorites'),
   rateUser: (id, rating) => api.put(`/users/${id}/rate`, { rating }),
 };
 
-// Listings API additional methods
-listingsAPI.getMyListings = (params) => api.get('/listings/my', { params });
-listingsAPI.getMySoldListings = (params) => api.get('/listings/my/sold', { params });
-listingsAPI.getFavorites = () => api.get('/listings/favorites');
+// Listings API additional methods (aliases pointing to users routes)
+listingsAPI.getMyListings = (params) => api.get('/users/me/listings', { params });
+listingsAPI.getMySoldListings = (params) => api.get('/users/me/listings', { params: { ...params, status: 'sold' } });
+listingsAPI.getFavorites = () => api.get('/users/me/favorites');
 listingsAPI.markAsSold = (id) => api.put(`/listings/${id}/sold`);
 
 // Messages API

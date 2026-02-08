@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { 
-  FiEdit2, FiPlusCircle, FiMessageCircle, FiHeart, FiLogOut, 
-  FiSettings, FiMail, FiPhone, FiMapPin, FiStar
+import {
+  FiEdit2, FiPlusCircle, FiMessageCircle, FiHeart, FiLogOut,
+  FiSettings, FiStar
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { getI18nProps } from '../lib/i18n';
@@ -46,7 +46,7 @@ export default function ProfilePage() {
 
         if (listingsRes.data.success) setMyListings(listingsRes.data.listings);
         if (soldRes.data.success) setSoldListings(soldRes.data.listings);
-        if (favoritesRes.data.success) setFavorites(favoritesRes.data.listings);
+        if (favoritesRes.data.success) setFavorites(favoritesRes.data.favorites || favoritesRes.data.listings || []);
         if (profileRes.data.success) {
           setStats({
             rating: profileRes.data.user.rating?.average || 0,
@@ -132,14 +132,17 @@ export default function ProfilePage() {
             </div>
 
             {/* Settings Button */}
-            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+            <button
+              onClick={() => router.push('/dashboard/settings')}
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            >
               <FiSettings size={20} />
             </button>
           </div>
 
           {/* Edit Profile Link */}
-          <Link 
-            href="/profile/edit" 
+          <Link
+            href="/dashboard/settings"
             className="inline-flex items-center gap-2 text-primary-600 text-sm font-medium hover:underline mb-6"
           >
             <FiEdit2 size={14} />

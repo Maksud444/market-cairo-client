@@ -32,7 +32,7 @@ export default function FavoritesPage() {
         try {
           const res = await usersAPI.getFavorites();
           if (res.data.success) {
-            setFavorites(res.data.listings || []);
+            setFavorites(res.data.favorites || res.data.listings || []);
           }
         } catch (error) {
           console.error('Failed to fetch favorites:', error);
