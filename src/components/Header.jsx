@@ -176,7 +176,7 @@ export default function Header() {
                 <div className="relative" ref={notifRef}>
                   <button
                     onClick={() => setShowNotifDropdown(!showNotifDropdown)}
-                    className="hidden sm:flex items-center gap-1.5 px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors relative"
+                    className="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors relative"
                   >
                     <FiBell size={20} />
                     {notifUnread > 0 && (
@@ -383,6 +383,18 @@ export default function Header() {
                       </span>
                     )}
                   </Link>
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); setShowNotifDropdown(!showNotifDropdown); }}
+                    className="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg w-full"
+                  >
+                    <FiBell size={20} />
+                    <span>{t('nav.notifications') || 'Notifications'}</span>
+                    {notifUnread > 0 && (
+                      <span className="ml-auto px-2 py-0.5 bg-red-500 text-white text-xs rounded-full">
+                        {notifUnread}
+                      </span>
+                    )}
+                  </button>
                 </>
               ) : (
                 <>
