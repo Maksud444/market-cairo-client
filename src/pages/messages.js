@@ -153,7 +153,7 @@ export default function MessagesPage() {
   return (
     <Layout hideFooter>
       <Head>
-        <title>{t('messages_page.title')} - Market Cairo</title>
+        <title>{t('messages_page.title')} - MySouqify</title>
       </Head>
 
       <div className="h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] flex bg-gray-50">

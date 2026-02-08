@@ -16,6 +16,7 @@ import Layout from '../../components/Layout';
 import ListingCard from '../../components/ListingCard';
 import { listingsAPI, messagesAPI } from '../../lib/api';
 import { useAuthStore } from '../../lib/store';
+import { getImageUrl } from '../../lib/utils';
 
 const conditionColors = {
   'New': 'badge-new',
@@ -207,7 +208,7 @@ export default function ListingDetailPage() {
   return (
     <Layout>
       <Head>
-        <title>{listing.title} - Market Cairo</title>
+        <title>{listing.title} - MySouqify</title>
         <meta name="description" content={listing.description.slice(0, 160)} />
       </Head>
 
@@ -232,7 +233,7 @@ export default function ListingDetailPage() {
               {listing.images && listing.images.length > 0 ? (
                 <>
                   <img
-                    src={listing.images[currentImageIndex]?.url || listing.images[currentImageIndex]}
+                    src={getImageUrl(listing.images[currentImageIndex])}
                     alt={listing.title}
                     className="w-full h-full object-cover"
                   />
@@ -292,7 +293,7 @@ export default function ListingDetailPage() {
                       index === currentImageIndex ? 'border-primary-600' : 'border-transparent'
                     }`}
                   >
-                    <Image src={image} alt="" fill className="object-cover" />
+                    <img src={getImageUrl(image)} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
@@ -533,7 +534,7 @@ export default function ListingDetailPage() {
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg mb-4">
               <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden relative flex-shrink-0">
                 {listing.images?.[0] && (
-                  <Image src={listing.images[0]} alt="" fill className="object-cover" />
+                  <img src={getImageUrl(listing.images[0])} alt="" className="w-full h-full object-cover" />
                 )}
               </div>
               <div className="min-w-0">

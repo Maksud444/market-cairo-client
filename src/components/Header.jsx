@@ -112,7 +112,7 @@ export default function Header() {
             <div className="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">M</span>
             </div>
-            <span className="hidden sm:block text-xl font-semibold text-gray-900">Market Cairo</span>
+            <span className="hidden sm:block text-xl font-semibold text-gray-900">MySouqify</span>
           </Link>
 
           {/* Location Selector - Desktop */}
@@ -348,7 +348,7 @@ export default function Header() {
                 <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-xl">M</span>
                 </div>
-                <span className="text-xl font-semibold">Market Cairo</span>
+                <span className="text-xl font-semibold">MySouqify</span>
               </div>
             </div>
             <nav className="p-4 space-y-1">

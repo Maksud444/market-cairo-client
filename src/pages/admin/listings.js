@@ -130,7 +130,7 @@ function AdminListings() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
-        <title>Listings Management - Admin - Market Cairo</title>
+        <title>Listings Management - Admin - MySouqify</title>
       </Head>
 
       {/* Admin Header */}
@@ -283,7 +283,7 @@ function AdminListings() {
                           <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                             {listing.images?.[0] ? (
                               <img
-                                src={listing.images[0]}
+                                src={typeof listing.images[0] === 'object' ? listing.images[0].url : listing.images[0]}
                                 alt={listing.title}
                                 className="w-full h-full object-cover"
                               />

@@ -129,7 +129,7 @@
   },
   "verify": {
     "title": "Identity Verification",
-    "subtitle": "Verify your identity to start posting listings on Market Cairo",
+    "subtitle": "Verify your identity to start posting listings on MySouqify",
     "select_document_type": "Select Document Type",
     "passport": "Passport",
     "passport_desc": "Upload photo page",

@@ -67,7 +67,7 @@ function AdminReports() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
-        <title>Reports - Admin - Market Cairo</title>
+        <title>Reports - Admin - MySouqify</title>
       </Head>
 
       {/* Admin Header */}
@@ -158,7 +158,7 @@ function AdminReports() {
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                             {listing.images?.[0] ? (
-                              <img src={listing.images[0]} alt="" className="w-full h-full object-cover" />
+                              <img src={typeof listing.images[0] === 'object' ? listing.images[0].url : listing.images[0]} alt="" className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-gray-400">
                                 <FiAlertCircle size={20} />

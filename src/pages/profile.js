@@ -92,7 +92,7 @@ export default function ProfilePage() {
   return (
     <Layout>
       <Head>
-        <title>My Profile - Market Cairo</title>
+        <title>My Profile - MySouqify</title>
       </Head>
 
       <div className="container-app py-6 lg:py-10">

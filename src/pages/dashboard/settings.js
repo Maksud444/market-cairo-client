@@ -116,7 +116,7 @@ function Settings() {
   return (
     <Layout>
       <Head>
-        <title>Settings - Market Cairo</title>
+        <title>Settings - MySouqify</title>
       </Head>
 
       <div className="container-app py-8">

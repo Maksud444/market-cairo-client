@@ -86,7 +86,7 @@ function AdminUsers() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
-        <title>User Management - Admin - Market Cairo</title>
+        <title>User Management - Admin - MySouqify</title>
       </Head>
 
       {/* Admin Header */}

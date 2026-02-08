@@ -333,7 +333,7 @@ export default function PostListingPage() {
   return (
     <Layout>
       <Head>
-        <title>{editId ? t('post.edit_title') : t('post.title')} - Market Cairo</title>
+        <title>{editId ? t('post.edit_title') : t('post.title')} - MySouqify</title>
       </Head>
 
       <div className="container-app py-6 lg:py-10">

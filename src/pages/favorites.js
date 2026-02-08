@@ -55,7 +55,7 @@ export default function FavoritesPage() {
   return (
     <Layout>
       <Head>
-        <title>{t('favorites.title')} - Market Cairo</title>
+        <title>{t('favorites.title')} - MySouqify</title>
       </Head>
 
       <div className="container-app py-6 lg:py-10">

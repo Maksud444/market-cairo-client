@@ -45,16 +45,17 @@ export default function SearchPage() {
     pages: 1,
   });
 
-  // Sync URL params with filters
+  // Sync URL params with filters - reset stale filters not in URL
   useEffect(() => {
-    if (router.query.category) setCategory(router.query.category);
-    if (router.query.condition) setCondition(router.query.condition);
-    if (router.query.location) setLocation(router.query.location);
-    if (router.query.q) setSearch(router.query.q); // Changed from 'search' to 'q'
+    if (!router.isReady) return;
+    setCategory(router.query.category || '');
+    setCondition(router.query.condition || '');
+    setLocation(router.query.location || '');
+    setSearch(router.query.q || '');
+    setPriceMin(router.query.minPrice || '');
+    setPriceMax(router.query.maxPrice || '');
     if (router.query.sort) setSort(router.query.sort);
-    if (router.query.priceMin) setPriceMin(router.query.priceMin);
-    if (router.query.priceMax) setPriceMax(router.query.priceMax);
-  }, [router.query]);
+  }, [router.asPath]);
 
   // Fetch categories and locations
   useEffect(() => {
@@ -85,8 +86,8 @@ export default function SearchPage() {
         ...(location && { location }),
         ...(search && { search }),
         ...(sort && { sort }),
-        ...(priceMin && { priceMin }),
-        ...(priceMax && { priceMax }),
+        ...(priceMin && { minPrice: priceMin }),
+        ...(priceMax && { maxPrice: priceMax }),
       };
 
       const res = await listingsAPI.getAll(params);
@@ -120,7 +121,7 @@ export default function SearchPage() {
   return (
     <Layout>
       <Head>
-        <title>{search ? `Search: ${search}` : category || 'Browse All'} - Market Cairo</title>
+        <title>{search ? `Search: ${search}` : category || 'Browse All'} - MySouqify</title>
       </Head>
 
       <div className="container-app py-4 lg:py-8">

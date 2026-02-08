@@ -32,7 +32,7 @@ export default function Footer() {
               <div className="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">M</span>
               </div>
-              <span className="text-xl font-semibold text-white">Market Cairo</span>
+              <span className="text-xl font-semibold text-white">MySouqify</span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
               Egypt's trusted marketplace for buying and selling used items.
@@ -96,7 +96,7 @@ export default function Footer() {
       <div className="border-t border-gray-800">
         <div className="container-app py-4">
           <p className="text-sm text-gray-500 text-center">
-            © {new Date().getFullYear()} Market Cairo. All rights reserved.
+            © {new Date().getFullYear()} MySouqify. All rights reserved.
           </p>
         </div>
       </div>

@@ -59,7 +59,7 @@ export default function Home() {
   return (
     <Layout>
       <Head>
-        <title>Market Cairo - Buy & Sell Used Items in Cairo</title>
+        <title>MySouqify - Buy & Sell Used Items in Cairo</title>
         <meta name="description" content="Egypt's trusted marketplace for buying and selling second-hand items. Find great deals on furniture, electronics, and more in Cairo." />
       </Head>
 

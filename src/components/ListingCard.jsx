@@ -6,6 +6,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { useTranslation } from 'next-i18next';
 import { useAuthStore, useUIStore } from '../lib/store';
 import { listingsAPI } from '../lib/api';
+import { getImageUrl } from '../lib/utils';
 import toast from 'react-hot-toast';
 
 const conditionColors = {
@@ -61,12 +62,7 @@ export default function ListingCard({ listing, onFavoriteToggle }) {
     return format(d, 'd MMM');
   };
 
-  const backendUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
-  const imageUrl = listing.images?.[0]?.url
-    ? (listing.images[0].url.startsWith('http')
-        ? listing.images[0].url
-        : `${backendUrl}${listing.images[0].url}`)
-    : '/images/placeholder.jpg';
+  const imageUrl = getImageUrl(listing.images?.[0]);
 
   return (
     <Link href={`/listing/${listing._id}`} className="block">

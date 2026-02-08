@@ -100,7 +100,7 @@ export default function UserProfilePage() {
   return (
     <Layout>
       <Head>
-        <title>{seller.name} - Market Cairo</title>
+        <title>{seller.name} - MySouqify</title>
       </Head>
 
       <div className="container-app py-6 lg:py-10">

@@ -48,7 +48,7 @@ function UserDashboard() {
   return (
     <Layout>
       <Head>
-        <title>My Dashboard - Market Cairo</title>
+        <title>My Dashboard - MySouqify</title>
       </Head>
 
       <div className="container-app py-4 lg:py-8">

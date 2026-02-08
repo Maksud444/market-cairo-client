@@ -111,7 +111,7 @@ function AdminVerifications() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
-        <title>Verifications - Admin - Market Cairo</title>
+        <title>Verifications - Admin - MySouqify</title>
       </Head>
 
       {/* Admin Header */}
@@ -316,16 +316,20 @@ function AdminVerifications() {
               <div>
                 <p className="text-sm text-gray-500 mb-3">Document Images</p>
                 <div className="grid grid-cols-3 gap-3">
-                  {reviewUser.verification?.documentImages?.map((img, i) => (
+                  {reviewUser.verification?.documentImages?.map((img, i) => {
+                    const imgSrc = img.url?.startsWith('data:') || img.url?.startsWith('http')
+                      ? img.url
+                      : `${API_URL.replace('/api', '')}${img.url}`;
+                    return (
                     <a
                       key={i}
-                      href={`${API_URL.replace('/api', '')}${img.url}`}
+                      href={imgSrc}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200 hover:border-primary-500 transition-colors relative group"
                     >
                       <img
-                        src={`${API_URL.replace('/api', '')}${img.url}`}
+                        src={imgSrc}
                         alt={`Document ${i + 1}`}
                         className="w-full h-full object-cover"
                       />
@@ -333,7 +337,8 @@ function AdminVerifications() {
                         <FiImage className="text-white opacity-0 group-hover:opacity-100" size={24} />
                       </div>
                     </a>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

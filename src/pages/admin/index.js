@@ -40,7 +40,7 @@ function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
-        <title>Admin Dashboard - Market Cairo</title>
+        <title>Admin Dashboard - MySouqify</title>
       </Head>
 
       {/* Admin Header */}

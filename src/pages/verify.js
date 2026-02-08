@@ -168,7 +168,7 @@ function VerifyPage() {
     return (
       <Layout>
         <Head>
-          <title>{t('verify.title')} - Market Cairo</title>
+          <title>{t('verify.title')} - MySouqify</title>
         </Head>
         <div className="container-app py-8 max-w-2xl">
           <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
@@ -191,7 +191,7 @@ function VerifyPage() {
     return (
       <Layout>
         <Head>
-          <title>{t('verify.title')} - Market Cairo</title>
+          <title>{t('verify.title')} - MySouqify</title>
         </Head>
         <div className="container-app py-8 max-w-2xl">
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-8 text-center">
@@ -213,7 +213,7 @@ function VerifyPage() {
   return (
     <Layout>
       <Head>
-        <title>{t('verify.title')} - Market Cairo</title>
+        <title>{t('verify.title')} - MySouqify</title>
       </Head>
 
       <div className="container-app py-6 lg:py-10">

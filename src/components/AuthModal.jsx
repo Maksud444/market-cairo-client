@@ -142,7 +142,7 @@ export default function AuthModal() {
             <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xl">M</span>
             </div>
-            <span className="text-xl font-semibold text-gray-900">Market Cairo</span>
+            <span className="text-xl font-semibold text-gray-900">MySouqify</span>
           </div>
 
           {/* Title */}
