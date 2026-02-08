@@ -6,7 +6,7 @@ module.exports = {
     locales: ['en', 'ar'],
     localeDetection: false,
   },
-  localePath: path.resolve('./public/locales'),
+  localePath: path.join(process.cwd(), 'public/locales'),
   react: {
     useSuspense: false,
   },

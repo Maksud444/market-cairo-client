@@ -11,7 +11,7 @@ import { useSocketStore } from '../lib/socket';
 import Cookies from 'js-cookie';
 
 function MyApp({ Component, pageProps }) {
-  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
   const fetchUser = useAuthStore((state) => state.fetchUser);
   const user = useAuthStore((state) => state.user);
   const { connect, disconnect } = useSocketStore();
