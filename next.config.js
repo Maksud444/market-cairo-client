@@ -9,7 +9,6 @@ const BACKEND_URL = process.env.INTERNAL_API_URL ||
 
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
   i18n,
   images: {
     domains: [
