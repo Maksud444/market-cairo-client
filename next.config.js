@@ -1,12 +1,15 @@
 /** @type {import('next').NextConfig} */
 const { i18n } = require('./next-i18next.config');
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
-  ? process.env.NEXT_PUBLIC_API_URL.replace('/api', '')
-  : 'http://localhost:5000';
+// Internal backend URL for server-side rewrites (docker network or localhost)
+const BACKEND_URL = process.env.INTERNAL_API_URL ||
+  (process.env.NEXT_PUBLIC_API_URL
+    ? process.env.NEXT_PUBLIC_API_URL.replace('/api', '')
+    : 'http://localhost:5000');
 
 const nextConfig = {
   reactStrictMode: true,
+  output: 'standalone',
   i18n,
   images: {
     domains: [
@@ -19,6 +22,14 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: '*.vercel.app',
+      },
+      {
+        protocol: 'https',
+        hostname: '*',
+      },
+      {
+        protocol: 'http',
+        hostname: '*',
       },
     ],
     unoptimized: true
