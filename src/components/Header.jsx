@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FiSearch, FiHeart, FiMessageSquare, FiUser, FiPlus, FiMenu, FiMapPin, FiX, FiShield, FiBell, FiCheck } from 'react-icons/fi';
+import { FiSearch, FiHeart, FiMessageSquare, FiUser, FiPlus, FiMenu, FiMapPin, FiX, FiShield, FiBell, FiCheck, FiChevronDown } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 import { useAuthStore, useMessagesStore, useUIStore } from '../lib/store';
 import { authAPI } from '../lib/api';
 import LanguageSwitcher from './LanguageSwitcher';
+import { cairoAreas, cairoCompounds } from '../lib/cairoLocations';
 
 const categories = [
   'Furniture', 'Electronics', 'Books', 'Kitchen', 'Clothing', 'Sports', 'Toys', 'Other'
@@ -14,6 +15,7 @@ const categories = [
 export default function Header() {
   const { t } = useTranslation('common');
   const router = useRouter();
+  const isArabic = router.locale === 'ar';
   const { user, isAuthenticated } = useAuthStore();
   const { unreadCount, fetchUnreadCount } = useMessagesStore();
   const { toggleMobileMenu, isMobileMenuOpen, setMobileMenuOpen, openLoginModal } = useUIStore();
@@ -22,7 +24,20 @@ export default function Header() {
   const [notifications, setNotifications] = useState([]);
   const [notifUnread, setNotifUnread] = useState(0);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const notifRef = useRef(null);
+  const locationRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (locationRef.current && !locationRef.current.contains(e.target)) {
+        setShowLocationDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -116,9 +131,66 @@ export default function Header() {
           </Link>
 
           {/* Location Selector - Desktop */}
-          <div className="hidden lg:flex items-center gap-1 text-gray-600 text-sm ml-4">
-            <FiMapPin size={16} />
-            <span>{t('common.cairo')}</span>
+          <div className="hidden lg:block ml-4 relative" ref={locationRef}>
+            <button
+              onClick={() => setShowLocationDropdown(!showLocationDropdown)}
+              className="flex items-center gap-1.5 text-gray-600 hover:text-primary-600 text-sm transition-colors"
+            >
+              <FiMapPin size={16} className="text-primary-600" />
+              <span className="font-medium">
+                {selectedLocation ? (isArabic ? selectedLocation.ar : selectedLocation.en) : (isArabic ? 'القاهرة' : 'Cairo')}
+              </span>
+              <FiChevronDown size={14} className={`transition-transform ${showLocationDropdown ? 'rotate-180' : ''}`} />
+            </button>
+
+            {showLocationDropdown && (
+              <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-gray-100 z-50 max-h-96 overflow-y-auto">
+                <div className="p-3 border-b border-gray-100">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                    {isArabic ? 'المناطق' : 'Areas'}
+                  </p>
+                </div>
+                <div className="py-1">
+                  {cairoAreas.map((area) => (
+                    <button
+                      key={area.en}
+                      onClick={() => {
+                        setSelectedLocation(area.en === 'All Cairo' ? null : area);
+                        setShowLocationDropdown(false);
+                        router.push(`/search?location=${encodeURIComponent(area.en === 'All Cairo' ? '' : area.en)}`);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-primary-50 hover:text-primary-600 transition-colors ${
+                        selectedLocation?.en === area.en ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-700'
+                      }`}
+                    >
+                      {isArabic ? area.ar : area.en}
+                    </button>
+                  ))}
+                </div>
+                <div className="p-3 border-t border-b border-gray-100">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                    {isArabic ? 'الكمبوندات' : 'Compounds'}
+                  </p>
+                </div>
+                <div className="py-1">
+                  {cairoCompounds.map((compound) => (
+                    <button
+                      key={compound.en}
+                      onClick={() => {
+                        setSelectedLocation(compound);
+                        setShowLocationDropdown(false);
+                        router.push(`/search?location=${encodeURIComponent(compound.en)}`);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-primary-50 hover:text-primary-600 transition-colors ${
+                        selectedLocation?.en === compound.en ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-700'
+                      }`}
+                    >
+                      {isArabic ? compound.ar : compound.en}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Search Bar - Desktop */}
@@ -142,10 +214,14 @@ export default function Header() {
           </form>
 
           {/* Location - Mobile */}
-          <div className="lg:hidden flex items-center gap-1 text-gray-600 text-sm">
-            <FiMapPin size={16} />
-            <span>{t('common.cairo')}</span>
-          </div>
+          <button
+            onClick={() => setShowLocationDropdown(!showLocationDropdown)}
+            className="lg:hidden flex items-center gap-1 text-gray-600 text-sm"
+          >
+            <FiMapPin size={16} className="text-primary-600" />
+            <span>{selectedLocation ? (isArabic ? selectedLocation.ar : selectedLocation.en) : (isArabic ? 'القاهرة' : 'Cairo')}</span>
+            <FiChevronDown size={12} />
+          </button>
 
           {/* Right Actions */}
           <div className="flex items-center gap-1 sm:gap-2">
