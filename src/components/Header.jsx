@@ -9,7 +9,7 @@ import LanguageSwitcher from './LanguageSwitcher';
 import { cairoAreas, cairoCompounds } from '../lib/cairoLocations';
 
 const categories = [
-  'Furniture', 'Electronics', 'Books', 'Kitchen', 'Clothing', 'Sports', 'Toys', 'Other'
+  'Mobile & Tablets', 'Electronics', 'Fashion & Beauty', 'Furniture', 'Kitchen', 'Books', 'Other'
 ];
 
 export default function Header() {
@@ -374,7 +374,7 @@ export default function Header() {
 
                 {user?.isAdmin && (
                   <Link
-                    href="/admin"
+                    href="/cp-x4m9k2"
                     className="hidden sm:flex items-center gap-1.5 px-3 py-2 text-primary-600 hover:text-primary-700 transition-colors"
                   >
                     <FiShield size={20} />

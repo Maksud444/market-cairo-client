@@ -159,6 +159,13 @@ export const adminAPI = {
   getVerifications: (params) => api.get('/admin/verifications', { params }),
   reviewVerification: (userId, action, reason) =>
     api.put(`/admin/verifications/${userId}/review`, { action, reason }),
+
+  // Categories Management
+  getCategories: () => api.get('/admin/categories'),
+  createCategory: (data) => api.post('/admin/categories', data),
+  updateCategory: (id, data) => api.put(`/admin/categories/${id}`, data),
+  deleteCategory: (id) => api.delete(`/admin/categories/${id}`),
+  seedCategories: () => api.post('/admin/categories/seed'),
 };
 
 export default api;

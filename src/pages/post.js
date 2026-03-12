@@ -11,16 +11,6 @@ import Layout from '../components/Layout';
 import { listingsAPI, categoriesAPI } from '../lib/api';
 import { useAuthStore } from '../lib/store';
 
-const categories = [
-  'Furniture',
-  'Electronics', 
-  'Books',
-  'Kitchen',
-  'Clothing',
-  'Sports',
-  'Toys',
-  'Other',
-];
 
 const MAX_IMAGES = 10;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -43,12 +33,14 @@ export default function PostListingPage() {
     description: '',
     price: '',
     category: '',
+    subcategory: '',
     condition: '',
     location: {
       area: '',
       city: 'Cairo',
     },
   });
+  const [categories, setCategories] = useState([]);
   const [images, setImages] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -76,19 +68,21 @@ export default function PostListingPage() {
     }
   }, [isAuthenticated, user, router]);
 
-  // Fetch locations
+  // Fetch categories and locations
   useEffect(() => {
-    const fetchLocations = async () => {
+    const fetchFilters = async () => {
       try {
-        const res = await categoriesAPI.getLocations();
-        if (res.data.success) {
-          setLocations(res.data.locations);
-        }
+        const [catRes, locRes] = await Promise.all([
+          categoriesAPI.getAll(),
+          categoriesAPI.getLocations(),
+        ]);
+        if (catRes.data.success) setCategories(catRes.data.categories);
+        if (locRes.data.success) setLocations(locRes.data.locations);
       } catch (error) {
-        console.error('Failed to fetch locations:', error);
+        console.error('Failed to fetch filters:', error);
       }
     };
-    fetchLocations();
+    fetchFilters();
   }, []);
 
   // Fetch listing data if editing
@@ -113,6 +107,7 @@ export default function PostListingPage() {
               description: listing.description,
               price: listing.price.toString(),
               category: listing.category,
+              subcategory: listing.subcategory || '',
               condition: listing.condition,
               location: listing.location || { area: '', city: 'Cairo' },
             });
@@ -186,13 +181,15 @@ export default function PostListingPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name.startsWith('location.')) {
       const field = name.split('.')[1];
       setFormData(prev => ({
         ...prev,
         location: { ...prev.location, [field]: value },
       }));
+    } else if (name === 'category') {
+      setFormData(prev => ({ ...prev, category: value, subcategory: '' }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -261,6 +258,7 @@ export default function PostListingPage() {
       data.append('description', formData.description.trim());
       data.append('price', formData.price);
       data.append('category', formData.category);
+      data.append('subcategory', formData.subcategory || '');
       data.append('condition', formData.condition);
       data.append('location', JSON.stringify({
         area: formData.location.area,
@@ -472,7 +470,7 @@ export default function PostListingPage() {
                 >
                   <option value="">{t('post.select_category')}</option>
                   {categories.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <option key={cat.name} value={cat.name}>{cat.name}</option>
                   ))}
                 </select>
                 <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
@@ -484,6 +482,31 @@ export default function PostListingPage() {
                 </p>
               )}
             </div>
+
+            {/* Subcategory */}
+            {formData.category && categories.find(c => c.name === formData.category)?.subcategories?.length > 0 && (
+              <div>
+                <label htmlFor="subcategory" className="block text-sm font-medium text-gray-700 mb-2">
+                  Subcategory
+                </label>
+                <div className="relative">
+                  <select
+                    id="subcategory"
+                    name="subcategory"
+                    value={formData.subcategory}
+                    onChange={handleChange}
+                    className="input w-full appearance-none pr-10"
+                  >
+                    <option value="">Select subcategory (optional)</option>
+                    {categories.find(c => c.name === formData.category).subcategories.map((sub) => {
+                      const subName = typeof sub === 'string' ? sub : sub.name;
+                      return <option key={subName} value={subName}>{subName}</option>;
+                    })}
+                  </select>
+                  <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
+                </div>
+              </div>
+            )}
 
             {/* Condition */}
             <div>

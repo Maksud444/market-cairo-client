@@ -72,34 +72,40 @@ function AdminDashboard() {
         <div className="container-app">
           <nav className="flex gap-6">
             <Link
-              href="/admin"
+              href="/cp-x4m9k2"
               className="py-4 border-b-2 border-primary-600 text-primary-600 font-medium"
             >
               Dashboard
             </Link>
             <Link
-              href="/admin/users"
+              href="/cp-x4m9k2/users"
               className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
             >
               Users
             </Link>
             <Link
-              href="/admin/listings"
+              href="/cp-x4m9k2/listings"
               className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
             >
               Listings
             </Link>
             <Link
-              href="/admin/verifications"
+              href="/cp-x4m9k2/verifications"
               className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
             >
               Verifications
             </Link>
             <Link
-              href="/admin/reports"
+              href="/cp-x4m9k2/reports"
               className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
             >
               Reports
+            </Link>
+            <Link
+              href="/cp-x4m9k2/categories"
+              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
+            >
+              Categories
             </Link>
             <Link
               href="/"
@@ -195,7 +201,7 @@ function AdminDashboard() {
                   ))}
                 </div>
                 <Link
-                  href="/admin/users"
+                  href="/cp-x4m9k2/users"
                   className="block text-center mt-4 text-sm text-primary-600 hover:text-primary-700 font-medium"
                 >
                   View All Users →
@@ -220,7 +226,7 @@ function AdminDashboard() {
                   ))}
                 </div>
                 <Link
-                  href="/admin/listings"
+                  href="/cp-x4m9k2/listings"
                   className="block text-center mt-4 text-sm text-primary-600 hover:text-primary-700 font-medium"
                 >
                   View All Listings →

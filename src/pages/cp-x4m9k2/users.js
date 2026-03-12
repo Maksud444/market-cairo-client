@@ -118,31 +118,31 @@ function AdminUsers() {
         <div className="container-app">
           <nav className="flex gap-6">
             <Link
-              href="/admin"
+              href="/cp-x4m9k2"
               className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
             >
               Dashboard
             </Link>
             <Link
-              href="/admin/users"
+              href="/cp-x4m9k2/users"
               className="py-4 border-b-2 border-primary-600 text-primary-600 font-medium"
             >
               Users
             </Link>
             <Link
-              href="/admin/listings"
+              href="/cp-x4m9k2/listings"
               className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
             >
               Listings
             </Link>
             <Link
-              href="/admin/verifications"
+              href="/cp-x4m9k2/verifications"
               className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
             >
               Verifications
             </Link>
             <Link
-              href="/admin/reports"
+              href="/cp-x4m9k2/reports"
               className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
             >
               Reports

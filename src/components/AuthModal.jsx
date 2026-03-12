@@ -55,7 +55,7 @@ export default function AuthModal() {
           const currentUser = useAuthStore.getState().user;
           if (currentUser?.isAdmin) {
             toast.success('Welcome back, Admin!');
-            router.push('/admin');
+            router.push('/cp-x4m9k2');
           } else {
             toast.success('Welcome!');
             router.push('/dashboard');
@@ -87,7 +87,7 @@ export default function AuthModal() {
         const currentUser = useAuthStore.getState().user;
         if (currentUser?.isAdmin) {
           toast.success('Welcome back, Admin!');
-          router.push('/admin');
+          router.push('/cp-x4m9k2');
         } else {
           toast.success('Welcome back!');
           router.push('/dashboard');

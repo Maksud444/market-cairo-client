@@ -147,19 +147,19 @@ function AdminVerifications() {
       <div className="bg-white border-b border-gray-200">
         <div className="container-app">
           <nav className="flex gap-6 overflow-x-auto">
-            <Link href="/admin" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
+            <Link href="/cp-x4m9k2" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
               Dashboard
             </Link>
-            <Link href="/admin/users" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
+            <Link href="/cp-x4m9k2/users" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
               Users
             </Link>
-            <Link href="/admin/listings" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
+            <Link href="/cp-x4m9k2/listings" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
               Listings
             </Link>
-            <Link href="/admin/verifications" className="py-4 border-b-2 border-primary-600 text-primary-600 font-medium whitespace-nowrap">
+            <Link href="/cp-x4m9k2/verifications" className="py-4 border-b-2 border-primary-600 text-primary-600 font-medium whitespace-nowrap">
               Verifications
             </Link>
-            <Link href="/admin/reports" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
+            <Link href="/cp-x4m9k2/reports" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
               Reports
             </Link>
             <Link href="/" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { FiShield, FiArrowRight, FiPackage, FiMonitor, FiBook, FiTool, FiShoppingBag, FiActivity, FiSmile, FiMoreHorizontal } from 'react-icons/fi';
+import { FiShield, FiArrowRight, FiPackage, FiMonitor, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
@@ -9,13 +9,12 @@ import ListingCard from '../components/ListingCard';
 import { listingsAPI, categoriesAPI } from '../lib/api';
 
 const categoryIcons = {
-  'Furniture': FiPackage,
+  'Mobile & Tablets': FiShoppingBag,
   'Electronics': FiMonitor,
-  'Books': FiBook,
+  'Fashion & Beauty': FiShoppingBag,
+  'Furniture': FiPackage,
   'Kitchen': FiTool,
-  'Clothing': FiShoppingBag,
-  'Sports': FiActivity,
-  'Toys': FiSmile,
+  'Books': FiBook,
   'Other': FiMoreHorizontal,
 };
 
