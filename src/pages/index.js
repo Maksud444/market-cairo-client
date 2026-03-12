@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { FiTrendingUp, FiUsers, FiShield, FiClock, FiArrowRight, FiPackage, FiMonitor, FiBook, FiTool, FiShoppingBag, FiActivity, FiSmile, FiMoreHorizontal } from 'react-icons/fi';
+import { FiShield, FiArrowRight, FiPackage, FiMonitor, FiBook, FiTool, FiShoppingBag, FiActivity, FiSmile, FiMoreHorizontal, FiSearch } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
 import ListingCard from '../components/ListingCard';
 import { listingsAPI, categoriesAPI } from '../lib/api';
+import { useRouter } from 'next/router';
 
 const categoryIcons = {
   'Furniture': FiPackage,
@@ -21,30 +22,30 @@ const categoryIcons = {
 
 export default function Home() {
   const { t } = useTranslation('common');
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
   const [featuredListings, setFeaturedListings] = useState([]);
   const [recentListings, setRecentListings] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [stats, setStats] = useState({
-    activeListings: 0,
-    totalMembers: 0,
-    safeDeals: '100%',
-  });
   const [isLoading, setIsLoading] = useState(true);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [featuredRes, recentRes, statsRes, categoriesRes] = await Promise.all([
+        const [featuredRes, recentRes, categoriesRes] = await Promise.all([
           listingsAPI.getFeatured(),
           listingsAPI.getRecent(8),
-          listingsAPI.getStats(),
           categoriesAPI.getAll(),
         ]);
 
         if (featuredRes.data.success) setFeaturedListings(featuredRes.data.listings);
         if (recentRes.data.success) setRecentListings(recentRes.data.listings);
-        if (statsRes.data.success) setStats(statsRes.data.stats);
         if (categoriesRes.data.success) setCategories(categoriesRes.data.categories);
       } catch (error) {
         console.error('Failed to fetch homepage data:', error);
@@ -63,71 +64,79 @@ export default function Home() {
         <meta name="description" content="Egypt's trusted marketplace for buying and selling second-hand items. Find great deals on furniture, electronics, and more in Cairo." />
       </Head>
 
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary-600 to-primary-700 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-10" />
-        <div className="container-app relative py-12 lg:py-20">
-          <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-3xl lg:text-5xl font-bold mb-4">
-              {t('home.hero_title')}
+      {/* Hero Section - Full Screen with Overlay */}
+      <section className="relative min-h-[88vh] flex items-center overflow-hidden">
+        {/* Dark gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-red-950 to-gray-900" />
+
+        {/* Dot pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)', backgroundSize: '32px 32px' }}
+        />
+
+        {/* Decorative blobs */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-red-600/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-red-800/20 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
+
+        {/* Content */}
+        <div className="container-app relative z-10 text-white py-20 w-full">
+          <div className="max-w-3xl mx-auto text-center">
+
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm mb-8 border border-white/20">
+              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              Cairo&apos;s trusted marketplace
+            </div>
+
+            {/* Heading */}
+            <h1 className="text-5xl lg:text-7xl font-extrabold mb-6 leading-tight tracking-tight">
+              Buy & Sell<br />
+              <span className="text-red-400">Anything</span> in Cairo
             </h1>
-            <p className="text-lg lg:text-xl text-white/90 mb-8">
+
+            <p className="text-lg lg:text-xl text-white/70 mb-10 max-w-xl mx-auto">
               {t('home.hero_subtitle')}
             </p>
-            <Link
-              href="/post"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              {t('home.start_selling')}
-            </Link>
-          </div>
-        </div>
-      </section>
 
-      {/* Stats Section */}
-      <section className="container-app -mt-6 lg:-mt-8 relative z-10">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-          <div className="bg-white rounded-xl p-4 lg:p-6 shadow-card flex items-center gap-3 lg:gap-4">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-primary-50 rounded-full flex items-center justify-center flex-shrink-0">
-              <FiTrendingUp className="text-primary-600" size={20} />
-            </div>
-            <div>
-              <p className="text-lg lg:text-2xl font-bold text-gray-900">
-                {stats.activeListings?.toLocaleString() || '8,758'}
-              </p>
-              <p className="text-xs lg:text-sm text-gray-500">{t('home.active_ads')}</p>
-            </div>
-          </div>
+            {/* Search Bar */}
+            <form onSubmit={handleSearch} className="flex gap-2 max-w-xl mx-auto mb-10">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search for items..."
+                className="flex-1 px-5 py-4 rounded-xl text-gray-900 text-base outline-none shadow-lg"
+              />
+              <button
+                type="submit"
+                className="px-6 py-4 bg-red-600 hover:bg-red-700 rounded-xl font-semibold transition-colors flex items-center gap-2 shadow-lg"
+              >
+                <FiSearch size={20} />
+              </button>
+            </form>
 
-          <div className="bg-white rounded-xl p-4 lg:p-6 shadow-card flex items-center gap-3 lg:gap-4">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-primary-50 rounded-full flex items-center justify-center flex-shrink-0">
-              <FiUsers className="text-primary-600" size={20} />
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-14">
+              <Link
+                href="/post"
+                className="px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors text-base shadow-lg"
+              >
+                {t('home.start_selling')}
+              </Link>
+              <Link
+                href="/search"
+                className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold rounded-xl transition-colors text-base border border-white/20"
+              >
+                Browse Listings
+              </Link>
             </div>
-            <div>
-              <p className="text-lg lg:text-2xl font-bold text-gray-900">
-                {stats.totalMembers?.toLocaleString() || '12,450'}
-              </p>
-              <p className="text-xs lg:text-sm text-gray-500">{t('home.total_members')}</p>
-            </div>
-          </div>
 
-          <div className="bg-white rounded-xl p-4 lg:p-6 shadow-card flex items-center gap-3 lg:gap-4">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-primary-50 rounded-full flex items-center justify-center flex-shrink-0">
-              <FiShield className="text-primary-600" size={20} />
-            </div>
-            <div>
-              <p className="text-lg lg:text-2xl font-bold text-gray-900">{stats.safeDeals}</p>
-              <p className="text-xs lg:text-sm text-gray-500">{t('home.safe_deals')}</p>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl p-4 lg:p-6 shadow-card flex items-center gap-3 lg:gap-4">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-primary-50 rounded-full flex items-center justify-center flex-shrink-0">
-              <FiClock className="text-primary-600" size={20} />
-            </div>
-            <div>
-              <p className="text-lg lg:text-2xl font-bold text-gray-900">Fast</p>
-              <p className="text-xs lg:text-sm text-gray-500">Delivery</p>
+            {/* Trust badges */}
+            <div className="flex flex-wrap justify-center gap-8 text-white/50 text-sm">
+              <span className="flex items-center gap-2"><FiShield size={14} className="text-green-400" /> Free to post</span>
+              <span className="flex items-center gap-2"><FiShield size={14} className="text-green-400" /> Safe deals</span>
+              <span className="flex items-center gap-2"><FiShield size={14} className="text-green-400" /> Local community</span>
             </div>
           </div>
         </div>
