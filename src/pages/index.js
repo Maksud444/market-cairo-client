@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { FiShield, FiArrowRight, FiPackage, FiMonitor, FiBook, FiTool, FiShoppingBag, FiActivity, FiSmile, FiMoreHorizontal, FiSearch } from 'react-icons/fi';
+import { FiShield, FiArrowRight, FiPackage, FiMonitor, FiBook, FiTool, FiShoppingBag, FiActivity, FiSmile, FiMoreHorizontal } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
 import ListingCard from '../components/ListingCard';
 import { listingsAPI, categoriesAPI } from '../lib/api';
-import { useRouter } from 'next/router';
 
 const categoryIcons = {
   'Furniture': FiPackage,
@@ -22,17 +21,10 @@ const categoryIcons = {
 
 export default function Home() {
   const { t } = useTranslation('common');
-  const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
   const [featuredListings, setFeaturedListings] = useState([]);
   const [recentListings, setRecentListings] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,23 +90,6 @@ export default function Home() {
             <p className="text-lg lg:text-xl text-white/70 mb-10 max-w-xl mx-auto">
               {t('home.hero_subtitle')}
             </p>
-
-            {/* Search Bar */}
-            <form onSubmit={handleSearch} className="flex gap-2 max-w-xl mx-auto mb-10">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search for items..."
-                className="flex-1 px-5 py-4 rounded-xl text-gray-900 text-base outline-none shadow-lg"
-              />
-              <button
-                type="submit"
-                className="px-6 py-4 bg-red-600 hover:bg-red-700 rounded-xl font-semibold transition-colors flex items-center gap-2 shadow-lg"
-              >
-                <FiSearch size={20} />
-              </button>
-            </form>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-14">

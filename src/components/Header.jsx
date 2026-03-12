@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FiSearch, FiHeart, FiMessageSquare, FiUser, FiPlus, FiMenu, FiMapPin, FiX, FiShield, FiBell, FiCheck, FiChevronDown } from 'react-icons/fi';
+import { FiSearch, FiHeart, FiMessageSquare, FiUser, FiPlus, FiMenu, FiMapPin, FiX, FiShield, FiBell, FiCheck, FiChevronDown, FiNavigation } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 import { useAuthStore, useMessagesStore, useUIStore } from '../lib/store';
 import { authAPI } from '../lib/api';
@@ -26,8 +26,38 @@ export default function Header() {
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [isLocating, setIsLocating] = useState(false);
   const notifRef = useRef(null);
   const locationRef = useRef(null);
+
+  const handleCurrentLocation = () => {
+    if (!navigator.geolocation) return;
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+          );
+          const data = await res.json();
+          const suburb = data.address?.suburb || data.address?.neighbourhood || data.address?.city_district || null;
+          if (suburb) {
+            setSelectedLocation({ en: suburb, ar: suburb });
+            router.push(`/search?location=${encodeURIComponent(suburb)}`);
+          } else {
+            setSelectedLocation({ en: 'Current Location', ar: 'موقعي الحالي' });
+          }
+        } catch {
+          setSelectedLocation({ en: 'Current Location', ar: 'موقعي الحالي' });
+        } finally {
+          setIsLocating(false);
+          setShowLocationDropdown(false);
+        }
+      },
+      () => setIsLocating(false)
+    );
+  };
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -145,6 +175,17 @@ export default function Header() {
 
             {showLocationDropdown && (
               <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-gray-100 z-50 max-h-96 overflow-y-auto">
+                {/* Current Location */}
+                <button
+                  onClick={handleCurrentLocation}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-primary-600 hover:bg-primary-50 transition-colors border-b border-gray-100 font-medium"
+                >
+                  <FiNavigation size={15} className={isLocating ? 'animate-spin' : ''} />
+                  {isLocating
+                    ? (isArabic ? 'جاري التحديد...' : 'Detecting...')
+                    : (isArabic ? 'استخدم موقعي الحالي' : 'Use my current location')}
+                </button>
+
                 <div className="p-3 border-b border-gray-100">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
                     {isArabic ? 'المناطق' : 'Areas'}
