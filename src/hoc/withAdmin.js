@@ -1,50 +1,49 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useAuthStore } from '../lib/store';
+import { authAPI } from '../lib/api';
 import toast from 'react-hot-toast';
+import Cookies from 'js-cookie';
 
 /**
  * Higher-Order Component to protect admin-only routes
- * Waits for Zustand persist hydration before checking auth
+ * Verifies admin status via API call - does NOT rely on client store hydration
  */
 export function withAdmin(Component) {
   return function AdminProtectedRoute(props) {
     const router = useRouter();
-    const { isAuthenticated, user } = useAuthStore();
-    const [hasHydrated, setHasHydrated] = useState(false);
+    const [status, setStatus] = useState('checking'); // 'checking' | 'allowed' | 'denied'
 
     useEffect(() => {
-      // Check if Zustand persist store has already hydrated
-      if (useAuthStore.persist.hasHydrated()) {
-        setHasHydrated(true);
-      } else {
-        // Wait for hydration to complete
-        const unsub = useAuthStore.persist.onFinishHydration(() => {
-          setHasHydrated(true);
-        });
-        // Fallback timeout in case hydration event doesn't fire
-        const timer = setTimeout(() => setHasHydrated(true), 1000);
-        return () => {
-          unsub();
-          clearTimeout(timer);
-        };
-      }
+      const checkAdmin = async () => {
+        const token = Cookies.get('token');
+
+        if (!token) {
+          toast.error('Please login to access this page');
+          router.push('/');
+          setStatus('denied');
+          return;
+        }
+
+        try {
+          const { data } = await authAPI.getMe();
+          if (data.success && data.user?.isAdmin) {
+            setStatus('allowed');
+          } else {
+            toast.error('Access denied. Admin privileges required.');
+            router.push('/');
+            setStatus('denied');
+          }
+        } catch (error) {
+          toast.error('Please login to access this page');
+          router.push('/');
+          setStatus('denied');
+        }
+      };
+
+      checkAdmin();
     }, []);
 
-    useEffect(() => {
-      if (!hasHydrated) return;
-
-      if (!isAuthenticated || !user) {
-        toast.error('Please login to access this page');
-        router.push('/');
-      } else if (!user.isAdmin) {
-        toast.error('Access denied. Admin privileges required.');
-        router.push('/');
-      }
-    }, [hasHydrated, isAuthenticated, user]);
-
-    // Show loading spinner until hydrated and confirmed admin
-    if (!hasHydrated || !isAuthenticated || !user || !user.isAdmin) {
+    if (status !== 'allowed') {
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center">
