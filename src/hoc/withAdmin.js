@@ -5,33 +5,46 @@ import toast from 'react-hot-toast';
 
 /**
  * Higher-Order Component to protect admin-only routes
- * Redirects to home page if user is not an admin
+ * Waits for Zustand persist hydration before checking auth
  */
 export function withAdmin(Component) {
   return function AdminProtectedRoute(props) {
     const router = useRouter();
     const { isAuthenticated, user } = useAuthStore();
-    const [hasChecked, setHasChecked] = useState(false);
+    const [hasHydrated, setHasHydrated] = useState(false);
 
     useEffect(() => {
-      // Wait a moment for store to hydrate from localStorage
-      const timer = setTimeout(() => {
-        setHasChecked(true);
-
-        if (!isAuthenticated || !user) {
-          toast.error('Please login to access this page');
-          router.push('/');
-        } else if (!user.isAdmin) {
-          toast.error('Access denied. Admin privileges required.');
-          router.push('/');
-        }
-      }, 100);
-
-      return () => clearTimeout(timer);
+      // Check if Zustand persist store has already hydrated
+      if (useAuthStore.persist.hasHydrated()) {
+        setHasHydrated(true);
+      } else {
+        // Wait for hydration to complete
+        const unsub = useAuthStore.persist.onFinishHydration(() => {
+          setHasHydrated(true);
+        });
+        // Fallback timeout in case hydration event doesn't fire
+        const timer = setTimeout(() => setHasHydrated(true), 1000);
+        return () => {
+          unsub();
+          clearTimeout(timer);
+        };
+      }
     }, []);
 
-    // Don't render if not authenticated or not admin
-    if (!isAuthenticated || !user || !user.isAdmin) {
+    useEffect(() => {
+      if (!hasHydrated) return;
+
+      if (!isAuthenticated || !user) {
+        toast.error('Please login to access this page');
+        router.push('/');
+      } else if (!user.isAdmin) {
+        toast.error('Access denied. Admin privileges required.');
+        router.push('/');
+      }
+    }, [hasHydrated, isAuthenticated, user]);
+
+    // Show loading spinner until hydrated and confirmed admin
+    if (!hasHydrated || !isAuthenticated || !user || !user.isAdmin) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center">
@@ -42,7 +55,6 @@ export function withAdmin(Component) {
       );
     }
 
-    // Render the admin component
     return <Component {...props} />;
   };
 }
