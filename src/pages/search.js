@@ -39,7 +39,7 @@ export default function SearchPage() {
   const [subcategory, setSubcategory] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState('grid');
+  const [viewMode, setViewMode] = useState('list');
   const [pagination, setPagination] = useState({
     page: 1,
     total: 0,
@@ -206,53 +206,67 @@ export default function SearchPage() {
                 )}
               </div>
 
-              {/* Category Filter */}
+              {/* Category Filter - OLX Style */}
               <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.category')}</h3>
-                <div className="space-y-1">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" name="category" checked={!category}
-                      onChange={() => { setCategory(''); setSubcategory(''); }}
-                      className="text-primary-600 focus:ring-primary-500" />
-                    <span className="text-sm text-gray-600">{t('categories.all')}</span>
-                  </label>
+                <h3 className="text-sm font-semibold text-gray-800 mb-3">{t('filters.category')}</h3>
+                <div className="space-y-0.5">
+                  <button
+                    onClick={() => { setCategory(''); setSubcategory(''); }}
+                    className={`w-full text-left px-2 py-1.5 text-sm rounded transition-colors ${
+                      !category ? 'text-primary-600 font-semibold' : 'text-gray-600 hover:text-primary-600'
+                    }`}
+                  >
+                    {t('categories.all')}
+                  </button>
                   {categories.map((cat) => (
-                    <label key={cat.name} className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" name="category" checked={category === cat.name}
-                        onChange={() => { setCategory(cat.name); setSubcategory(''); }}
-                        className="text-primary-600 focus:ring-primary-500" />
-                      <span className="text-sm text-gray-600">{cat.name}</span>
-                      <span className="text-xs text-gray-400 ml-auto">{cat.count}</span>
-                    </label>
+                    <div key={cat.name}>
+                      <button
+                        onClick={() => { setCategory(cat.name); setSubcategory(''); }}
+                        className={`w-full text-left px-2 py-1.5 text-sm rounded transition-colors flex items-center justify-between ${
+                          category === cat.name
+                            ? 'text-primary-600 font-semibold bg-primary-50'
+                            : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
+                        }`}
+                      >
+                        <span>{cat.name}</span>
+                        {cat.count > 0 && (
+                          <span className="text-xs text-gray-400">({cat.count})</span>
+                        )}
+                      </button>
+
+                      {/* Subcategories - show indented when this category is selected */}
+                      {category === cat.name && cat.subcategories?.length > 0 && (
+                        <div className="ml-3 mt-0.5 space-y-0.5 border-l-2 border-primary-100 pl-3">
+                          <button
+                            onClick={() => setSubcategory('')}
+                            className={`w-full text-left py-1 text-xs rounded transition-colors ${
+                              !subcategory ? 'text-primary-600 font-medium' : 'text-gray-500 hover:text-primary-600'
+                            }`}
+                          >
+                            All {cat.name}
+                          </button>
+                          {cat.subcategories.map((sub) => {
+                            const subName = typeof sub === 'string' ? sub : sub.name;
+                            return (
+                              <button
+                                key={subName}
+                                onClick={() => setSubcategory(subName)}
+                                className={`w-full text-left py-1 text-xs rounded transition-colors ${
+                                  subcategory === subName
+                                    ? 'text-primary-600 font-medium'
+                                    : 'text-gray-500 hover:text-primary-600'
+                                }`}
+                              >
+                                {subName}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
-
-              {/* Subcategory Filter */}
-              {selectedCategoryData?.subcategories?.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Subcategory</h3>
-                  <div className="space-y-1">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" name="subcategory" checked={!subcategory}
-                        onChange={() => setSubcategory('')}
-                        className="text-primary-600 focus:ring-primary-500" />
-                      <span className="text-sm text-gray-600">All</span>
-                    </label>
-                    {selectedCategoryData.subcategories.map((sub) => {
-                      const subName = typeof sub === 'string' ? sub : sub.name;
-                      return (
-                        <label key={subName} className="flex items-center gap-2 cursor-pointer">
-                          <input type="radio" name="subcategory" checked={subcategory === subName}
-                            onChange={() => setSubcategory(subName)}
-                            className="text-primary-600 focus:ring-primary-500" />
-                          <span className="text-sm text-gray-600">{subName}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
 
               {/* Location Filter */}
               <div className="mb-6">
@@ -427,53 +441,48 @@ export default function SearchPage() {
             </div>
 
             <div className="p-4 space-y-6">
-              {/* Category Filter */}
+              {/* Category Filter - OLX Style Mobile */}
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.category')}</h3>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" name="mobile-category" checked={!category}
-                      onChange={() => { setCategory(''); setSubcategory(''); }}
-                      className="text-primary-600 focus:ring-primary-500" />
-                    <span className="text-sm text-gray-600">{t('categories.all')}</span>
-                  </label>
+                <h3 className="text-sm font-semibold text-gray-800 mb-2">{t('filters.category')}</h3>
+                <div className="space-y-0.5">
+                  <button
+                    onClick={() => { setCategory(''); setSubcategory(''); }}
+                    className={`w-full text-left px-2 py-1.5 text-sm rounded ${!category ? 'text-primary-600 font-semibold' : 'text-gray-600'}`}
+                  >
+                    {t('categories.all')}
+                  </button>
                   {categories.map((cat) => (
-                    <label key={cat.name} className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" name="mobile-category" checked={category === cat.name}
-                        onChange={() => { setCategory(cat.name); setSubcategory(''); }}
-                        className="text-primary-600 focus:ring-primary-500" />
-                      <span className="text-sm text-gray-600">{cat.name}</span>
-                      <span className="text-xs text-gray-400 ml-auto">{cat.count}</span>
-                    </label>
+                    <div key={cat.name}>
+                      <button
+                        onClick={() => { setCategory(cat.name); setSubcategory(''); }}
+                        className={`w-full text-left px-2 py-1.5 text-sm rounded flex items-center justify-between ${
+                          category === cat.name ? 'text-primary-600 font-semibold bg-primary-50' : 'text-gray-600'
+                        }`}
+                      >
+                        <span>{cat.name}</span>
+                        {cat.count > 0 && <span className="text-xs text-gray-400">({cat.count})</span>}
+                      </button>
+                      {category === cat.name && cat.subcategories?.length > 0 && (
+                        <div className="ml-3 mt-1 space-y-1 border-l-2 border-primary-100 pl-3">
+                          <button onClick={() => setSubcategory('')}
+                            className={`w-full text-left py-1 text-xs ${!subcategory ? 'text-primary-600 font-medium' : 'text-gray-500'}`}>
+                            All {cat.name}
+                          </button>
+                          {cat.subcategories.map((sub) => {
+                            const subName = typeof sub === 'string' ? sub : sub.name;
+                            return (
+                              <button key={subName} onClick={() => setSubcategory(subName)}
+                                className={`w-full text-left py-1 text-xs ${subcategory === subName ? 'text-primary-600 font-medium' : 'text-gray-500'}`}>
+                                {subName}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
-
-              {/* Subcategory Filter */}
-              {selectedCategoryData?.subcategories?.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Subcategory</h3>
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" name="mobile-subcategory" checked={!subcategory}
-                        onChange={() => setSubcategory('')}
-                        className="text-primary-600 focus:ring-primary-500" />
-                      <span className="text-sm text-gray-600">All</span>
-                    </label>
-                    {selectedCategoryData.subcategories.map((sub) => {
-                      const subName = typeof sub === 'string' ? sub : sub.name;
-                      return (
-                        <label key={subName} className="flex items-center gap-2 cursor-pointer">
-                          <input type="radio" name="mobile-subcategory" checked={subcategory === subName}
-                            onChange={() => setSubcategory(subName)}
-                            className="text-primary-600 focus:ring-primary-500" />
-                          <span className="text-sm text-gray-600">{subName}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
 
               {/* Location Filter */}
               <div>
