@@ -272,6 +272,67 @@ export default function Header() {
             <FiChevronDown size={12} />
           </button>
 
+          {/* Mobile Location Dropdown Overlay */}
+          {showLocationDropdown && (
+            <div
+              className="lg:hidden fixed inset-0 z-50 bg-black/50"
+              onClick={() => setShowLocationDropdown(false)}
+            >
+              <div
+                className="absolute top-28 left-4 right-4 bg-white rounded-xl shadow-xl border border-gray-100 max-h-[70vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  onClick={handleCurrentLocation}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-primary-600 hover:bg-primary-50 border-b border-gray-100 font-medium"
+                >
+                  <FiNavigation size={15} className={isLocating ? 'animate-spin' : ''} />
+                  {isLocating ? 'Detecting...' : 'Use my current location'}
+                </button>
+                <div className="p-3 border-b border-gray-100">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Areas</p>
+                </div>
+                <div className="py-1">
+                  {cairoAreas.map((area) => (
+                    <button
+                      key={area.en}
+                      onClick={() => {
+                        setSelectedLocation(area.en === 'All Cairo' ? null : area);
+                        setShowLocationDropdown(false);
+                        router.push(`/search?location=${encodeURIComponent(area.en === 'All Cairo' ? '' : area.en)}`);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                        selectedLocation?.en === area.en ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {isArabic ? area.ar : area.en}
+                    </button>
+                  ))}
+                </div>
+                <div className="p-3 border-t border-b border-gray-100">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Compounds</p>
+                </div>
+                <div className="py-1">
+                  {cairoCompounds.map((compound) => (
+                    <button
+                      key={compound.en}
+                      onClick={() => {
+                        setSelectedLocation(compound);
+                        setShowLocationDropdown(false);
+                        router.push(`/search?location=${encodeURIComponent(compound.en)}`);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                        selectedLocation?.en === compound.en ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {isArabic ? compound.ar : compound.en}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Right Actions */}
           <div className="flex items-center gap-1 sm:gap-2">
             {isAuthenticated ? (

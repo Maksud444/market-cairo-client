@@ -55,58 +55,31 @@ export default function Home() {
         <meta name="description" content="Egypt's trusted marketplace for buying and selling second-hand items. Find great deals on furniture, electronics, and more in Cairo." />
       </Head>
 
-      {/* Hero Section - Full Screen with Overlay */}
-      <section className="relative min-h-[88vh] flex items-center overflow-hidden">
-        {/* Dark gradient background */}
+      {/* Hero Section - Desktop only */}
+      <section className="relative hidden lg:flex min-h-[88vh] items-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-red-950 to-gray-900" />
-
-        {/* Dot pattern overlay */}
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)', backgroundSize: '32px 32px' }}
-        />
-
-        {/* Decorative blobs */}
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-red-600/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-red-800/20 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
-
-        {/* Content */}
         <div className="container-app relative z-10 text-white py-20 w-full">
           <div className="max-w-3xl mx-auto text-center">
-
-            {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm mb-8 border border-white/20">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
               Cairo&apos;s trusted marketplace
             </div>
-
-            {/* Heading */}
             <h1 className="text-5xl lg:text-7xl font-extrabold mb-6 leading-tight tracking-tight">
               Buy & Sell<br />
               <span className="text-red-400">Anything</span> in Cairo
             </h1>
-
-            <p className="text-lg lg:text-xl text-white/70 mb-10 max-w-xl mx-auto">
-              {t('home.hero_subtitle')}
-            </p>
-
-            {/* CTA Buttons */}
+            <p className="text-lg lg:text-xl text-white/70 mb-10 max-w-xl mx-auto">{t('home.hero_subtitle')}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-14">
-              <Link
-                href="/post"
-                className="px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors text-base shadow-lg"
-              >
+              <Link href="/post" className="px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors text-base shadow-lg">
                 {t('home.start_selling')}
               </Link>
-              <Link
-                href="/search"
-                className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold rounded-xl transition-colors text-base border border-white/20"
-              >
+              <Link href="/search" className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold rounded-xl transition-colors text-base border border-white/20">
                 Browse Listings
               </Link>
             </div>
-
-            {/* Trust badges */}
             <div className="flex flex-wrap justify-center gap-8 text-white/50 text-sm">
               <span className="flex items-center gap-2"><FiShield size={14} className="text-green-400" /> Free to post</span>
               <span className="flex items-center gap-2"><FiShield size={14} className="text-green-400" /> Safe deals</span>
@@ -116,32 +89,50 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Browse Categories */}
-      <section className="container-app py-10 lg:py-16">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl lg:text-2xl font-bold text-gray-900">{t('home.browse_categories')}</h2>
-          <Link href="/search" className="text-sm text-primary-600 hover:underline flex items-center gap-1">
-            {t('home.view_all')} <FiArrowRight size={14} />
+      {/* Mobile Hero - compact Dubizzle-style banner */}
+      <section className="lg:hidden relative overflow-hidden bg-gradient-to-r from-gray-950 via-red-950 to-gray-900 px-4 py-7">
+        <div className="absolute top-0 right-0 w-40 h-40 bg-red-600/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/4" />
+        <div className="relative z-10 flex items-center justify-between">
+          <div className="text-white">
+            <h1 className="text-xl font-extrabold mb-0.5">
+              Buy & Sell <span className="text-red-400">Anything</span>
+            </h1>
+            <p className="text-xs text-white/60">Cairo&apos;s trusted marketplace</p>
+          </div>
+          <Link href="/post" className="flex-shrink-0 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg text-sm shadow-lg">
+            + Sell
           </Link>
         </div>
+      </section>
 
-        <div className="grid grid-cols-4 lg:grid-cols-8 gap-3 lg:gap-4">
-          {categories.map((category) => {
-            const Icon = categoryIcons[category.name] || FiPackage;
-            return (
-              <Link
-                key={category.name}
-                href={`/search?category=${encodeURIComponent(category.name)}`}
-                className="flex flex-col items-center p-3 lg:p-4 bg-white rounded-xl border border-gray-100 hover:border-primary-500 hover:shadow-card transition-all group"
-              >
-                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gray-50 rounded-full flex items-center justify-center mb-2 group-hover:bg-primary-50 transition-colors">
-                  <Icon className="text-gray-600 group-hover:text-primary-600" size={20} />
-                </div>
-                <span className="text-xs lg:text-sm text-gray-700 text-center">{category.name}</span>
-                <span className="text-xs text-gray-400">{category.count || 0} ads</span>
-              </Link>
-            );
-          })}
+      {/* Browse Categories */}
+      <section className="bg-white py-5 lg:py-16 lg:container-app">
+        <div className="px-4 lg:px-0">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base lg:text-2xl font-bold text-gray-900">{t('home.browse_categories')}</h2>
+            <Link href="/search" className="text-sm text-primary-600 hover:underline flex items-center gap-1">
+              {t('home.view_all')} <FiArrowRight size={14} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-4 lg:grid-cols-8 gap-2 lg:gap-4">
+            {categories.map((category) => {
+              const Icon = categoryIcons[category.name] || FiPackage;
+              return (
+                <Link
+                  key={category.name}
+                  href={`/search?category=${encodeURIComponent(category.name)}`}
+                  className="flex flex-col items-center p-2.5 lg:p-4 bg-gray-50 lg:bg-white rounded-xl border border-gray-100 hover:border-primary-500 hover:shadow-sm transition-all group"
+                >
+                  <div className="w-12 h-12 lg:w-14 lg:h-14 bg-white lg:bg-gray-50 rounded-2xl flex items-center justify-center mb-1.5 group-hover:bg-primary-50 transition-colors shadow-sm lg:shadow-none">
+                    <Icon className="text-primary-600 group-hover:text-primary-700" size={22} />
+                  </div>
+                  <span className="text-[11px] lg:text-sm text-gray-700 text-center font-medium leading-tight">{category.name}</span>
+                  <span className="text-[10px] lg:text-xs text-gray-400 mt-0.5">{category.count || 0} ads</span>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -164,34 +155,55 @@ export default function Home() {
       )}
 
       {/* Recent Listings */}
-      <section className="container-app pb-10 lg:pb-16">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl lg:text-2xl font-bold text-gray-900">{t('home.recent_listings')}</h2>
-          <Link href="/search" className="text-sm text-primary-600 hover:underline flex items-center gap-1">
-            {t('home.view_all')} <FiArrowRight size={14} />
-          </Link>
-        </div>
+      <section className="pb-10 lg:pb-16">
+        <div className="px-4 lg:container-app">
+          <div className="flex items-center justify-between mb-4 lg:mb-6">
+            <h2 className="text-base lg:text-2xl font-bold text-gray-900">{t('home.recent_listings')}</h2>
+            <Link href="/search" className="text-sm text-primary-600 hover:underline flex items-center gap-1">
+              {t('home.view_all')} <FiArrowRight size={14} />
+            </Link>
+          </div>
 
-        {isLoading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="card">
-                <div className="aspect-card skeleton" />
-                <div className="p-3 space-y-2">
-                  <div className="h-4 skeleton w-3/4" />
-                  <div className="h-5 skeleton w-1/2" />
-                  <div className="h-3 skeleton w-full" />
+          {isLoading ? (
+            <div className="space-y-3 lg:grid lg:space-y-0 lg:grid-cols-4 lg:gap-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="lg:hidden flex gap-3 bg-white rounded-xl border border-gray-100 overflow-hidden h-28">
+                  <div className="w-28 skeleton flex-shrink-0" />
+                  <div className="flex-1 p-3 space-y-2">
+                    <div className="h-4 skeleton w-3/4" />
+                    <div className="h-5 skeleton w-1/2" />
+                    <div className="h-3 skeleton w-2/3" />
+                  </div>
                 </div>
+              ))}
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="hidden lg:block card">
+                  <div className="aspect-card skeleton" />
+                  <div className="p-3 space-y-2">
+                    <div className="h-4 skeleton w-3/4" />
+                    <div className="h-5 skeleton w-1/2" />
+                    <div className="h-3 skeleton w-full" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              {/* Mobile: list view */}
+              <div className="lg:hidden space-y-2">
+                {recentListings.map((listing) => (
+                  <ListingCard key={listing._id} listing={listing} viewMode="list" />
+                ))}
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-            {recentListings.map((listing) => (
-              <ListingCard key={listing._id} listing={listing} />
-            ))}
-          </div>
-        )}
+              {/* Desktop: grid view */}
+              <div className="hidden lg:grid lg:grid-cols-4 gap-4">
+                {recentListings.map((listing) => (
+                  <ListingCard key={listing._id} listing={listing} viewMode="grid" />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </section>
 
       {/* Safety Section */}
