@@ -4,11 +4,11 @@ import { useRouter } from 'next/router';
 import { FiSearch, FiHeart, FiMessageSquare, FiUser, FiPlus, FiMenu, FiMapPin, FiX, FiShield, FiBell, FiCheck, FiChevronDown, FiNavigation } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 import { useAuthStore, useMessagesStore, useUIStore } from '../lib/store';
-import { authAPI } from '../lib/api';
+import { authAPI, categoriesAPI } from '../lib/api';
 import LanguageSwitcher from './LanguageSwitcher';
 import { cairoAreas, cairoCompounds } from '../lib/cairoLocations';
 
-const categories = [
+const fallbackCategories = [
   'Mobile & Tablets', 'Electronics', 'Fashion & Beauty', 'Furniture', 'Kitchen', 'Books', 'Other'
 ];
 
@@ -27,6 +27,8 @@ export default function Header() {
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isLocating, setIsLocating] = useState(false);
+  const [apiCategories, setApiCategories] = useState([]);
+  const [hoveredCategory, setHoveredCategory] = useState(null);
   const notifRef = useRef(null);
   const locationRef = useRef(null);
 
@@ -119,6 +121,12 @@ export default function Header() {
     const days = Math.floor(hrs / 24);
     return `${days}d`;
   };
+
+  useEffect(() => {
+    categoriesAPI.getAll().then(res => {
+      if (res.data.success) setApiCategories(res.data.categories);
+    }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -424,14 +432,39 @@ export default function Header() {
         {/* Category Navigation - Desktop */}
         <nav className="hidden lg:block border-t border-gray-100">
           <div className="flex items-center gap-6 py-2.5">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => handleCategoryClick(category)}
-                className="text-sm text-gray-600 hover:text-primary-600 transition-colors whitespace-nowrap"
+            {(apiCategories.length > 0 ? apiCategories : fallbackCategories.map(c => ({ name: c, subcategories: [] }))).map((cat) => (
+              <div
+                key={cat.name}
+                className="relative"
+                onMouseEnter={() => setHoveredCategory(cat.name)}
+                onMouseLeave={() => setHoveredCategory(null)}
               >
-                {category}
-              </button>
+                <button
+                  onClick={() => handleCategoryClick(cat.name)}
+                  className="flex items-center gap-0.5 text-sm text-gray-600 hover:text-primary-600 transition-colors whitespace-nowrap py-2.5"
+                >
+                  {cat.name}
+                  {cat.subcategories?.length > 0 && (
+                    <FiChevronDown size={12} className={`transition-transform mt-0.5 ${hoveredCategory === cat.name ? 'rotate-180' : ''}`} />
+                  )}
+                </button>
+                {hoveredCategory === cat.name && cat.subcategories?.length > 0 && (
+                  <div className="absolute top-full left-0 mt-0 w-52 bg-white rounded-xl shadow-xl border border-gray-100 z-50 py-1">
+                    {cat.subcategories.map((sub) => {
+                      const subName = typeof sub === 'string' ? sub : sub.name;
+                      return (
+                        <button
+                          key={subName}
+                          onClick={() => router.push(`/search?category=${encodeURIComponent(cat.name)}&subcategory=${encodeURIComponent(subName)}`)}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-600 transition-colors"
+                        >
+                          {subName}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </nav>
@@ -439,13 +472,13 @@ export default function Header() {
         {/* Category Pills - Mobile */}
         <div className="lg:hidden pb-2 -mx-4 px-4 overflow-x-auto no-scrollbar">
           <div className="flex gap-2">
-            {categories.map((category) => (
+            {(apiCategories.length > 0 ? apiCategories : fallbackCategories.map(c => ({ name: c, subcategories: [] }))).map((cat) => (
               <button
-                key={category}
-                onClick={() => handleCategoryClick(category)}
+                key={cat.name}
+                onClick={() => handleCategoryClick(cat.name)}
                 className="category-pill"
               >
-                {category}
+                {cat.name}
               </button>
             ))}
           </div>
@@ -526,14 +559,14 @@ export default function Header() {
               )}
               <hr className="my-3" />
               <p className="px-3 py-2 text-xs font-medium text-gray-400 uppercase">Categories</p>
-              {categories.map((category) => (
-                <Link 
-                  key={category}
-                  href={`/search?category=${encodeURIComponent(category)}`}
+              {(apiCategories.length > 0 ? apiCategories : fallbackCategories.map(c => ({ name: c, subcategories: [] }))).map((cat) => (
+                <Link
+                  key={cat.name}
+                  href={`/search?category=${encodeURIComponent(cat.name)}`}
                   className="block px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {category}
+                  {cat.name}
                 </Link>
               ))}
             </nav>

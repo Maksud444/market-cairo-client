@@ -36,6 +36,7 @@ export default function SearchPage() {
   const [listings, setListings] = useState([]);
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
+  const [subcategory, setSubcategory] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
@@ -49,6 +50,7 @@ export default function SearchPage() {
   useEffect(() => {
     if (!router.isReady) return;
     setCategory(router.query.category || '');
+    setSubcategory(router.query.subcategory || '');
     setCondition(router.query.condition || '');
     setLocation(router.query.location || '');
     setSearch(router.query.q || '');
@@ -82,6 +84,7 @@ export default function SearchPage() {
         page,
         limit: 12,
         ...(category && { category }),
+        ...(subcategory && { subcategory }),
         ...(condition && { condition }),
         ...(location && { location }),
         ...(search && { search }),
@@ -100,7 +103,7 @@ export default function SearchPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [category, condition, location, search, sort, priceMin, priceMax]);
+  }, [category, subcategory, condition, location, search, sort, priceMin, priceMax]);
 
   useEffect(() => {
     fetchListings(1);
@@ -112,11 +115,13 @@ export default function SearchPage() {
   };
 
   const clearAllFilters = () => {
+    setSubcategory('');
     resetFilters();
     router.push('/search', undefined, { shallow: true });
   };
 
-  const activeFiltersCount = [category, condition, location, priceMin, priceMax].filter(Boolean).length;
+  const activeFiltersCount = [category, subcategory, condition, location, priceMin, priceMax].filter(Boolean).length;
+  const selectedCategoryData = categories.find(c => c.name === category);
 
   return (
     <Layout>
@@ -206,24 +211,16 @@ export default function SearchPage() {
                 <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.category')}</h3>
                 <div className="space-y-1">
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="category"
-                      checked={!category}
-                      onChange={() => setCategory('')}
-                      className="text-primary-600 focus:ring-primary-500"
-                    />
+                    <input type="radio" name="category" checked={!category}
+                      onChange={() => { setCategory(''); setSubcategory(''); }}
+                      className="text-primary-600 focus:ring-primary-500" />
                     <span className="text-sm text-gray-600">{t('categories.all')}</span>
                   </label>
                   {categories.map((cat) => (
                     <label key={cat.name} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="category"
-                        checked={category === cat.name}
-                        onChange={() => setCategory(cat.name)}
-                        className="text-primary-600 focus:ring-primary-500"
-                      />
+                      <input type="radio" name="category" checked={category === cat.name}
+                        onChange={() => { setCategory(cat.name); setSubcategory(''); }}
+                        className="text-primary-600 focus:ring-primary-500" />
                       <span className="text-sm text-gray-600">{cat.name}</span>
                       <span className="text-xs text-gray-400 ml-auto">{cat.count}</span>
                     </label>
@@ -231,43 +228,37 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              {/* Condition Filter */}
-              <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.condition')}</h3>
-                <div className="space-y-1">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="condition"
-                      checked={!condition}
-                      onChange={() => setCondition('')}
-                      className="text-primary-600 focus:ring-primary-500"
-                    />
-                    <span className="text-sm text-gray-600">{t('condition.all')}</span>
-                  </label>
-                  {conditions.map((cond) => (
-                    <label key={cond} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="condition"
-                        checked={condition === cond}
-                        onChange={() => setCondition(cond)}
-                        className="text-primary-600 focus:ring-primary-500"
-                      />
-                      <span className="text-sm text-gray-600">{cond}</span>
+              {/* Subcategory Filter */}
+              {selectedCategoryData?.subcategories?.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-gray-700 mb-2">Subcategory</h3>
+                  <div className="space-y-1">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="subcategory" checked={!subcategory}
+                        onChange={() => setSubcategory('')}
+                        className="text-primary-600 focus:ring-primary-500" />
+                      <span className="text-sm text-gray-600">All</span>
                     </label>
-                  ))}
+                    {selectedCategoryData.subcategories.map((sub) => {
+                      const subName = typeof sub === 'string' ? sub : sub.name;
+                      return (
+                        <label key={subName} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="subcategory" checked={subcategory === subName}
+                            onChange={() => setSubcategory(subName)}
+                            className="text-primary-600 focus:ring-primary-500" />
+                          <span className="text-sm text-gray-600">{subName}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Location Filter */}
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.location')}</h3>
-                <select
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="input text-sm w-full"
-                >
+                <select value={location} onChange={(e) => setLocation(e.target.value)}
+                  className="input text-sm w-full">
                   <option value="">{t('filters.all_locations')}</option>
                   {locations.map((loc) => (
                     <option key={loc} value={loc}>{loc}</option>
@@ -279,21 +270,32 @@ export default function SearchPage() {
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.price_range')} ({t('common.egp')})</h3>
                 <div className="flex gap-2">
-                  <input
-                    type="number"
-                    placeholder={t('filters.min_price')}
-                    value={priceMin}
-                    onChange={(e) => setPriceMin(e.target.value)}
-                    className="input text-sm w-full"
-                  />
+                  <input type="number" placeholder={t('filters.min_price')} value={priceMin}
+                    onChange={(e) => setPriceMin(e.target.value)} className="input text-sm w-full" />
                   <span className="text-gray-400 self-center">-</span>
-                  <input
-                    type="number"
-                    placeholder={t('filters.max_price')}
-                    value={priceMax}
-                    onChange={(e) => setPriceMax(e.target.value)}
-                    className="input text-sm w-full"
-                  />
+                  <input type="number" placeholder={t('filters.max_price')} value={priceMax}
+                    onChange={(e) => setPriceMax(e.target.value)} className="input text-sm w-full" />
+                </div>
+              </div>
+
+              {/* Condition Filter */}
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.condition')}</h3>
+                <div className="space-y-1">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="condition" checked={!condition}
+                      onChange={() => setCondition('')}
+                      className="text-primary-600 focus:ring-primary-500" />
+                    <span className="text-sm text-gray-600">{t('condition.all')}</span>
+                  </label>
+                  {conditions.map((cond) => (
+                    <label key={cond} className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="condition" checked={condition === cond}
+                        onChange={() => setCondition(cond)}
+                        className="text-primary-600 focus:ring-primary-500" />
+                      <span className="text-sm text-gray-600">{cond}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
             </div>
@@ -430,24 +432,16 @@ export default function SearchPage() {
                 <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.category')}</h3>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="mobile-category"
-                      checked={!category}
-                      onChange={() => setCategory('')}
-                      className="text-primary-600 focus:ring-primary-500"
-                    />
+                    <input type="radio" name="mobile-category" checked={!category}
+                      onChange={() => { setCategory(''); setSubcategory(''); }}
+                      className="text-primary-600 focus:ring-primary-500" />
                     <span className="text-sm text-gray-600">{t('categories.all')}</span>
                   </label>
                   {categories.map((cat) => (
                     <label key={cat.name} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="mobile-category"
-                        checked={category === cat.name}
-                        onChange={() => setCategory(cat.name)}
-                        className="text-primary-600 focus:ring-primary-500"
-                      />
+                      <input type="radio" name="mobile-category" checked={category === cat.name}
+                        onChange={() => { setCategory(cat.name); setSubcategory(''); }}
+                        className="text-primary-600 focus:ring-primary-500" />
                       <span className="text-sm text-gray-600">{cat.name}</span>
                       <span className="text-xs text-gray-400 ml-auto">{cat.count}</span>
                     </label>
@@ -455,43 +449,37 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              {/* Condition Filter */}
-              <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.condition')}</h3>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="mobile-condition"
-                      checked={!condition}
-                      onChange={() => setCondition('')}
-                      className="text-primary-600 focus:ring-primary-500"
-                    />
-                    <span className="text-sm text-gray-600">{t('condition.all')}</span>
-                  </label>
-                  {conditions.map((cond) => (
-                    <label key={cond} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="mobile-condition"
-                        checked={condition === cond}
-                        onChange={() => setCondition(cond)}
-                        className="text-primary-600 focus:ring-primary-500"
-                      />
-                      <span className="text-sm text-gray-600">{cond}</span>
+              {/* Subcategory Filter */}
+              {selectedCategoryData?.subcategories?.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-700 mb-2">Subcategory</h3>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="mobile-subcategory" checked={!subcategory}
+                        onChange={() => setSubcategory('')}
+                        className="text-primary-600 focus:ring-primary-500" />
+                      <span className="text-sm text-gray-600">All</span>
                     </label>
-                  ))}
+                    {selectedCategoryData.subcategories.map((sub) => {
+                      const subName = typeof sub === 'string' ? sub : sub.name;
+                      return (
+                        <label key={subName} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="mobile-subcategory" checked={subcategory === subName}
+                            onChange={() => setSubcategory(subName)}
+                            className="text-primary-600 focus:ring-primary-500" />
+                          <span className="text-sm text-gray-600">{subName}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Location Filter */}
               <div>
                 <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.location')}</h3>
-                <select
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="input text-sm w-full"
-                >
+                <select value={location} onChange={(e) => setLocation(e.target.value)}
+                  className="input text-sm w-full">
                   <option value="">{t('filters.all_locations')}</option>
                   {locations.map((loc) => (
                     <option key={loc} value={loc}>{loc}</option>
@@ -503,21 +491,32 @@ export default function SearchPage() {
               <div>
                 <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.price_range')} ({t('common.egp')})</h3>
                 <div className="flex gap-2">
-                  <input
-                    type="number"
-                    placeholder={t('filters.min_price')}
-                    value={priceMin}
-                    onChange={(e) => setPriceMin(e.target.value)}
-                    className="input text-sm w-full"
-                  />
+                  <input type="number" placeholder={t('filters.min_price')} value={priceMin}
+                    onChange={(e) => setPriceMin(e.target.value)} className="input text-sm w-full" />
                   <span className="text-gray-400 self-center">-</span>
-                  <input
-                    type="number"
-                    placeholder={t('filters.max_price')}
-                    value={priceMax}
-                    onChange={(e) => setPriceMax(e.target.value)}
-                    className="input text-sm w-full"
-                  />
+                  <input type="number" placeholder={t('filters.max_price')} value={priceMax}
+                    onChange={(e) => setPriceMax(e.target.value)} className="input text-sm w-full" />
+                </div>
+              </div>
+
+              {/* Condition Filter */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.condition')}</h3>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="mobile-condition" checked={!condition}
+                      onChange={() => setCondition('')}
+                      className="text-primary-600 focus:ring-primary-500" />
+                    <span className="text-sm text-gray-600">{t('condition.all')}</span>
+                  </label>
+                  {conditions.map((cond) => (
+                    <label key={cond} className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="mobile-condition" checked={condition === cond}
+                        onChange={() => setCondition(cond)}
+                        className="text-primary-600 focus:ring-primary-500" />
+                      <span className="text-sm text-gray-600">{cond}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
             </div>
