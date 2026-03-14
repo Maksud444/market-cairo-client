@@ -87,10 +87,15 @@ export default function MessagesPage() {
   useEffect(() => {
     if (activeConversation) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
   }, [activeConversation]);
 
   const handleSendMessage = async (e) => {
@@ -293,7 +298,7 @@ export default function MessagesPage() {
       )}
 
       <Layout hideFooter>
-        <div className="h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] flex bg-gray-50">
+        <div className="h-[calc(100vh-64px)] lg:h-[calc(100vh-108px)] flex bg-gray-50">
         {/* Conversations List - Desktop always visible, Mobile only when no active */}
         <aside className={`w-full lg:w-80 xl:w-96 bg-white border-r border-gray-100 flex flex-col ${
           activeConversation ? 'hidden lg:flex' : 'flex'
