@@ -157,6 +157,106 @@ export default function MessagesPage() {
         <title>{t('messages_page.title')} - MySouqify</title>
       </Head>
 
+      {/* Mobile full-screen chat overlay when conversation is active */}
+      {activeConversation && (
+        <div className="lg:hidden fixed inset-0 z-50 flex flex-col bg-white">
+          {/* Dark mobile chat header */}
+          <header className="flex items-center gap-3 px-4 py-3 bg-gray-950 flex-shrink-0">
+            <button onClick={() => { setActiveConversation(null); router.push('/messages', undefined, { shallow: true }); }} className="p-1 -ml-1 text-white">
+              <FiArrowLeft size={22} />
+            </button>
+            <Link href={`/user/${getOtherParticipant(activeConversation)._id}`} className="flex items-center gap-3 flex-1 min-w-0">
+              <div className="w-10 h-10 bg-primary-700 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 text-lg">
+                {getOtherParticipant(activeConversation).name?.charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                <p className="font-semibold text-white truncate">{getOtherParticipant(activeConversation).name}</p>
+                {activeConversation.listing && <p className="text-xs text-gray-400 truncate">{activeConversation.listing.title}</p>}
+              </div>
+            </Link>
+            <div className="flex items-center gap-1">
+              <button className="p-2 text-white"><FiPhone size={20} /></button>
+              <div className="relative">
+                <button onClick={() => setShowMenu(!showMenu)} className="p-2 text-white"><FiMoreVertical size={20} /></button>
+                {showMenu && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
+                    <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-20">
+                      {activeConversation.listing && (
+                        <Link href={`/listing/${activeConversation.listing._id}`} className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onClick={() => setShowMenu(false)}>
+                          <FiImage size={16} /> View Listing
+                        </Link>
+                      )}
+                      <button onClick={handleDeleteConversation} className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full">
+                        <FiTrash2 size={16} /> Delete
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </header>
+
+          {/* Listing Preview */}
+          {activeConversation.listing && (
+            <Link href={`/listing/${activeConversation.listing._id}`} className="flex items-center gap-3 p-3 bg-gray-50 border-b border-gray-200 hover:bg-gray-100 transition-colors flex-shrink-0">
+              <div className="w-14 h-14 bg-gray-200 rounded-lg overflow-hidden relative flex-shrink-0">
+                {activeConversation.listing.images?.[0] && <Image src={activeConversation.listing.images[0]} alt="" fill className="object-cover" />}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-gray-900 truncate">{activeConversation.listing.title}</p>
+                <p className="text-primary-600 font-bold">{activeConversation.listing.price?.toLocaleString()} EGP</p>
+              </div>
+            </Link>
+          )}
+
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+            {Object.entries(groupedMessages).map(([date, msgs]) => (
+              <div key={date}>
+                <div className="flex items-center justify-center my-3">
+                  <span className="px-3 py-1 bg-gray-200 text-gray-500 text-xs rounded-full">{formatChatDate(msgs[0].createdAt)}</span>
+                </div>
+                {msgs.map((message, index) => {
+                  const isOwn = message.sender === user?._id || message.sender?._id === user?._id;
+                  return (
+                    <div key={message._id || index} className={`flex items-end gap-2 mb-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                      {!isOwn && (
+                        <div className="w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 text-xs font-bold flex-shrink-0">
+                          {getOtherParticipant(activeConversation).name?.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div className={`max-w-[78%] ${isOwn ? 'order-1' : ''}`}>
+                        <div className={`px-3.5 py-2.5 rounded-2xl text-sm break-words ${isOwn ? 'bg-primary-600 text-white rounded-br-sm' : 'bg-white text-gray-900 rounded-bl-sm shadow-sm'}`}
+                          style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
+                          {message.content}
+                        </div>
+                        <div className={`flex items-center gap-1 mt-0.5 text-xs text-gray-400 ${isOwn ? 'justify-end' : ''}`}>
+                          {format(new Date(message.createdAt), 'h:mm a')}
+                          {isOwn && (message.read ? <FiCheckCircle size={11} className="text-primary-400" /> : <FiCheck size={11} />)}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input */}
+          <form onSubmit={handleSendMessage} className="flex items-center gap-2 p-3 border-t border-gray-200 bg-white flex-shrink-0">
+            <input ref={inputRef} type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type a message..." disabled={isSending}
+              className="flex-1 px-4 py-2.5 bg-gray-100 rounded-full text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-primary-200 transition-all" />
+            <button type="submit" disabled={!newMessage.trim() || isSending}
+              className="w-10 h-10 bg-primary-600 text-white rounded-full flex items-center justify-center disabled:opacity-40 flex-shrink-0">
+              <FiSend size={16} />
+            </button>
+          </form>
+        </div>
+      )}
+
       <div className="h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] flex bg-gray-50">
         {/* Conversations List - Desktop always visible, Mobile only when no active */}
         <aside className={`w-full lg:w-80 xl:w-96 bg-white border-r border-gray-100 flex flex-col ${
