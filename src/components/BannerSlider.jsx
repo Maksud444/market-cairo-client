@@ -78,46 +78,60 @@ export default function BannerSlider() {
   const banner = banners[current];
 
   return (
-    <div className="lg:hidden mx-4 mt-3 mb-1">
-      <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-r ${banner.bg} transition-all duration-300`} style={{ height: '130px' }}>
-        {/* Decorative circles */}
-        <div className={`absolute right-10 top-1/2 -translate-y-1/2 w-28 h-28 ${banner.circles[0]} rounded-full blur-sm`} />
-        <div className={`absolute right-4 top-1/2 -translate-y-1/2 w-16 h-16 ${banner.circles[1]} rounded-full`} />
-
-        {/* Content */}
-        <div className={`relative z-10 p-4 h-full flex flex-col justify-between transition-opacity duration-200 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
-          <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className={`w-2 h-2 ${banner.accent} rounded-full`} />
-              <span className="text-white/60 text-xs uppercase tracking-wider font-medium">MySouqify</span>
+    <>
+      {/* Mobile */}
+      <div className="lg:hidden mx-4 mt-3 mb-1">
+        <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-r ${banner.bg} transition-all duration-300`} style={{ height: '130px' }}>
+          <div className={`absolute right-10 top-1/2 -translate-y-1/2 w-28 h-28 ${banner.circles[0]} rounded-full blur-sm`} />
+          <div className={`absolute right-4 top-1/2 -translate-y-1/2 w-16 h-16 ${banner.circles[1]} rounded-full`} />
+          <div className={`relative z-10 p-4 h-full flex flex-col justify-between transition-opacity duration-200 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className={`w-2 h-2 ${banner.accent} rounded-full`} />
+                <span className="text-white/60 text-xs uppercase tracking-wider font-medium">MySouqify</span>
+              </div>
+              <h3 className="text-white font-bold text-lg leading-tight">{banner.title}</h3>
+              <p className="text-white/60 text-xs mt-0.5">{banner.subtitle}</p>
             </div>
-            <h3 className="text-white font-bold text-lg leading-tight">{banner.title}</h3>
-            <p className="text-white/60 text-xs mt-0.5">{banner.subtitle}</p>
+            <Link href={banner.ctaLink} className="self-start px-4 py-1.5 bg-white/15 backdrop-blur-sm border border-white/20 text-white text-xs font-semibold rounded-lg hover:bg-white/25 transition-colors">
+              {banner.cta} →
+            </Link>
           </div>
-          <Link
-            href={banner.ctaLink}
-            className="self-start px-4 py-1.5 bg-white/15 backdrop-blur-sm border border-white/20 text-white text-xs font-semibold rounded-lg hover:bg-white/25 transition-colors"
-          >
-            {banner.cta} →
-          </Link>
-        </div>
-
-        {/* Large icon decoration */}
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 text-5xl opacity-20 select-none">
-          {banner.icon}
-        </div>
-
-        {/* Dots */}
-        <div className="absolute bottom-2.5 right-4 flex gap-1.5">
-          {banners.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goTo(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-4 bg-white' : 'w-1.5 bg-white/40'}`}
-            />
-          ))}
+          <div className="absolute right-6 top-1/2 -translate-y-1/2 text-5xl opacity-20 select-none">{banner.icon}</div>
+          <div className="absolute bottom-2.5 right-4 flex gap-1.5">
+            {banners.map((_, i) => (
+              <button key={i} onClick={() => goTo(i)} className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-4 bg-white' : 'w-1.5 bg-white/40'}`} />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Desktop */}
+      <div className="hidden lg:block">
+        <div className={`relative overflow-hidden bg-gradient-to-r ${banner.bg} transition-all duration-300`} style={{ height: '160px' }}>
+          <div className="container-app h-full mx-auto relative">
+            <div className={`absolute right-32 top-1/2 -translate-y-1/2 w-52 h-52 ${banner.circles[0]} rounded-full blur-sm`} />
+            <div className={`absolute right-16 top-1/2 -translate-y-1/2 w-32 h-32 ${banner.circles[1]} rounded-full`} />
+            <div className={`relative z-10 px-6 h-full flex flex-col justify-center gap-2 transition-opacity duration-200 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+              <div className="flex items-center gap-2">
+                <span className={`w-2 h-2 ${banner.accent} rounded-full`} />
+                <span className="text-white/60 text-xs uppercase tracking-wider font-medium">MySouqify</span>
+              </div>
+              <h3 className="text-white font-bold text-2xl leading-tight">{banner.title}</h3>
+              <p className="text-white/60 text-sm">{banner.subtitle}</p>
+              <Link href={banner.ctaLink} className="self-start px-5 py-1.5 bg-white/15 backdrop-blur-sm border border-white/20 text-white text-sm font-semibold rounded-lg hover:bg-white/25 transition-colors mt-1">
+                {banner.cta} →
+              </Link>
+            </div>
+            <div className="absolute right-20 top-1/2 -translate-y-1/2 text-8xl opacity-20 select-none">{banner.icon}</div>
+          </div>
+          <div className="absolute bottom-3 right-6 flex gap-1.5">
+            {banners.map((_, i) => (
+              <button key={i} onClick={() => goTo(i)} className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-4 bg-white' : 'w-1.5 bg-white/40'}`} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

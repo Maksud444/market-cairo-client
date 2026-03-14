@@ -56,41 +56,7 @@ export default function Home() {
         <meta name="description" content="Egypt's trusted marketplace for buying and selling second-hand items. Find great deals on furniture, electronics, and more in Cairo." />
       </Head>
 
-      {/* Hero Section - Desktop only */}
-      <section className="relative hidden lg:flex min-h-[88vh] items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-red-950 to-gray-900" />
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-red-600/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-red-800/20 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
-        <div className="container-app relative z-10 text-white py-20 w-full">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm mb-8 border border-white/20">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              Cairo&apos;s trusted marketplace
-            </div>
-            <h1 className="text-5xl lg:text-7xl font-extrabold mb-6 leading-tight tracking-tight">
-              Buy & Sell<br />
-              <span className="text-red-400">Anything</span> in Cairo
-            </h1>
-            <p className="text-lg lg:text-xl text-white/70 mb-10 max-w-xl mx-auto">{t('home.hero_subtitle')}</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-14">
-              <Link href="/post" className="px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors text-base shadow-lg">
-                {t('home.start_selling')}
-              </Link>
-              <Link href="/search" className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold rounded-xl transition-colors text-base border border-white/20">
-                Browse Listings
-              </Link>
-            </div>
-            <div className="flex flex-wrap justify-center gap-8 text-white/50 text-sm">
-              <span className="flex items-center gap-2"><FiShield size={14} className="text-green-400" /> Free to post</span>
-              <span className="flex items-center gap-2"><FiShield size={14} className="text-green-400" /> Safe deals</span>
-              <span className="flex items-center gap-2"><FiShield size={14} className="text-green-400" /> Local community</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Banner Slider - Mobile only */}
+      {/* Banner Slider - Both mobile and desktop */}
       <BannerSlider />
 
       {/* Browse Categories - Desktop only (mobile uses Header icons) */}
