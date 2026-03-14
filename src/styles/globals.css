@@ -127,7 +127,7 @@
 
   /* Chat bubble styles */
   .chat-bubble {
-    @apply px-4 py-2 rounded-2xl break-words overflow-wrap-anywhere;
+    @apply px-4 py-2 rounded-2xl break-words;
     word-break: break-word;
     overflow-wrap: anywhere;
   }
