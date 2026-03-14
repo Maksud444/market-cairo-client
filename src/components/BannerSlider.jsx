@@ -107,12 +107,12 @@ export default function BannerSlider() {
       </div>
 
       {/* Desktop */}
-      <div className="hidden lg:block">
-        <div className={`relative overflow-hidden bg-gradient-to-r ${banner.bg} transition-all duration-300`} style={{ height: '160px' }}>
-          <div className="container-app h-full mx-auto relative">
+      <div className="hidden lg:block container-app mt-4 mb-2">
+        <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-r ${banner.bg} transition-all duration-300`} style={{ height: '160px' }}>
+          <div className="h-full relative">
             <div className={`absolute right-32 top-1/2 -translate-y-1/2 w-52 h-52 ${banner.circles[0]} rounded-full blur-sm`} />
             <div className={`absolute right-16 top-1/2 -translate-y-1/2 w-32 h-32 ${banner.circles[1]} rounded-full`} />
-            <div className={`relative z-10 px-6 h-full flex flex-col justify-center gap-2 transition-opacity duration-200 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+            <div className={`relative z-10 px-8 h-full flex flex-col justify-center gap-2 transition-opacity duration-200 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
               <div className="flex items-center gap-2">
                 <span className={`w-2 h-2 ${banner.accent} rounded-full`} />
                 <span className="text-white/60 text-xs uppercase tracking-wider font-medium">MySouqify</span>

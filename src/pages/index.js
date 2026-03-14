@@ -7,6 +7,7 @@ import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
 import ListingCard from '../components/ListingCard';
 import BannerSlider from '../components/BannerSlider';
+import RamadanBanner from '../components/RamadanBanner';
 import { listingsAPI, categoriesAPI } from '../lib/api';
 
 const categoryIcons = {
@@ -58,6 +59,9 @@ export default function Home() {
 
       {/* Banner Slider - Both mobile and desktop */}
       <BannerSlider />
+
+      {/* Ramadan Banner */}
+      <RamadanBanner />
 
       {/* Browse Categories - Desktop only (mobile uses Header icons) */}
       <section className="hidden lg:block container-app py-16">
