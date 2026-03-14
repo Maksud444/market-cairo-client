@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FiSearch, FiHeart, FiMessageSquare, FiUser, FiPlus, FiMenu, FiMapPin, FiX, FiShield, FiBell, FiChevronDown, FiNavigation, FiMonitor, FiPackage, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal } from 'react-icons/fi';
+import { FiSearch, FiHeart, FiMessageSquare, FiUser, FiPlus, FiMenu, FiMapPin, FiX, FiShield, FiBell, FiChevronDown, FiNavigation, FiMonitor, FiPackage, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal, FiImage } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 import { useAuthStore, useMessagesStore, useUIStore } from '../lib/store';
 import { authAPI, categoriesAPI } from '../lib/api';
@@ -37,7 +37,9 @@ export default function Header() {
   const [isLocating, setIsLocating] = useState(false);
   const [apiCategories, setApiCategories] = useState([]);
   const [hoveredCategory, setHoveredCategory] = useState(null);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const locationRef = useRef(null);
+  const profileRef = useRef(null);
 
   const handleCurrentLocation = () => {
     if (!navigator.geolocation) return;
@@ -70,6 +72,9 @@ export default function Header() {
     const handleClickOutside = (e) => {
       if (locationRef.current && !locationRef.current.contains(e.target)) {
         setShowLocationDropdown(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setShowProfileDropdown(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -152,7 +157,7 @@ export default function Header() {
             </Link>
 
             {/* Location + Search (Dubizzle style combined box) */}
-            <div className="flex flex-1 max-w-2xl mx-4 rounded-lg border-2 border-gray-200 overflow-hidden focus-within:border-primary-500 transition-colors" ref={locationRef}>
+            <div className="flex flex-1 max-w-2xl mx-4 rounded-lg border-2 border-gray-200 focus-within:border-primary-500 transition-colors relative" ref={locationRef}>
               <div className="relative flex-shrink-0">
                 <button onClick={() => setShowLocationDropdown(!showLocationDropdown)}
                   className="flex items-center gap-1.5 px-3 h-11 text-gray-700 hover:bg-gray-50 transition-colors border-r border-gray-200 text-sm font-medium whitespace-nowrap">
@@ -192,17 +197,45 @@ export default function Header() {
                     <FiBell size={20} />
                     {notifUnread > 0 && <span className="absolute top-1.5 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">{notifUnread > 9 ? '9+' : notifUnread}</span>}
                   </Link>
-                  <Link href="/dashboard" className="flex items-center gap-2 px-2 py-2 text-gray-700 hover:text-gray-900 transition-colors">
-                    <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-primary-700 font-bold text-sm">
-                      {user?.name?.charAt(0).toUpperCase() || 'U'}
-                    </div>
-                    <FiChevronDown size={12} className="text-gray-400" />
-                  </Link>
-                  {user?.isAdmin && (
-                    <Link href="/cp-x4m9k2" className="flex items-center px-2 py-2 text-primary-600 hover:text-primary-700 transition-colors">
-                      <FiShield size={18} />
-                    </Link>
-                  )}
+                  {/* Profile Dropdown */}
+                  <div className="relative" ref={profileRef}>
+                    <button onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                      className="flex items-center gap-2 px-2 py-2 text-gray-700 hover:text-gray-900 transition-colors rounded-lg hover:bg-gray-50">
+                      <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-primary-700 font-bold text-sm">
+                        {user?.name?.charAt(0).toUpperCase() || 'U'}
+                      </div>
+                      <FiChevronDown size={12} className={`text-gray-400 transition-transform ${showProfileDropdown ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {showProfileDropdown && (
+                      <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50">
+                        {/* User info */}
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="font-semibold text-gray-900 text-sm truncate">{user?.name}</p>
+                          <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                        </div>
+                        <Link href="/dashboard" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setShowProfileDropdown(false)}>
+                          <FiUser size={16} /> My Dashboard
+                        </Link>
+                        <Link href="/profile?tab=listings" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setShowProfileDropdown(false)}>
+                          <FiImage size={16} /> My Ads
+                        </Link>
+                        <Link href="/favorites" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setShowProfileDropdown(false)}>
+                          <FiHeart size={16} /> Favorites
+                        </Link>
+                        {user?.isAdmin && (
+                          <Link href="/cp-x4m9k2" className="flex items-center gap-3 px-4 py-2.5 text-sm text-primary-600 hover:bg-primary-50 transition-colors" onClick={() => setShowProfileDropdown(false)}>
+                            <FiShield size={16} /> Admin Panel
+                          </Link>
+                        )}
+                        <div className="border-t border-gray-100 mt-1" />
+                        <button onClick={() => { useAuthStore.getState().logout(); setShowProfileDropdown(false); router.push('/'); }}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors w-full">
+                          <FiX size={16} /> Sign Out
+                        </button>
+                      </div>
+                    )}
+                  </div>
                   <Link href="/post" className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-lg hover:bg-primary-700 transition-colors ml-1">
                     <FiPlus size={16} /> Post Your Ad
                   </Link>
