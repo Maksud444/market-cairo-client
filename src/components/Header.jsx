@@ -26,6 +26,7 @@ export default function Header() {
   const { t } = useTranslation('common');
   const router = useRouter();
   const isArabic = router.locale === 'ar';
+  const showMobileSearchBar = router.pathname === '/' || router.pathname === '/search';
   const { user, isAuthenticated } = useAuthStore();
   const { unreadCount, fetchUnreadCount } = useMessagesStore();
   const { toggleMobileMenu, isMobileMenuOpen, setMobileMenuOpen, openLoginModal } = useUIStore();
@@ -302,6 +303,7 @@ export default function Header() {
               <span className="text-lg font-bold text-gray-900">MySouqify</span>
             </Link>
             <div className="flex-1" />
+            <LanguageSwitcher />
             {isAuthenticated ? (
               <div className="flex items-center">
                 <Link href="/messages" className="relative p-2 text-gray-600">
@@ -320,46 +322,52 @@ export default function Header() {
             )}
           </div>
 
-          {/* Mobile Search */}
-          <div className="pb-2">
-            <form onSubmit={handleSearch} className="flex gap-2">
-              <div className="relative flex-1">
-                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={t('common.search_placeholder')}
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary-500 transition-all" />
-              </div>
-              <button type="submit" className="px-4 py-2.5 bg-primary-600 text-white rounded-lg flex items-center justify-center flex-shrink-0">
-                <FiSearch size={18} />
-              </button>
-            </form>
-          </div>
-
-          {/* Mobile Location */}
-          <div className="pb-2">
-            <button onClick={() => setShowLocationDropdown(!showLocationDropdown)} className="flex items-center gap-1 text-gray-600 text-sm">
-              <FiMapPin size={15} className="text-primary-600" />
-              <span className="font-medium">{locationLabel}</span>
-              <FiChevronDown size={12} />
-            </button>
-          </div>
-
-          {/* Mobile Category Icons (Dubizzle style - horizontal scroll) */}
-          <div className="pb-3 -mx-4 px-4 overflow-x-auto no-scrollbar">
-            <div className="flex gap-4 min-w-max">
-              {cats.map((cat) => {
-                const Icon = categoryIcons[cat.name] || FiShoppingBag;
-                return (
-                  <button key={cat.name} onClick={() => handleCategoryClick(cat.name)} className="flex flex-col items-center gap-1.5 min-w-[58px]">
-                    <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center border border-primary-100">
-                      <Icon className="text-primary-600" size={20} />
-                    </div>
-                    <span className="text-[10px] text-gray-600 text-center leading-tight font-medium">{cat.name}</span>
-                  </button>
-                );
-              })}
+          {/* Mobile Search - only on home and search pages */}
+          {showMobileSearchBar && (
+            <div className="pb-2">
+              <form onSubmit={handleSearch} className="flex gap-2">
+                <div className="relative flex-1">
+                  <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={t('common.search_placeholder')}
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary-500 transition-all" />
+                </div>
+                <button type="submit" className="px-4 py-2.5 bg-primary-600 text-white rounded-lg flex items-center justify-center flex-shrink-0">
+                  <FiSearch size={18} />
+                </button>
+              </form>
             </div>
-          </div>
+          )}
+
+          {/* Mobile Location - only on home and search pages */}
+          {showMobileSearchBar && (
+            <div className="pb-2">
+              <button onClick={() => setShowLocationDropdown(!showLocationDropdown)} className="flex items-center gap-1 text-gray-600 text-sm">
+                <FiMapPin size={15} className="text-primary-600" />
+                <span className="font-medium">{locationLabel}</span>
+                <FiChevronDown size={12} />
+              </button>
+            </div>
+          )}
+
+          {/* Mobile Category Icons - only on home and search pages */}
+          {showMobileSearchBar && (
+            <div className="pb-3 -mx-4 px-4 overflow-x-auto no-scrollbar">
+              <div className="flex gap-4 min-w-max">
+                {cats.map((cat) => {
+                  const Icon = categoryIcons[cat.name] || FiShoppingBag;
+                  return (
+                    <button key={cat.name} onClick={() => handleCategoryClick(cat.name)} className="flex flex-col items-center gap-1.5 min-w-[58px]">
+                      <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center border border-primary-100">
+                        <Icon className="text-primary-600" size={20} />
+                      </div>
+                      <span className="text-[10px] text-gray-600 text-center leading-tight font-medium">{cat.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
