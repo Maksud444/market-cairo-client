@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
-import { FiUpload, FiX, FiCamera, FiAlertCircle, FiCheck, FiChevronDown } from 'react-icons/fi';
+import { FiUpload, FiX, FiCamera, FiAlertCircle, FiCheck, FiChevronDown, FiMapPin } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
@@ -47,6 +47,7 @@ export default function PostListingPage() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(!!editId);
+  const [isGeolocating, setIsGeolocating] = useState(false);
 
   // Redirect if not authenticated or not verified
   useEffect(() => {
@@ -177,6 +178,46 @@ export default function PostListingPage() {
       newImages.splice(index, 1);
       return newImages;
     });
+  };
+
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser');
+      return;
+    }
+    setIsGeolocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+          );
+          const data = await res.json();
+          const addr = data.address || {};
+          // Try to match a known location
+          const areaKeywords = [
+            'New Cairo', '5th Settlement', 'Madinaty', 'Rehab City', 'Shorouk City',
+            'Nasr City', 'Heliopolis', 'Maadi', 'Zamalek', 'Downtown', 'Mohandessin',
+            'Dokki', 'Giza', 'Sheikh Zayed', '6th of October', 'Mokattam',
+            'Ain Shams', 'Helwan', 'Shubra', 'Katameya', 'Garden City', 'Agouza',
+          ];
+          const fullText = `${addr.suburb || ''} ${addr.city_district || ''} ${addr.town || ''} ${addr.city || ''}`;
+          const matched = areaKeywords.find(k => fullText.toLowerCase().includes(k.toLowerCase()));
+          const area = matched || addr.suburb || addr.city_district || addr.town || 'Cairo';
+          setFormData(prev => ({ ...prev, location: { ...prev.location, area } }));
+          toast.success(`Location set to: ${area}`);
+        } catch {
+          toast.error('Could not detect location. Please select manually.');
+        } finally {
+          setIsGeolocating(false);
+        }
+      },
+      () => {
+        toast.error('Location access denied. Please select manually.');
+        setIsGeolocating(false);
+      }
+    );
   };
 
   const handleChange = (e) => {
@@ -576,9 +617,20 @@ export default function PostListingPage() {
 
             {/* Location */}
             <div>
-              <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
-                {t('post.location_label')} <span className="text-red-500">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+                  {t('post.location_label')} <span className="text-red-500">*</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={handleUseCurrentLocation}
+                  disabled={isGeolocating}
+                  className="flex items-center gap-1.5 text-xs text-primary-600 hover:text-primary-700 font-medium disabled:opacity-50"
+                >
+                  <FiMapPin size={13} />
+                  {isGeolocating ? 'Detecting...' : 'Use current location'}
+                </button>
+              </div>
               <div className="relative">
                 <select
                   id="location"

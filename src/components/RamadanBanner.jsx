@@ -129,7 +129,7 @@ export default function RamadanBanner() {
       <div className="hidden lg:block container-app mt-3 mb-2">
         <div
           className="relative overflow-hidden rounded-2xl"
-          style={{ background: 'linear-gradient(135deg, #0d1b3e 0%, #1a0a2e 35%, #6b0f1a 100%)', height: '90px' }}
+          style={{ background: 'linear-gradient(135deg, #0d1b3e 0%, #1a0a2e 35%, #6b0f1a 100%)', height: '130px' }}
         >
           {/* Stars */}
           <div className="absolute inset-0 overflow-hidden">
@@ -146,51 +146,51 @@ export default function RamadanBanner() {
           <div className="relative z-10 h-full flex items-center px-8 gap-8">
             {/* Left: decoration */}
             <div className="flex items-center gap-3 flex-shrink-0">
-              <span className="text-4xl">🌙</span>
-              <span className="text-3xl">🏮</span>
+              <span className="text-5xl">🌙</span>
+              <span className="text-4xl">🏮</span>
             </div>
 
             {/* Divider */}
-            <div className="w-px h-12 bg-white/20" />
+            <div className="w-px h-16 bg-white/20" />
 
             {/* Hijri date + label */}
             <div className="flex-shrink-0">
-              <div className="text-yellow-300 text-xs font-bold uppercase tracking-widest">Ramadan Kareem</div>
-              <div className="text-white/50 text-xs mt-0.5">{hijriDate}</div>
+              <div className="text-yellow-300 text-sm font-bold uppercase tracking-widest">Ramadan Kareem</div>
+              <div className="text-white/50 text-sm mt-1">{hijriDate}</div>
             </div>
 
             {/* Divider */}
-            <div className="w-px h-12 bg-white/20" />
+            <div className="w-px h-16 bg-white/20" />
 
             {/* Sohour */}
             <div className="flex-shrink-0 text-center">
-              <div className="text-white/60 text-xs uppercase tracking-widest mb-1">Sohour</div>
-              <div className="border border-white/25 rounded-lg px-5 py-1.5"
+              <div className="text-white/60 text-xs uppercase tracking-widest mb-2">Sohour</div>
+              <div className="border border-white/25 rounded-lg px-6 py-2"
                 style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}>
-                <span className="text-white font-bold text-xl">{formatTime(times.fajrStr)}</span>
+                <span className="text-white font-bold text-2xl">{formatTime(times.fajrStr)}</span>
               </div>
             </div>
 
             {/* Center countdown */}
             <div className="flex-1 text-center">
-              <div className="text-white/50 text-xs uppercase tracking-widest mb-1">
+              <div className="text-white/50 text-xs uppercase tracking-widest mb-2">
                 {next?.name === 'Sohour' ? 'till Sohour' : 'till Iftar'} in {location}
               </div>
-              <div className="text-yellow-300 font-mono font-bold text-3xl tracking-wider">{countdown}</div>
+              <div className="text-yellow-300 font-mono font-bold text-4xl tracking-wider">{countdown}</div>
             </div>
 
             {/* Iftar */}
             <div className="flex-shrink-0 text-center">
-              <div className="text-white/60 text-xs uppercase tracking-widest mb-1">Iftar</div>
-              <div className="border border-white/25 rounded-lg px-5 py-1.5"
+              <div className="text-white/60 text-xs uppercase tracking-widest mb-2">Iftar</div>
+              <div className="border border-white/25 rounded-lg px-6 py-2"
                 style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}>
-                <span className="text-white font-bold text-xl">{formatTime(times.maghribStr)}</span>
+                <span className="text-white font-bold text-2xl">{formatTime(times.maghribStr)}</span>
               </div>
             </div>
 
             {/* Right decoration */}
             <div className="flex-shrink-0">
-              <span className="text-3xl">🏮</span>
+              <span className="text-4xl">🏮</span>
             </div>
           </div>
         </div>
