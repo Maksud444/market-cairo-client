@@ -588,9 +588,13 @@ export default function PostListingPage() {
                   className={`input w-full appearance-none pr-10 ${errors['location.area'] ? 'border-red-300' : ''}`}
                 >
                   <option value="">{t('post.location_placeholder')}</option>
-                  {locations.map((loc) => (
-                    <option key={loc} value={loc}>{loc}</option>
-                  ))}
+                  {locations.map((loc) => {
+                    const en = typeof loc === 'object' ? loc.en : loc;
+                    const ar = typeof loc === 'object' ? loc.ar : '';
+                    return (
+                      <option key={en} value={en}>{en}{ar ? ` - ${ar}` : ''}</option>
+                    );
+                  })}
                 </select>
                 <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
               </div>

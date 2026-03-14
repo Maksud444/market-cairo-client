@@ -208,12 +208,12 @@ export default function SearchPage() {
 
               {/* Category Filter - OLX Style */}
               <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-800 mb-3">{t('filters.category')}</h3>
+                <h3 className="text-base font-bold text-gray-900 mb-3">{t('filters.category')}</h3>
                 <div className="space-y-0.5">
                   <button
                     onClick={() => { setCategory(''); setSubcategory(''); }}
-                    className={`w-full text-left px-2 py-1.5 text-sm rounded transition-colors ${
-                      !category ? 'text-primary-600 font-semibold' : 'text-gray-600 hover:text-primary-600'
+                    className={`w-full text-left px-2 py-1.5 text-sm rounded transition-colors font-semibold ${
+                      !category ? 'text-primary-600 font-bold' : 'text-gray-700 hover:text-primary-600'
                     }`}
                   >
                     {t('categories.all')}
@@ -224,13 +224,13 @@ export default function SearchPage() {
                         onClick={() => { setCategory(cat.name); setSubcategory(''); }}
                         className={`w-full text-left px-2 py-1.5 text-sm rounded transition-colors flex items-center justify-between ${
                           category === cat.name
-                            ? 'text-primary-600 font-semibold bg-primary-50'
-                            : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
+                            ? 'text-primary-600 font-bold bg-primary-50'
+                            : 'text-gray-700 font-semibold hover:text-primary-600 hover:bg-gray-50'
                         }`}
                       >
                         <span>{cat.name}</span>
                         {cat.count > 0 && (
-                          <span className="text-xs text-gray-400">({cat.count})</span>
+                          <span className="text-xs text-gray-400 font-normal">({cat.count})</span>
                         )}
                       </button>
 
