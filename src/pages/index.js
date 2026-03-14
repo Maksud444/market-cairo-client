@@ -6,6 +6,7 @@ import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
 import ListingCard from '../components/ListingCard';
+import BannerSlider from '../components/BannerSlider';
 import { listingsAPI, categoriesAPI } from '../lib/api';
 
 const categoryIcons = {
@@ -105,34 +106,31 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Browse Categories */}
-      <section className="bg-white py-5 lg:py-16 lg:container-app">
-        <div className="px-4 lg:px-0">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base lg:text-2xl font-bold text-gray-900">{t('home.browse_categories')}</h2>
-            <Link href="/search" className="text-sm text-primary-600 hover:underline flex items-center gap-1">
-              {t('home.view_all')} <FiArrowRight size={14} />
-            </Link>
-          </div>
+      {/* Banner Slider - Mobile only */}
+      <BannerSlider />
 
-          <div className="grid grid-cols-4 lg:grid-cols-8 gap-2 lg:gap-4">
-            {categories.map((category) => {
-              const Icon = categoryIcons[category.name] || FiPackage;
-              return (
-                <Link
-                  key={category.name}
-                  href={`/search?category=${encodeURIComponent(category.name)}`}
-                  className="flex flex-col items-center p-2.5 lg:p-4 bg-gray-50 lg:bg-white rounded-xl border border-gray-100 hover:border-primary-500 hover:shadow-sm transition-all group"
-                >
-                  <div className="w-12 h-12 lg:w-14 lg:h-14 bg-white lg:bg-gray-50 rounded-2xl flex items-center justify-center mb-1.5 group-hover:bg-primary-50 transition-colors shadow-sm lg:shadow-none">
-                    <Icon className="text-primary-600 group-hover:text-primary-700" size={22} />
-                  </div>
-                  <span className="text-[11px] lg:text-sm text-gray-700 text-center font-medium leading-tight">{category.name}</span>
-                  <span className="text-[10px] lg:text-xs text-gray-400 mt-0.5">{category.count || 0} ads</span>
-                </Link>
-              );
-            })}
-          </div>
+      {/* Browse Categories - Desktop only (mobile uses Header icons) */}
+      <section className="hidden lg:block container-app py-16">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">{t('home.browse_categories')}</h2>
+          <Link href="/search" className="text-sm text-primary-600 hover:underline flex items-center gap-1">
+            {t('home.view_all')} <FiArrowRight size={14} />
+          </Link>
+        </div>
+        <div className="grid grid-cols-8 gap-4">
+          {categories.map((category) => {
+            const Icon = categoryIcons[category.name] || FiPackage;
+            return (
+              <Link key={category.name} href={`/search?category=${encodeURIComponent(category.name)}`}
+                className="flex flex-col items-center p-4 bg-white rounded-xl border border-gray-100 hover:border-primary-500 hover:shadow-card transition-all group">
+                <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mb-2 group-hover:bg-primary-50 transition-colors">
+                  <Icon className="text-primary-600 group-hover:text-primary-700" size={24} />
+                </div>
+                <span className="text-sm text-gray-700 text-center font-medium leading-tight">{category.name}</span>
+                <span className="text-xs text-gray-400 mt-0.5">{category.count || 0} ads</span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 

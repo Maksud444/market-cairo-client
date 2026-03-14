@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FiArrowLeft, FiSend, FiMoreVertical, FiTrash2, FiImage, FiCheck, FiCheckCircle } from 'react-icons/fi';
-import { formatDistanceToNow, format, isToday, isYesterday } from 'date-fns';
+import { FiArrowLeft, FiSend, FiMoreVertical, FiTrash2, FiImage, FiCheck, FiCheckCircle, FiPhone } from 'react-icons/fi';
+import { format, isToday, isYesterday } from 'date-fns';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
@@ -34,6 +34,7 @@ export default function MessagesPage() {
   const [isSending, setIsSending] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
+  const [filter, setFilter] = useState('all'); // 'all' | 'unread' | 'important'
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -165,6 +166,18 @@ export default function MessagesPage() {
             <h1 className="text-xl font-bold text-gray-900">{t('messages_page.title')}</h1>
           </div>
 
+          {/* Quick Filters (Dubizzle style) */}
+          <div className="flex gap-2 px-4 py-3 border-b border-gray-100">
+            {[['all', 'All'], ['unread', 'Unread'], ['important', 'Important']].map(([key, label]) => (
+              <button key={key} onClick={() => setFilter(key)}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+                  filter === key ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'
+                }`}>
+                {label}
+              </button>
+            ))}
+          </div>
+
           {isLoading ? (
             <div className="flex-1 p-4 space-y-3">
               {[...Array(5)].map((_, i) => (
@@ -191,7 +204,10 @@ export default function MessagesPage() {
             </div>
           ) : (
             <div className="flex-1 overflow-y-auto">
-              {conversations.map((conv) => {
+              {conversations.filter(conv => {
+                if (filter === 'unread') return (conv.unreadCount?.[user?._id] || 0) > 0;
+                return true;
+              }).map((conv) => {
                 const other = getOtherParticipant(conv);
                 const unread = conv.unreadCount?.[user?._id] || 0;
                 const isActive = activeConversation?._id === conv._id;
@@ -251,66 +267,51 @@ export default function MessagesPage() {
         }`}>
           {activeConversation ? (
             <>
-              {/* Chat Header */}
-              <header className="flex items-center gap-3 p-4 border-b border-gray-100">
+              {/* Chat Header - dark on mobile (Dubizzle style), light on desktop */}
+              <header className="flex items-center gap-3 px-4 py-3 lg:border-b lg:border-gray-100 bg-gray-950 lg:bg-white">
                 <button
-                  onClick={() => {
-                    setActiveConversation(null);
-                    router.push('/messages', undefined, { shallow: true });
-                  }}
-                  className="lg:hidden p-2 -ml-2"
+                  onClick={() => { setActiveConversation(null); router.push('/messages', undefined, { shallow: true }); }}
+                  className="lg:hidden p-1 -ml-1 text-white lg:text-gray-700"
                 >
-                  <FiArrowLeft size={20} />
+                  <FiArrowLeft size={22} />
                 </button>
 
                 <Link href={`/user/${getOtherParticipant(activeConversation)._id}`} className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 font-bold flex-shrink-0">
+                  <div className="w-10 h-10 bg-primary-700 lg:bg-primary-100 rounded-full flex items-center justify-center text-white lg:text-primary-600 font-bold flex-shrink-0 text-lg">
                     {getOtherParticipant(activeConversation).name?.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0">
-                    <p className="font-semibold text-gray-900 truncate">
+                    <p className="font-semibold text-white lg:text-gray-900 truncate">
                       {getOtherParticipant(activeConversation).name}
                     </p>
                     {activeConversation.listing && (
-                      <p className="text-xs text-gray-500 truncate">
-                        {activeConversation.listing.title}
-                      </p>
+                      <p className="text-xs text-gray-400 lg:text-gray-500 truncate">{activeConversation.listing.title}</p>
                     )}
                   </div>
                 </Link>
 
-                <div className="relative">
-                  <button
-                    onClick={() => setShowMenu(!showMenu)}
-                    className="p-2 text-gray-400 hover:text-gray-600"
-                  >
-                    <FiMoreVertical size={20} />
-                  </button>
-
-                  {showMenu && (
-                    <>
-                      <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
-                      <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-dropdown border border-gray-100 py-1 z-20">
-                        {activeConversation.listing && (
-                          <Link
-                            href={`/listing/${activeConversation.listing._id}`}
-                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                            onClick={() => setShowMenu(false)}
-                          >
-                            <FiImage size={16} />
-                            {t('messages_page.view_listing')}
-                          </Link>
-                        )}
-                        <button
-                          onClick={handleDeleteConversation}
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full"
-                        >
-                          <FiTrash2 size={16} />
-                          {t('messages_page.delete_conversation')}
-                        </button>
-                      </div>
-                    </>
-                  )}
+                <div className="flex items-center gap-1">
+                  <button className="lg:hidden p-2 text-white"><FiPhone size={20} /></button>
+                  <div className="relative">
+                    <button onClick={() => setShowMenu(!showMenu)} className="p-2 text-white lg:text-gray-400 hover:text-gray-300 lg:hover:text-gray-600">
+                      <FiMoreVertical size={20} />
+                    </button>
+                    {showMenu && (
+                      <>
+                        <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
+                        <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-dropdown border border-gray-100 py-1 z-20">
+                          {activeConversation.listing && (
+                            <Link href={`/listing/${activeConversation.listing._id}`} className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onClick={() => setShowMenu(false)}>
+                              <FiImage size={16} /> {t('messages_page.view_listing')}
+                            </Link>
+                          )}
+                          <button onClick={handleDeleteConversation} className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full">
+                            <FiTrash2 size={16} /> {t('messages_page.delete_conversation')}
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               </header>
 
