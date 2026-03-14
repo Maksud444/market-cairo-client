@@ -179,11 +179,6 @@ function UserDashboard() {
         <div className="mb-6 lg:mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg lg:text-xl font-bold text-gray-900">{t('dashboard.my_listings')}</h2>
-            <Link href="/post" className="btn btn-primary flex items-center gap-2 text-sm">
-              <FiEdit size={16} />
-              <span className="hidden sm:inline">{t('buttons.post_ad')}</span>
-              <span className="sm:hidden">+</span>
-            </Link>
           </div>
 
           {isLoading ? (

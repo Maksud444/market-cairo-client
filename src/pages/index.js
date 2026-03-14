@@ -90,22 +90,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Mobile Hero - compact Dubizzle-style banner */}
-      <section className="lg:hidden relative overflow-hidden bg-gradient-to-r from-gray-950 via-red-950 to-gray-900 px-4 py-7">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-red-600/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/4" />
-        <div className="relative z-10 flex items-center justify-between">
-          <div className="text-white">
-            <h1 className="text-xl font-extrabold mb-0.5">
-              Buy & Sell <span className="text-red-400">Anything</span>
-            </h1>
-            <p className="text-xs text-white/60">Cairo&apos;s trusted marketplace</p>
-          </div>
-          <Link href="/post" className="flex-shrink-0 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg text-sm shadow-lg">
-            + Sell
-          </Link>
-        </div>
-      </section>
-
       {/* Banner Slider - Mobile only */}
       <BannerSlider />
 

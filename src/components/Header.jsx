@@ -322,13 +322,16 @@ export default function Header() {
 
           {/* Mobile Search */}
           <div className="pb-2">
-            <form onSubmit={handleSearch}>
-              <div className="relative">
+            <form onSubmit={handleSearch} className="flex gap-2">
+              <div className="relative flex-1">
                 <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                 <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('common.search_placeholder')}
                   className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary-500 transition-all" />
               </div>
+              <button type="submit" className="px-4 py-2.5 bg-primary-600 text-white rounded-lg flex items-center justify-center flex-shrink-0">
+                <FiSearch size={18} />
+              </button>
             </form>
           </div>
 
