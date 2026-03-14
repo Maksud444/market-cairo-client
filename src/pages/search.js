@@ -275,7 +275,7 @@ export default function SearchPage() {
                   className="input text-sm w-full">
                   <option value="">{t('filters.all_locations')}</option>
                   {locations.map((loc) => (
-                    <option key={loc} value={loc}>{loc}</option>
+                    <option key={typeof loc === 'object' ? loc.en : loc} value={typeof loc === 'object' ? loc.en : loc}>{typeof loc === 'object' ? `${loc.en} - ${loc.ar}` : loc}</option>
                   ))}
                 </select>
               </div>
@@ -491,7 +491,7 @@ export default function SearchPage() {
                   className="input text-sm w-full">
                   <option value="">{t('filters.all_locations')}</option>
                   {locations.map((loc) => (
-                    <option key={loc} value={loc}>{loc}</option>
+                    <option key={typeof loc === 'object' ? loc.en : loc} value={typeof loc === 'object' ? loc.en : loc}>{typeof loc === 'object' ? `${loc.en} - ${loc.ar}` : loc}</option>
                   ))}
                 </select>
               </div>
