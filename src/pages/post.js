@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
-import { FiUpload, FiX, FiCamera, FiAlertCircle, FiCheck, FiChevronDown, FiMapPin, FiShield, FiChevronRight } from 'react-icons/fi';
+import { FiUpload, FiX, FiCamera, FiAlertCircle, FiCheck, FiChevronDown, FiMapPin, FiShield, FiChevronRight, FiNavigation } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import imageCompression from 'browser-image-compression';
 import { useTranslation } from 'next-i18next';
@@ -41,6 +41,8 @@ export default function PostListingPage() {
   const [locationRegion, setLocationRegion] = useState('');
   const [locationCity, setLocationCity] = useState('');
   const [locationCompound, setLocationCompound] = useState('');
+  const [gpsLoading, setGpsLoading] = useState(false);
+  const [detectedLocation, setDetectedLocation] = useState('');
 
   const [formData, setFormData] = useState({
     title: '',
@@ -251,6 +253,52 @@ export default function PostListingPage() {
     setSelectedSubcategory(subName);
     setFormData(prev => ({ ...prev, subcategory: subName }));
     setStep(3);
+  };
+
+  const useCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser');
+      return;
+    }
+    setGpsLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=en`,
+            { headers: { 'User-Agent': 'MySouqify/1.0' } }
+          );
+          const data = await res.json();
+          const addr = data.address || {};
+          // Build a readable label
+          const label = [addr.suburb, addr.city_district, addr.city, addr.state].filter(Boolean).join(', ');
+          setDetectedLocation(label || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+
+          // Try to auto-match to locationHierarchy
+          const cityName = (addr.suburb || addr.city_district || addr.city || '').toLowerCase();
+          for (const region of locationHierarchy) {
+            for (const city of region.cities) {
+              if (cityName.includes(city.en.toLowerCase()) || city.en.toLowerCase().includes(cityName)) {
+                setLocationRegion(region.en);
+                setLocationCity(city.en);
+                setLocationCompound('');
+                break;
+              }
+            }
+          }
+        } catch {
+          toast.error('Could not detect location. Please select manually.');
+        } finally {
+          setGpsLoading(false);
+        }
+      },
+      () => {
+        toast.error('Location access denied. Please select manually.');
+        setGpsLoading(false);
+      },
+      { timeout: 10000 }
+    );
   };
 
   const validate = () => {
@@ -767,9 +815,33 @@ export default function PostListingPage() {
 
               {/* Location - 3 levels */}
               <div className="space-y-3">
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('post.location_label')} <span className="text-red-500">*</span>
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-sm font-medium text-gray-700">
+                    {t('post.location_label')} <span className="text-red-500">*</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={useCurrentLocation}
+                    disabled={gpsLoading}
+                    className="flex items-center gap-1.5 text-xs font-medium text-red-600 hover:text-red-700 disabled:opacity-50 transition-colors"
+                  >
+                    {gpsLoading ? (
+                      <span className="w-3 h-3 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <FiNavigation size={13} />
+                    )}
+                    Use Current Location
+                  </button>
+                </div>
+
+                {/* Detected location label */}
+                {detectedLocation && (
+                  <div className="flex items-center gap-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg text-xs text-green-700">
+                    <FiMapPin size={13} className="flex-shrink-0" />
+                    <span className="font-medium">Detected:</span>
+                    <span>{detectedLocation}</span>
+                  </div>
+                )}
 
                 {/* Region */}
                 <div>
