@@ -409,9 +409,9 @@ export default function MessagesPage() {
             <div style={{ position: 'absolute', bottom: 64, left: 0, right: 0, padding: '8px 12px', borderTop: '1px solid #f3f4f6', background: '#fafafa', zIndex: 2 }}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
                 {[...quickReplies, ...customQuickReplies].map(reply => (
-                  <button key={reply.id} onClick={() => handleQuickReply(t('_lang') === 'ar' ? reply.ar : reply.en)}
+                  <button key={reply.id} onClick={() => handleQuickReply(router.locale === 'ar' ? reply.ar : reply.en)}
                     style={{ padding: '5px 12px', background: 'white', border: '1px solid #e5e7eb', borderRadius: 20, fontSize: 12, cursor: 'pointer', color: '#374151', whiteSpace: 'nowrap' }}>
-                    {t('_lang') === 'ar' ? reply.ar : reply.en}
+                    {router.locale === 'ar' ? reply.ar : reply.en}
                     {reply.id > 6 && (
                       <span onClick={(e) => { e.stopPropagation(); handleRemoveCustomReply(reply.id); }}
                         style={{ marginLeft: 4, color: '#9ca3af' }}>×</span>
@@ -780,11 +780,11 @@ export default function MessagesPage() {
                 <div style={{ padding: '8px 12px', borderTop: '1px solid #f3f4f6', background: '#fafafa' }}>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
                     {[...quickReplies, ...customQuickReplies].map(reply => (
-                      <button key={reply.id} onClick={() => handleQuickReply(t('_lang') === 'ar' ? reply.ar : reply.en)}
+                      <button key={reply.id} onClick={() => handleQuickReply(router.locale === 'ar' ? reply.ar : reply.en)}
                         style={{ padding: '5px 12px', background: 'white', border: '1px solid #e5e7eb', borderRadius: 20, fontSize: 12, cursor: 'pointer', color: '#374151', whiteSpace: 'nowrap' }}
                         onMouseOver={e => e.target.style.borderColor = '#dc2626'}
                         onMouseOut={e => e.target.style.borderColor = '#e5e7eb'}>
-                        {t('_lang') === 'ar' ? reply.ar : reply.en}
+                        {router.locale === 'ar' ? reply.ar : reply.en}
                         {reply.id > 6 && (
                           <span onClick={(e) => { e.stopPropagation(); handleRemoveCustomReply(reply.id); }}
                             style={{ marginLeft: 4, color: '#9ca3af' }}>×</span>
