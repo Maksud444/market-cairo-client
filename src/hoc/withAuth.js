@@ -5,30 +5,44 @@ import toast from 'react-hot-toast';
 
 /**
  * Higher-Order Component to protect routes that require authentication
- * Redirects to home page if user is not logged in
+ * Waits for Zustand persist hydration before checking auth state
  */
 export function withAuth(Component) {
   return function ProtectedRoute(props) {
     const router = useRouter();
-    const { isAuthenticated, user } = useAuthStore();
-    const [hasChecked, setHasChecked] = useState(false);
+    const { isAuthenticated, user, _hasHydrated } = useAuthStore();
+    const [hydrated, setHydrated] = useState(false);
 
     useEffect(() => {
-      // Wait a moment for store to hydrate from localStorage
-      const timer = setTimeout(() => {
-        setHasChecked(true);
-
-        if (!isAuthenticated || !user) {
-          toast.error('Please login to access this page');
-          router.push('/');
+      // If store already hydrated synchronously, mark immediately
+      if (_hasHydrated) {
+        setHydrated(true);
+        return;
+      }
+      // Otherwise poll until hydrated (max ~1s)
+      const interval = setInterval(() => {
+        if (useAuthStore.getState()._hasHydrated) {
+          setHydrated(true);
+          clearInterval(interval);
         }
-      }, 100);
+      }, 50);
+      const timeout = setTimeout(() => {
+        clearInterval(interval);
+        setHydrated(true); // fallback
+      }, 1000);
+      return () => { clearInterval(interval); clearTimeout(timeout); };
+    }, [_hasHydrated]);
 
-      return () => clearTimeout(timer);
-    }, []);
+    useEffect(() => {
+      if (!hydrated) return;
+      if (!isAuthenticated || !user) {
+        toast.error('Please login to access this page');
+        router.push('/');
+      }
+    }, [hydrated, isAuthenticated, user]);
 
-    // Don't render the component if not authenticated
-    if (!isAuthenticated || !user) {
+    // Show spinner while waiting for hydration
+    if (!hydrated || !isAuthenticated || !user) {
       return (
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -39,7 +53,6 @@ export function withAuth(Component) {
       );
     }
 
-    // Render the protected component
     return <Component {...props} />;
   };
 }

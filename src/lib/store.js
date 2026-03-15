@@ -130,6 +130,9 @@ export const useAuthStore = create(
         user: state.user,
         isAuthenticated: state.isAuthenticated
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state) state._hasHydrated = true;
+      },
     }
   )
 );
