@@ -3,13 +3,26 @@
     "home": "Home",
     "search": "Search",
     "post": "Post Ad",
+    "post_your_ad": "Post Your Ad",
     "dashboard": "Dashboard",
+    "my_ads": "My Ads",
     "admin": "Admin",
+    "admin_panel": "Admin Panel",
     "login": "Login",
     "signup": "Sign Up",
     "logout": "Logout",
+    "sign_out": "Sign Out",
     "favorites": "Favorites",
-    "messages": "Messages"
+    "messages": "Messages",
+    "notifications": "Notifications"
+  },
+  "header": {
+    "search": "Search",
+    "use_current_location": "Use my current location",
+    "detecting": "Detecting...",
+    "areas": "Areas",
+    "compounds": "Compounds",
+    "categories_label": "Categories"
   },
   "home": {
     "hero_title": "Buy & Sell Used Items in Cairo",
@@ -82,6 +95,8 @@
   },
   "categories": {
     "all": "All Categories",
+    "mobile_tablets": "Mobile & Tablets",
+    "fashion_beauty": "Fashion & Beauty",
     "furniture": "Furniture",
     "electronics": "Electronics",
     "books": "Books",

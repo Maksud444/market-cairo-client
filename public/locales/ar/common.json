@@ -3,13 +3,26 @@
     "home": "الرئيسية",
     "search": "بحث",
     "post": "حط إعلان",
+    "post_your_ad": "انشر إعلانك",
     "dashboard": "لوحة التحكم",
+    "my_ads": "إعلاناتي",
     "admin": "الإدارة",
+    "admin_panel": "لوحة الإدارة",
     "login": "دخول",
     "signup": "تسجيل",
     "logout": "خروج",
+    "sign_out": "خروج",
     "favorites": "المفضلة",
-    "messages": "الرسائل"
+    "messages": "الرسائل",
+    "notifications": "الإشعارات"
+  },
+  "header": {
+    "search": "ابحث",
+    "use_current_location": "استخدم موقعي الحالي",
+    "detecting": "جاري التحديد...",
+    "areas": "المناطق",
+    "compounds": "الكومباوندات",
+    "categories_label": "الفئات"
   },
   "home": {
     "hero_title": "اشتري وبيع حاجات مستعملة في القاهرة",
@@ -82,6 +95,8 @@
   },
   "categories": {
     "all": "كل الفئات",
+    "mobile_tablets": "موبايل وتابلت",
+    "fashion_beauty": "موضة وجمال",
     "furniture": "أثاث",
     "electronics": "إلكترونيات",
     "books": "كتب",

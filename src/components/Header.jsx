@@ -113,15 +113,30 @@ export default function Header() {
   };
 
   const cats = apiCategories.length > 0 ? apiCategories : fallbackCategories.map(c => ({ name: c, subcategories: [] }));
-  const locationLabel = selectedLocation ? (isArabic ? selectedLocation.ar : selectedLocation.en) : 'Cairo';
+  const locationLabel = selectedLocation ? (isArabic ? selectedLocation.ar : selectedLocation.en) : t('common.cairo');
+
+  // Map backend English category names to i18n keys
+  const catKeyMap = {
+    'Mobile & Tablets': 'mobile_tablets',
+    'Electronics': 'electronics',
+    'Fashion & Beauty': 'fashion_beauty',
+    'Furniture': 'furniture',
+    'Kitchen': 'kitchen',
+    'Books': 'books',
+    'Other': 'other',
+  };
+  const getCatLabel = (name) => {
+    const key = catKeyMap[name];
+    return key ? t(`categories.${key}`) : name;
+  };
 
   const LocationDropdownContent = () => (
     <>
       <button onClick={handleCurrentLocation} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-primary-600 hover:bg-primary-50 border-b border-gray-100 font-medium">
         <FiNavigation size={15} className={isLocating ? 'animate-spin' : ''} />
-        {isLocating ? 'Detecting...' : 'Use my current location'}
+        {isLocating ? t('header.detecting') : t('header.use_current_location')}
       </button>
-      <div className="p-3 border-b border-gray-100"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Areas</p></div>
+      <div className="p-3 border-b border-gray-100"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{t('header.areas')}</p></div>
       <div className="py-1">
         {cairoAreas.map((area) => (
           <button key={area.en} onClick={() => { setSelectedLocation(area.en === 'All Cairo' ? null : area); setShowLocationDropdown(false); router.push(`/search?location=${encodeURIComponent(area.en === 'All Cairo' ? '' : area.en)}`); }}
@@ -130,7 +145,7 @@ export default function Header() {
           </button>
         ))}
       </div>
-      <div className="p-3 border-t border-b border-gray-100"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Compounds</p></div>
+      <div className="p-3 border-t border-b border-gray-100"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{t('header.compounds')}</p></div>
       <div className="py-1">
         {cairoCompounds.map((compound) => (
           <button key={compound.en} onClick={() => { setSelectedLocation(compound); setShowLocationDropdown(false); router.push(`/search?location=${encodeURIComponent(compound.en)}`); }}
@@ -180,7 +195,7 @@ export default function Header() {
                     className="w-full h-11 pl-9 pr-3 text-sm focus:outline-none bg-transparent" />
                 </div>
                 <button type="submit" className="px-5 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 transition-colors flex items-center gap-2">
-                  <FiSearch size={16} /> Search
+                  <FiSearch size={16} /> {t('header.search')}
                 </button>
               </form>
             </div>
@@ -216,29 +231,29 @@ export default function Header() {
                           <p className="text-xs text-gray-500 truncate">{user?.email}</p>
                         </div>
                         <Link href="/dashboard" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setShowProfileDropdown(false)}>
-                          <FiUser size={16} /> My Dashboard
+                          <FiUser size={16} /> {t('nav.dashboard')}
                         </Link>
                         <Link href="/profile?tab=listings" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setShowProfileDropdown(false)}>
-                          <FiImage size={16} /> My Ads
+                          <FiImage size={16} /> {t('nav.my_ads')}
                         </Link>
                         <Link href="/favorites" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setShowProfileDropdown(false)}>
-                          <FiHeart size={16} /> Favorites
+                          <FiHeart size={16} /> {t('nav.favorites')}
                         </Link>
                         {user?.isAdmin && (
                           <Link href="/cp-x4m9k2" className="flex items-center gap-3 px-4 py-2.5 text-sm text-primary-600 hover:bg-primary-50 transition-colors" onClick={() => setShowProfileDropdown(false)}>
-                            <FiShield size={16} /> Admin Panel
+                            <FiShield size={16} /> {t('nav.admin_panel')}
                           </Link>
                         )}
                         <div className="border-t border-gray-100 mt-1" />
                         <button onClick={() => { useAuthStore.getState().logout(); setShowProfileDropdown(false); router.push('/'); }}
                           className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors w-full">
-                          <FiX size={16} /> Sign Out
+                          <FiX size={16} /> {t('nav.sign_out')}
                         </button>
                       </div>
                     )}
                   </div>
                   <Link href="/post" className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-lg hover:bg-primary-700 transition-colors ml-1">
-                    <FiPlus size={16} /> Post Your Ad
+                    <FiPlus size={16} /> {t('nav.post_your_ad')}
                   </Link>
                 </>
               ) : (
@@ -247,7 +262,7 @@ export default function Header() {
                     {t('nav.login')}
                   </button>
                   <Link href="/post" className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-lg hover:bg-primary-700 transition-colors">
-                    <FiPlus size={16} /> Post Your Ad
+                    <FiPlus size={16} /> {t('nav.post_your_ad')}
                   </Link>
                 </>
               )}
@@ -263,7 +278,7 @@ export default function Header() {
                 <div key={cat.name} className="relative" onMouseEnter={() => setHoveredCategory(cat.name)} onMouseLeave={() => setHoveredCategory(null)}>
                   <button onClick={() => handleCategoryClick(cat.name)}
                     className="flex items-center gap-0.5 text-sm text-gray-600 hover:text-primary-600 transition-colors whitespace-nowrap py-1">
-                    {cat.name}
+                    {getCatLabel(cat.name)}
                     {cat.subcategories?.length > 0 && (
                       <FiChevronDown size={12} className={`transition-transform mt-0.5 ${hoveredCategory === cat.name ? 'rotate-180' : ''}`} />
                     )}
@@ -317,7 +332,7 @@ export default function Header() {
               </div>
             ) : (
               <button onClick={openLoginModal} className="px-3 py-1.5 text-sm font-semibold text-primary-600 border border-primary-200 rounded-lg">
-                Login
+                {t('nav.login')}
               </button>
             )}
           </div>
@@ -361,7 +376,7 @@ export default function Header() {
                       <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center border border-primary-100">
                         <Icon className="text-primary-600" size={20} />
                       </div>
-                      <span className="text-[10px] text-gray-600 text-center leading-tight font-medium">{cat.name}</span>
+                      <span className="text-[10px] text-gray-600 text-center leading-tight font-medium">{getCatLabel(cat.name)}</span>
                     </button>
                   );
                 })}
@@ -405,7 +420,7 @@ export default function Header() {
                     {unreadCount > 0 && <span className="ml-auto px-2 py-0.5 bg-primary-600 text-white text-xs rounded-full">{unreadCount}</span>}
                   </Link>
                   <Link href="/notifications" className="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg" onClick={() => setMobileMenuOpen(false)}>
-                    <FiBell size={20} /><span>Notifications</span>
+                    <FiBell size={20} /><span>{t('nav.notifications')}</span>
                     {notifUnread > 0 && <span className="ml-auto px-2 py-0.5 bg-red-500 text-white text-xs rounded-full">{notifUnread}</span>}
                   </Link>
                 </>
@@ -415,10 +430,10 @@ export default function Header() {
                 </button>
               )}
               <hr className="my-3" />
-              <p className="px-3 py-2 text-xs font-medium text-gray-400 uppercase">Categories</p>
+              <p className="px-3 py-2 text-xs font-medium text-gray-400 uppercase">{t('header.categories_label')}</p>
               {cats.map((cat) => (
                 <Link key={cat.name} href={`/search?category=${encodeURIComponent(cat.name)}`} className="block px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg" onClick={() => setMobileMenuOpen(false)}>
-                  {cat.name}
+                  {getCatLabel(cat.name)}
                 </Link>
               ))}
             </nav>

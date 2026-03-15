@@ -20,6 +20,16 @@ const categoryIcons = {
   'Other': FiMoreHorizontal,
 };
 
+const catKeyMap = {
+  'Mobile & Tablets': 'mobile_tablets',
+  'Electronics': 'electronics',
+  'Fashion & Beauty': 'fashion_beauty',
+  'Furniture': 'furniture',
+  'Kitchen': 'kitchen',
+  'Books': 'books',
+  'Other': 'other',
+};
+
 export default function Home() {
   const { t } = useTranslation('common');
   const [featuredListings, setFeaturedListings] = useState([]);
@@ -80,7 +90,7 @@ export default function Home() {
                 <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mb-2 group-hover:bg-primary-50 transition-colors">
                   <Icon className="text-primary-600 group-hover:text-primary-700" size={24} />
                 </div>
-                <span className="text-sm text-gray-800 text-center font-bold leading-tight">{category.name}</span>
+                <span className="text-sm text-gray-800 text-center font-bold leading-tight">{catKeyMap[category.name] ? t(`categories.${catKeyMap[category.name]}`) : category.name}</span>
                 <span className="text-xs text-gray-400 mt-0.5">{category.count || 0} ads</span>
               </Link>
             );
