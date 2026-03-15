@@ -12,6 +12,7 @@ export default function PrivacyPage() {
       <Head>
         <title>Privacy Policy - MySouqify</title>
         <meta name="description" content="MySouqify Privacy Policy - How we collect, use and protect your data." />
+        <link rel="canonical" href="https://mysouqify.com/privacy" />
       </Head>
 
       <div className="container-app py-10 lg:py-16 max-w-3xl">

@@ -75,11 +75,29 @@ export default function SafetyPage() {
   const { i18n } = useTranslation('common');
   const isAr = i18n.language === 'ar';
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: tips.map((tip) => ({
+      '@type': 'Question',
+      name: tip.titleKey,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: tip.descKey,
+      },
+    })),
+  };
+
   return (
     <Layout>
       <Head>
         <title>Safety Tips - MySouqify</title>
         <meta name="description" content="Stay safe when buying and selling on MySouqify. Essential safety tips for secure transactions in Cairo." />
+        <link rel="canonical" href="https://mysouqify.com/safety" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
       </Head>
 
       {/* Hero */}

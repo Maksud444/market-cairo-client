@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import {
   FiHeart, FiShare2, FiMapPin, FiEye, FiClock, FiChevronLeft,
@@ -25,13 +24,13 @@ const conditionColors = {
   'Fair': 'badge-fair',
 };
 
-export default function ListingDetailPage() {
+export default function ListingDetailPage({ initialListing }) {
   const router = useRouter();
   const { t } = useTranslation('common');
   const { id } = router.query;
   const { user, isAuthenticated } = useAuthStore();
 
-  const [listing, setListing] = useState(null);
+  const [listing, setListing] = useState(initialListing || null);
   const [similarListings, setSimilarListings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -205,11 +204,74 @@ export default function ListingDetailPage() {
 
   const isOwner = user?._id === listing.seller._id;
 
+  const pageTitle = `${listing.title} | EGP ${listing.price?.toLocaleString()} | ${listing.location || 'Cairo'} - MySouqify`;
+  const pageDesc = listing.description?.slice(0, 160) || '';
+  const pageUrl = `https://mysouqify.com/listing/${listing._id}`;
+  const pageImage = listing.images?.[0]
+    ? (listing.images[0].startsWith('http') ? listing.images[0] : `https://mysouqify.com${listing.images[0]}`)
+    : 'https://mysouqify.com/og-default.jpg';
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: listing.title,
+    description: listing.description,
+    image: pageImage,
+    offers: {
+      '@type': 'Offer',
+      price: listing.price,
+      priceCurrency: 'EGP',
+      availability: listing.status === 'sold'
+        ? 'https://schema.org/SoldOut'
+        : 'https://schema.org/InStock',
+      seller: {
+        '@type': 'Person',
+        name: listing.seller?.name || 'MySouqify Seller',
+      },
+    },
+    itemCondition: {
+      'New': 'https://schema.org/NewCondition',
+      'Like New': 'https://schema.org/LikeNewCondition',
+      'Good': 'https://schema.org/UsedCondition',
+      'Fair': 'https://schema.org/UsedCondition',
+    }[listing.condition] || 'https://schema.org/UsedCondition',
+  };
+
   return (
     <Layout>
       <Head>
-        <title>{listing.title} - MySouqify</title>
-        <meta name="description" content={listing.description.slice(0, 160)} />
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDesc} />
+        <link rel="canonical" href={pageUrl} />
+
+        {/* Open Graph */}
+        <meta property="og:type" content="product" />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDesc} />
+        <meta property="og:image" content={pageImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:site_name" content="MySouqify" />
+        <meta property="product:price:amount" content={listing.price} />
+        <meta property="product:price:currency" content="EGP" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDesc} />
+        <meta name="twitter:image" content={pageImage} />
+
+        {/* Hreflang for this listing */}
+        <link rel="alternate" hrefLang="en" href={pageUrl} />
+        <link rel="alternate" hrefLang="ar-EG" href={`https://mysouqify.com/ar/listing/${listing._id}`} />
+        <link rel="alternate" hrefLang="x-default" href={pageUrl} />
+
+        {/* JSON-LD Product Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </Head>
 
       <div className="container-app py-4 lg:py-8">
@@ -655,10 +717,31 @@ export default function ListingDetailPage() {
   );
 }
 
-export async function getServerSideProps({ locale }) {
+export async function getServerSideProps({ locale, params }) {
+  const i18nProps = await getI18nProps(locale);
+
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+    const res = await fetch(`${apiUrl}/listings/${params.id}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && data.listing) {
+        return {
+          props: {
+            ...i18nProps,
+            initialListing: data.listing,
+          },
+        };
+      }
+    }
+  } catch {
+    // fall through to client-side fetch
+  }
+
   return {
     props: {
-      ...(await getI18nProps(locale)),
+      ...i18nProps,
+      initialListing: null,
     },
   };
 }

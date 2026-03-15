@@ -60,11 +60,56 @@ export default function Home() {
     fetchData();
   }, []);
 
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'MySouqify',
+    url: 'https://mysouqify.com',
+    logo: 'https://mysouqify.com/logo.png',
+    description: "Egypt's trusted marketplace for buying and selling second-hand items.",
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Cairo',
+      addressCountry: 'EG',
+    },
+    sameAs: [],
+  };
+
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'MySouqify',
+    url: 'https://mysouqify.com',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://mysouqify.com/search?q={search_term_string}',
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <Layout>
       <Head>
         <title>MySouqify - Buy & Sell Used Items in Cairo</title>
         <meta name="description" content="Egypt's trusted marketplace for buying and selling second-hand items. Find great deals on furniture, electronics, and more in Cairo." />
+        <link rel="canonical" href="https://mysouqify.com" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="MySouqify - Buy & Sell Used Items in Cairo" />
+        <meta property="og:description" content="Egypt's trusted marketplace for buying and selling second-hand items. Find great deals on furniture, electronics, and more in Cairo." />
+        <meta property="og:url" content="https://mysouqify.com" />
+        <meta property="og:site_name" content="MySouqify" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
       </Head>
 
       {/* Banner Slider - Both mobile and desktop */}

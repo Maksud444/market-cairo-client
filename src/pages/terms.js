@@ -12,6 +12,7 @@ export default function TermsPage() {
       <Head>
         <title>Terms of Service - MySouqify</title>
         <meta name="description" content="MySouqify Terms of Service - Rules and guidelines for using our marketplace." />
+        <link rel="canonical" href="https://mysouqify.com/terms" />
       </Head>
 
       <div className="container-app py-10 lg:py-16 max-w-3xl">
