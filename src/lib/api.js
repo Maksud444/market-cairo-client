@@ -88,6 +88,9 @@ export const usersAPI = {
   getMySoldListings: (params) => api.get('/users/me/listings', { params: { ...params, status: 'sold' } }),
   getFavorites: () => api.get('/users/me/favorites'),
   rateUser: (id, rating) => api.put(`/users/${id}/rate`, { rating }),
+  blockUser: (userId) => api.post(`/users/block/${userId}`),
+  unblockUser: (userId) => api.delete(`/users/block/${userId}`),
+  getBlockedUsers: () => api.get('/users/blocked'),
 };
 
 // Listings API additional methods (aliases pointing to users routes)
@@ -114,8 +117,8 @@ export const messagesAPI = {
 
     return convResponse;
   },
-  sendMessage: (conversationId, content) =>
-    api.post(`/messages/${conversationId}`, { content }),
+  sendMessage: (conversationId, content, type = 'text', offerAmount = null) =>
+    api.post(`/messages/${conversationId}`, { content, type, ...(offerAmount ? { offerAmount } : {}) }),
   getUnreadCount: () => api.get('/messages/unread/count'),
   deleteConversation: (id) => api.delete(`/messages/conversations/${id}`),
 };

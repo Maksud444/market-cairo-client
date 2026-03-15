@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
-import { messagesAPI } from '../lib/api';
+import { messagesAPI, usersAPI } from '../lib/api';
 import { useAuthStore, useMessagesStore } from '../lib/store';
 import { useSocketStore } from '../lib/socket';
 
@@ -37,6 +37,29 @@ export default function MessagesPage() {
   const [filter, setFilter] = useState('all'); // 'all' | 'unread' | 'important'
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [showBlockMenu, setShowBlockMenu] = useState(false);
+  const [quickReplies] = useState([
+    { id: 1, en: 'Is this still available?', ar: 'هل لا زال متاح؟' },
+    { id: 2, en: "What's your best price?", ar: 'ما هو أفضل سعر؟' },
+    { id: 3, en: 'Can I inspect it before buying?', ar: 'هل يمكنني الفحص قبل الشراء؟' },
+    { id: 4, en: 'Where are you located?', ar: 'فين موقعك؟' },
+    { id: 5, en: 'Is it negotiable?', ar: 'هل السعر قابل للتفاوض؟' },
+    { id: 6, en: 'Can you deliver?', ar: 'هل يمكن التوصيل؟' },
+  ]);
+  const [customQuickReplies, setCustomQuickReplies] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try { return JSON.parse(localStorage.getItem('customQuickReplies') || '[]'); } catch { return []; }
+    }
+    return [];
+  });
+  const [showQuickReplies, setShowQuickReplies] = useState(false);
+  const [showAddCustomReply, setShowAddCustomReply] = useState(false);
+  const [newCustomReply, setNewCustomReply] = useState('');
+  const [showOfferModal, setShowOfferModal] = useState(false);
+  const [offerAmount, setOfferAmount] = useState('');
+  const [isSendingOffer, setIsSendingOffer] = useState(false);
 
   // Redirect if not authenticated (wait for hydration first)
   useEffect(() => {
@@ -68,6 +91,11 @@ export default function MessagesPage() {
       if (conv) {
         setActiveConversation(conv);
         fetchConversation(conversationId);
+        messagesAPI.getConversation(conversationId).then(res => {
+          if (res.data?.conversation?.isBlocked !== undefined) {
+            setIsBlocked(res.data.conversation.isBlocked);
+          }
+        }).catch(() => {});
       }
     }
   }, [conversationId, conversations, setActiveConversation, fetchConversation]);
@@ -134,6 +162,12 @@ export default function MessagesPage() {
   const selectConversation = (conv) => {
     router.push(`/messages?conversationId=${conv._id}`, undefined, { shallow: true });
     setActiveConversation(conv);
+    if (conv.isBlocked !== undefined) setIsBlocked(conv.isBlocked);
+    messagesAPI.getConversation(conv._id).then(res => {
+      if (res.data?.conversation?.isBlocked !== undefined) {
+        setIsBlocked(res.data.conversation.isBlocked);
+      }
+    }).catch(() => {});
     fetchConversation(conv._id);
   };
 
@@ -162,6 +196,69 @@ export default function MessagesPage() {
     groups[date].push(message);
     return groups;
   }, {});
+
+  const handleBlockUser = async () => {
+    if (!activeConversation) return;
+    const otherId = activeConversation.otherParticipant?._id;
+    if (!otherId) return;
+    try {
+      if (isBlocked) {
+        await usersAPI.unblockUser(otherId);
+        setIsBlocked(false);
+        toast.success('User unblocked');
+      } else {
+        await usersAPI.blockUser(otherId);
+        setIsBlocked(true);
+        toast.success('User blocked');
+      }
+    } catch {
+      toast.error('Failed to update block status');
+    }
+    setShowBlockMenu(false);
+  };
+
+  const handleQuickReply = (text) => {
+    setNewMessage(text);
+    setShowQuickReplies(false);
+  };
+
+  const handleAddCustomReply = () => {
+    if (!newCustomReply.trim()) return;
+    const updated = [...customQuickReplies, { id: Date.now(), en: newCustomReply.trim(), ar: newCustomReply.trim() }];
+    setCustomQuickReplies(updated);
+    localStorage.setItem('customQuickReplies', JSON.stringify(updated));
+    setNewCustomReply('');
+    setShowAddCustomReply(false);
+  };
+
+  const handleRemoveCustomReply = (id) => {
+    const updated = customQuickReplies.filter(r => r.id !== id);
+    setCustomQuickReplies(updated);
+    localStorage.setItem('customQuickReplies', JSON.stringify(updated));
+  };
+
+  const handleSendOffer = async () => {
+    if (!offerAmount || isNaN(offerAmount) || Number(offerAmount) <= 0) {
+      toast.error('Please enter a valid amount');
+      return;
+    }
+    if (!activeConversation) return;
+    setIsSendingOffer(true);
+    try {
+      const content = `💰 Offer: ${offerAmount} EGP`;
+      const res = await messagesAPI.sendMessage(activeConversation._id, content, 'offer', Number(offerAmount));
+      if (res.data.success) {
+        const newMsg = res.data.message;
+        useMessagesStore.getState().addMessage(newMsg);
+        setShowOfferModal(false);
+        setOfferAmount('');
+      }
+    } catch {
+      toast.error('Failed to send offer');
+    } finally {
+      setIsSendingOffer(false);
+    }
+  };
 
   if (!_hasHydrated || !isAuthenticated) {
     return null;
@@ -193,25 +290,42 @@ export default function MessagesPage() {
                   {activeConversation.listing && <p style={{ fontSize: 11, color: '#9ca3af', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{activeConversation.listing.title}</p>}
                 </div>
               </Link>
-              <div style={{ position: 'relative' }}>
-                <button onClick={() => setShowMenu(!showMenu)} style={{ color: '#fff', background: 'none', border: 'none', cursor: 'pointer', padding: 8, display: 'flex' }}>
-                  <FiMoreVertical size={20} />
-                </button>
-                {showMenu && (
-                  <>
-                    <div style={{ position: 'fixed', inset: 0, zIndex: 10 }} onClick={() => setShowMenu(false)} />
-                    <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: 4, width: 180, backgroundColor: '#fff', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.15)', border: '1px solid #f3f4f6', padding: '4px 0', zIndex: 20 }}>
-                      {activeConversation.listing && (
-                        <Link href={`/listing/${activeConversation.listing._id}`} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', fontSize: 13, color: '#374151', textDecoration: 'none' }} onClick={() => setShowMenu(false)}>
-                          <FiImage size={15} /> View Listing
-                        </Link>
-                      )}
-                      <button onClick={handleDeleteConversation} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', fontSize: 13, color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', width: '100%' }}>
-                        <FiTrash2 size={15} /> Delete
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                {/* Mobile block menu */}
+                <div style={{ position: 'relative' }}>
+                  <button onClick={() => setShowBlockMenu(!showBlockMenu)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, color: '#fff', display: 'flex' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                  </button>
+                  {showBlockMenu && (
+                    <div style={{ position: 'absolute', right: 0, top: '100%', background: 'white', border: '1px solid #e5e7eb', borderRadius: 12, boxShadow: '0 10px 25px rgba(0,0,0,0.1)', zIndex: 100, minWidth: 160, overflow: 'hidden' }}>
+                      <button onClick={handleBlockUser}
+                        style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '10px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: isBlocked ? '#16a34a' : '#dc2626', textAlign: 'left' }}>
+                        {isBlocked ? '✓ Unblock User' : '🚫 Block User'}
                       </button>
                     </div>
-                  </>
-                )}
+                  )}
+                </div>
+                <div style={{ position: 'relative' }}>
+                  <button onClick={() => setShowMenu(!showMenu)} style={{ color: '#fff', background: 'none', border: 'none', cursor: 'pointer', padding: 8, display: 'flex' }}>
+                    <FiMoreVertical size={20} />
+                  </button>
+                  {showMenu && (
+                    <>
+                      <div style={{ position: 'fixed', inset: 0, zIndex: 10 }} onClick={() => setShowMenu(false)} />
+                      <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: 4, width: 180, backgroundColor: '#fff', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.15)', border: '1px solid #f3f4f6', padding: '4px 0', zIndex: 20 }}>
+                        {activeConversation.listing && (
+                          <Link href={`/listing/${activeConversation.listing._id}`} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', fontSize: 13, color: '#374151', textDecoration: 'none' }} onClick={() => setShowMenu(false)}>
+                            <FiImage size={15} /> View Listing
+                          </Link>
+                        )}
+                        <button onClick={handleDeleteConversation} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', fontSize: 13, color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', width: '100%' }}>
+                          <FiTrash2 size={15} /> Delete
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -229,14 +343,21 @@ export default function MessagesPage() {
             )}
           </div>
 
+          {/* Mobile blocked banner */}
+          {isBlocked && (
+            <div style={{ position: 'absolute', top: activeConversation.listing ? 130 : 62, left: 0, right: 0, zIndex: 3, padding: '8px 16px', background: '#fef2f2', borderBottom: '1px solid #fecaca', display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#dc2626' }}>
+              🚫 You have blocked this user. <button onClick={handleBlockUser} style={{ marginLeft: 4, color: '#2563eb', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13 }}>Unblock</button>
+            </div>
+          )}
+
           {/* Messages - fills space between header and input */}
           <div
             style={{
               position: 'absolute',
-              top: activeConversation.listing ? 130 : 62,
+              top: isBlocked ? (activeConversation.listing ? 166 : 98) : (activeConversation.listing ? 130 : 62),
               left: 0,
               right: 0,
-              bottom: 64,
+              bottom: showQuickReplies ? 160 : 64,
               overflowY: 'auto',
               padding: '12px 16px',
               backgroundColor: '#f9fafb',
@@ -257,9 +378,19 @@ export default function MessagesPage() {
                         </div>
                       )}
                       <div style={{ maxWidth: '78%' }}>
-                        <div style={{ padding: '9px 13px', borderRadius: 18, fontSize: 14, wordBreak: 'break-word', overflowWrap: 'anywhere', backgroundColor: isOwn ? '#dc2626' : '#fff', color: isOwn ? '#fff' : '#111827', borderBottomRightRadius: isOwn ? 4 : 18, borderBottomLeftRadius: isOwn ? 18 : 4, boxShadow: isOwn ? 'none' : '0 1px 3px rgba(0,0,0,0.08)' }}>
-                          {message.content}
-                        </div>
+                        {message.type === 'offer' ? (
+                          <div style={{ background: isOwn ? '#7f1d1d' : '#f9fafb', border: isOwn ? 'none' : '2px solid #dc2626', borderRadius: 12, padding: '10px 14px', minWidth: 160 }}>
+                            <div style={{ fontSize: 11, color: isOwn ? '#fca5a5' : '#dc2626', fontWeight: 600, marginBottom: 4 }}>PRICE OFFER</div>
+                            <div style={{ fontSize: 20, fontWeight: 800, color: isOwn ? 'white' : '#dc2626' }}>
+                              {message.offerAmount?.toLocaleString() || ''} EGP
+                            </div>
+                            <div style={{ fontSize: 11, color: isOwn ? '#fca5a5' : '#6b7280', marginTop: 2 }}>Tap to negotiate</div>
+                          </div>
+                        ) : (
+                          <div style={{ padding: '9px 13px', borderRadius: 18, fontSize: 14, wordBreak: 'break-word', overflowWrap: 'anywhere', backgroundColor: isOwn ? '#dc2626' : '#fff', color: isOwn ? '#fff' : '#111827', borderBottomRightRadius: isOwn ? 4 : 18, borderBottomLeftRadius: isOwn ? 18 : 4, boxShadow: isOwn ? 'none' : '0 1px 3px rgba(0,0,0,0.08)' }}>
+                            {message.content}
+                          </div>
+                        )}
                         <div style={{ display: 'flex', alignItems: 'center', gap: 3, marginTop: 2, fontSize: 10, color: '#9ca3af', justifyContent: isOwn ? 'flex-end' : 'flex-start' }}>
                           {format(new Date(message.createdAt), 'h:mm a')}
                           {isOwn && (message.read ? <FiCheckCircle size={10} style={{ color: '#f87171' }} /> : <FiCheck size={10} />)}
@@ -273,18 +404,63 @@ export default function MessagesPage() {
             <div ref={messagesEndRef} />
           </div>
 
+          {/* Mobile quick replies panel */}
+          {showQuickReplies && (
+            <div style={{ position: 'absolute', bottom: 64, left: 0, right: 0, padding: '8px 12px', borderTop: '1px solid #f3f4f6', background: '#fafafa', zIndex: 2 }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+                {[...quickReplies, ...customQuickReplies].map(reply => (
+                  <button key={reply.id} onClick={() => handleQuickReply(t('_lang') === 'ar' ? reply.ar : reply.en)}
+                    style={{ padding: '5px 12px', background: 'white', border: '1px solid #e5e7eb', borderRadius: 20, fontSize: 12, cursor: 'pointer', color: '#374151', whiteSpace: 'nowrap' }}>
+                    {t('_lang') === 'ar' ? reply.ar : reply.en}
+                    {reply.id > 6 && (
+                      <span onClick={(e) => { e.stopPropagation(); handleRemoveCustomReply(reply.id); }}
+                        style={{ marginLeft: 4, color: '#9ca3af' }}>×</span>
+                    )}
+                  </button>
+                ))}
+                <button onClick={() => setShowAddCustomReply(!showAddCustomReply)}
+                  style={{ padding: '5px 12px', background: '#fef2f2', border: '1px dashed #fca5a5', borderRadius: 20, fontSize: 12, cursor: 'pointer', color: '#dc2626' }}>
+                  + Add
+                </button>
+              </div>
+              {showAddCustomReply && (
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <input value={newCustomReply} onChange={e => setNewCustomReply(e.target.value)}
+                    placeholder="Type your quick reply..."
+                    style={{ flex: 1, padding: '5px 10px', border: '1px solid #e5e7eb', borderRadius: 8, fontSize: 13, outline: 'none' }}
+                    onKeyDown={e => e.key === 'Enter' && handleAddCustomReply()} />
+                  <button onClick={handleAddCustomReply}
+                    style={{ padding: '5px 12px', background: '#dc2626', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 13 }}>Save</button>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Input - always pinned at bottom */}
           <form
             onSubmit={handleSendMessage}
             style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 64, display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', borderTop: '1px solid #e5e7eb', backgroundColor: '#fff' }}
           >
+            {/* Quick replies toggle */}
+            <button type="button" onClick={() => setShowQuickReplies(!showQuickReplies)}
+              title="Quick Replies"
+              style={{ flexShrink: 0, padding: 8, background: showQuickReplies ? '#fef2f2' : 'none', border: 'none', cursor: 'pointer', color: showQuickReplies ? '#dc2626' : '#6b7280', borderRadius: 8, display: 'flex', alignItems: 'center' }}>
+              ⚡
+            </button>
+            {/* Make offer */}
+            <button type="button" onClick={() => setShowOfferModal(true)}
+              title="Make an Offer"
+              disabled={isBlocked}
+              style={{ flexShrink: 0, padding: 8, background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 8, display: 'flex', alignItems: 'center' }}>
+              🏷️
+            </button>
             <input
               ref={inputRef}
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type a message..."
-              disabled={isSending}
+              disabled={isSending || isBlocked}
               style={{ flex: 1, padding: '10px 16px', backgroundColor: '#f3f4f6', borderRadius: 999, fontSize: 14, border: 'none', outline: 'none' }}
             />
             <button
@@ -295,6 +471,43 @@ export default function MessagesPage() {
               <FiSend size={16} />
             </button>
           </form>
+        </div>
+      )}
+
+      {/* Offer Price Modal */}
+      {showOfferModal && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+          <div style={{ background: 'white', borderRadius: 20, padding: 24, width: '100%', maxWidth: 360, boxShadow: '0 25px 60px rgba(0,0,0,0.2)' }}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 4, color: '#111827' }}>💰 Make an Offer</h3>
+            {activeConversation?.listing?.price && (
+              <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 16 }}>
+                Listed price: <strong>{activeConversation.listing.price.toLocaleString()} EGP</strong>
+              </p>
+            )}
+            <div style={{ position: 'relative', marginBottom: 16 }}>
+              <input
+                type="number"
+                value={offerAmount}
+                onChange={e => setOfferAmount(e.target.value)}
+                placeholder="Enter your offer..."
+                min="1"
+                style={{ width: '100%', padding: '10px 48px 10px 12px', border: '2px solid #e5e7eb', borderRadius: 10, fontSize: 16, outline: 'none', boxSizing: 'border-box' }}
+                onFocus={e => e.target.style.borderColor = '#dc2626'}
+                onBlur={e => e.target.style.borderColor = '#e5e7eb'}
+              />
+              <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', fontSize: 13 }}>EGP</span>
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={() => { setShowOfferModal(false); setOfferAmount(''); }}
+                style={{ flex: 1, padding: '10px 0', border: '1px solid #e5e7eb', borderRadius: 10, background: 'white', cursor: 'pointer', fontSize: 14 }}>
+                Cancel
+              </button>
+              <button onClick={handleSendOffer} disabled={isSendingOffer}
+                style={{ flex: 1, padding: '10px 0', background: '#dc2626', color: 'white', border: 'none', borderRadius: 10, cursor: 'pointer', fontSize: 14, fontWeight: 600, opacity: isSendingOffer ? 0.7 : 1 }}>
+                {isSendingOffer ? 'Sending...' : 'Send Offer'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -434,6 +647,21 @@ export default function MessagesPage() {
 
                 <div className="flex items-center gap-1">
                   <button className="lg:hidden p-2 text-white"><FiPhone size={20} /></button>
+                  {/* Block menu */}
+                  <div className="relative">
+                    <button onClick={() => setShowBlockMenu(!showBlockMenu)}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, color: '#fff', display: 'flex' }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                    </button>
+                    {showBlockMenu && (
+                      <div style={{ position: 'absolute', right: 0, top: '100%', background: 'white', border: '1px solid #e5e7eb', borderRadius: 12, boxShadow: '0 10px 25px rgba(0,0,0,0.1)', zIndex: 100, minWidth: 160, overflow: 'hidden' }}>
+                        <button onClick={handleBlockUser}
+                          style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '10px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: isBlocked ? '#16a34a' : '#dc2626', textAlign: 'left' }}>
+                          {isBlocked ? '✓ Unblock User' : '🚫 Block User'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                   <div className="relative">
                     <button onClick={() => setShowMenu(!showMenu)} className="p-2 text-white lg:text-gray-400 hover:text-gray-300 lg:hover:text-gray-600">
                       <FiMoreVertical size={20} />
@@ -480,6 +708,13 @@ export default function MessagesPage() {
                 </Link>
               )}
 
+              {/* Blocked banner */}
+              {isBlocked && (
+                <div style={{ padding: '8px 16px', background: '#fef2f2', borderBottom: '1px solid #fecaca', display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#dc2626' }}>
+                  🚫 You have blocked this user. <button onClick={handleBlockUser} style={{ marginLeft: 4, color: '#2563eb', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13 }}>Unblock</button>
+                </div>
+              )}
+
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {Object.entries(groupedMessages).map(([date, msgs]) => (
@@ -508,9 +743,19 @@ export default function MessagesPage() {
                           )}
 
                           <div className={`max-w-[70%] ${isOwn ? 'order-1' : ''}`}>
-                            <div className={`chat-bubble ${isOwn ? 'chat-bubble-sent' : 'chat-bubble-received'}`}>
-                              {message.content}
-                            </div>
+                            {message.type === 'offer' ? (
+                              <div style={{ background: isOwn ? '#7f1d1d' : '#f9fafb', border: isOwn ? 'none' : '2px solid #dc2626', borderRadius: 12, padding: '10px 14px', minWidth: 160 }}>
+                                <div style={{ fontSize: 11, color: isOwn ? '#fca5a5' : '#dc2626', fontWeight: 600, marginBottom: 4 }}>PRICE OFFER</div>
+                                <div style={{ fontSize: 20, fontWeight: 800, color: isOwn ? 'white' : '#dc2626' }}>
+                                  {message.offerAmount?.toLocaleString() || ''} EGP
+                                </div>
+                                <div style={{ fontSize: 11, color: isOwn ? '#fca5a5' : '#6b7280', marginTop: 2 }}>Tap to negotiate</div>
+                              </div>
+                            ) : (
+                              <div className={`chat-bubble ${isOwn ? 'chat-bubble-sent' : 'chat-bubble-received'}`}>
+                                {message.content}
+                              </div>
+                            )}
                             <div className={`flex items-center gap-1 mt-1 text-xs text-gray-400 ${isOwn ? 'justify-end' : ''}`}>
                               {format(new Date(message.createdAt), 'h:mm a')}
                               {isOwn && (
@@ -530,9 +775,56 @@ export default function MessagesPage() {
                 <div ref={messagesEndRef} />
               </div>
 
+              {/* Quick replies panel */}
+              {showQuickReplies && (
+                <div style={{ padding: '8px 12px', borderTop: '1px solid #f3f4f6', background: '#fafafa' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+                    {[...quickReplies, ...customQuickReplies].map(reply => (
+                      <button key={reply.id} onClick={() => handleQuickReply(t('_lang') === 'ar' ? reply.ar : reply.en)}
+                        style={{ padding: '5px 12px', background: 'white', border: '1px solid #e5e7eb', borderRadius: 20, fontSize: 12, cursor: 'pointer', color: '#374151', whiteSpace: 'nowrap' }}
+                        onMouseOver={e => e.target.style.borderColor = '#dc2626'}
+                        onMouseOut={e => e.target.style.borderColor = '#e5e7eb'}>
+                        {t('_lang') === 'ar' ? reply.ar : reply.en}
+                        {reply.id > 6 && (
+                          <span onClick={(e) => { e.stopPropagation(); handleRemoveCustomReply(reply.id); }}
+                            style={{ marginLeft: 4, color: '#9ca3af' }}>×</span>
+                        )}
+                      </button>
+                    ))}
+                    <button onClick={() => setShowAddCustomReply(!showAddCustomReply)}
+                      style={{ padding: '5px 12px', background: '#fef2f2', border: '1px dashed #fca5a5', borderRadius: 20, fontSize: 12, cursor: 'pointer', color: '#dc2626' }}>
+                      + Add
+                    </button>
+                  </div>
+                  {showAddCustomReply && (
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      <input value={newCustomReply} onChange={e => setNewCustomReply(e.target.value)}
+                        placeholder="Type your quick reply..."
+                        style={{ flex: 1, padding: '5px 10px', border: '1px solid #e5e7eb', borderRadius: 8, fontSize: 13, outline: 'none' }}
+                        onKeyDown={e => e.key === 'Enter' && handleAddCustomReply()} />
+                      <button onClick={handleAddCustomReply}
+                        style={{ padding: '5px 12px', background: '#dc2626', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 13 }}>Save</button>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Message Input */}
               <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-100">
                 <div className="flex items-center gap-3">
+                  {/* Quick replies toggle */}
+                  <button type="button" onClick={() => setShowQuickReplies(!showQuickReplies)}
+                    title="Quick Replies"
+                    style={{ flexShrink: 0, padding: 8, background: showQuickReplies ? '#fef2f2' : 'none', border: 'none', cursor: 'pointer', color: showQuickReplies ? '#dc2626' : '#6b7280', borderRadius: 8, display: 'flex', alignItems: 'center' }}>
+                    ⚡
+                  </button>
+                  {/* Make offer */}
+                  <button type="button" onClick={() => setShowOfferModal(true)}
+                    title="Make an Offer"
+                    disabled={isBlocked}
+                    style={{ flexShrink: 0, padding: 8, background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 8, display: 'flex', alignItems: 'center' }}>
+                    🏷️
+                  </button>
                   <input
                     ref={inputRef}
                     type="text"
@@ -540,7 +832,7 @@ export default function MessagesPage() {
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder={t('messages_page.type_message')}
                     className="input flex-1"
-                    disabled={isSending}
+                    disabled={isSending || isBlocked}
                   />
                   <button
                     type="submit"
