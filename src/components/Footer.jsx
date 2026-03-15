@@ -1,27 +1,29 @@
 import Link from 'next/link';
-
-const quickLinks = [
-  { name: 'Home', href: '/' },
-  { name: 'Browse Listings', href: '/search' },
-  { name: 'Post Ad', href: '/post' },
-  { name: 'My Dashboard', href: '/dashboard' },
-];
-
-const categories = [
-  { name: 'Furniture', href: '/search?category=Furniture' },
-  { name: 'Electronics', href: '/search?category=Electronics' },
-  { name: 'Clothing', href: '/search?category=Clothing' },
-  { name: 'Books', href: '/search?category=Books' },
-];
-
-const moreCategories = [
-  { name: 'Kitchen', href: '/search?category=Kitchen' },
-  { name: 'Sports', href: '/search?category=Sports' },
-  { name: 'Toys', href: '/search?category=Toys' },
-  { name: 'Other', href: '/search?category=Other' },
-];
+import { useTranslation } from 'next-i18next';
 
 export default function Footer() {
+  const { t } = useTranslation('common');
+
+  const quickLinks = [
+    { name: t('footer.home'), href: '/' },
+    { name: t('footer.browse_listings'), href: '/search' },
+    { name: t('footer.post_ad'), href: '/post' },
+    { name: t('footer.my_dashboard'), href: '/dashboard' },
+  ];
+
+  const categories = [
+    { name: t('footer.cat_furniture'), href: '/search?category=Furniture' },
+    { name: t('footer.cat_electronics'), href: '/search?category=Electronics' },
+    { name: t('footer.cat_fashion'), href: '/search?category=Fashion+%26+Beauty' },
+    { name: t('footer.cat_books'), href: '/search?category=Books' },
+  ];
+
+  const moreCategories = [
+    { name: t('footer.cat_kitchen'), href: '/search?category=Kitchen' },
+    { name: t('footer.cat_mobiles'), href: '/search?category=Mobile+%26+Tablets' },
+    { name: t('footer.cat_other'), href: '/search?category=Other' },
+  ];
+
   return (
     <footer className="bg-gray-900 text-gray-300 mt-auto">
       <div className="container-app py-12 lg:py-16">
@@ -35,20 +37,17 @@ export default function Footer() {
               <span className="text-xl font-semibold text-white">MySouqify</span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
-              Egypt's trusted marketplace for buying and selling used items.
+              {t('footer.tagline')}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Quick Links</h3>
+            <h3 className="text-white font-semibold mb-4">{t('footer.quick_links')}</h3>
             <ul className="space-y-2.5">
               {quickLinks.map((link) => (
-                <li key={link.name}>
-                  <Link 
-                    href={link.href}
-                    className="text-sm text-gray-400 hover:text-white transition-colors"
-                  >
+                <li key={link.href}>
+                  <Link href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -58,14 +57,11 @@ export default function Footer() {
 
           {/* Categories */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Categories</h3>
+            <h3 className="text-white font-semibold mb-4">{t('footer.categories')}</h3>
             <ul className="space-y-2.5">
               {categories.map((link) => (
-                <li key={link.name}>
-                  <Link 
-                    href={link.href}
-                    className="text-sm text-gray-400 hover:text-white transition-colors"
-                  >
+                <li key={link.href}>
+                  <Link href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -75,14 +71,11 @@ export default function Footer() {
 
           {/* More Categories */}
           <div>
-            <h3 className="text-white font-semibold mb-4">More Categories</h3>
+            <h3 className="text-white font-semibold mb-4">{t('footer.more_categories')}</h3>
             <ul className="space-y-2.5">
               {moreCategories.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-400 hover:text-white transition-colors"
-                  >
+                <li key={link.href}>
+                  <Link href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -96,7 +89,7 @@ export default function Footer() {
       <div className="border-t border-gray-800">
         <div className="container-app py-4">
           <p className="text-sm text-gray-500 text-center">
-            © {new Date().getFullYear()} MySouqify. All rights reserved.
+            © {new Date().getFullYear()} MySouqify. {t('footer.all_rights')}
           </p>
         </div>
       </div>

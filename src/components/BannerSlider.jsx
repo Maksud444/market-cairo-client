@@ -1,60 +1,62 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-
-const banners = [
-  {
-    id: 1,
-    title: 'Buy & Sell Anything',
-    subtitle: "Cairo's #1 Trusted Marketplace",
-    cta: 'Browse All',
-    ctaLink: '/search',
-    bg: 'from-blue-950 via-blue-900 to-indigo-900',
-    accent: 'bg-blue-500',
-    dot: 'bg-blue-400',
-    circles: ['bg-blue-700/40', 'bg-blue-600/20'],
-    icon: '🛒',
-  },
-  {
-    id: 2,
-    title: 'Mobile & Tablets',
-    subtitle: 'Best deals on phones & gadgets',
-    cta: 'Shop Now',
-    ctaLink: '/search?category=Mobile+%26+Tablets',
-    bg: 'from-gray-950 via-slate-900 to-zinc-900',
-    accent: 'bg-green-500',
-    dot: 'bg-green-400',
-    circles: ['bg-green-700/20', 'bg-emerald-600/10'],
-    icon: '📱',
-  },
-  {
-    id: 3,
-    title: 'Fashion & Beauty',
-    subtitle: 'Discover amazing fashion deals',
-    cta: 'Explore',
-    ctaLink: '/search?category=Fashion+%26+Beauty',
-    bg: 'from-rose-950 via-pink-900 to-purple-950',
-    accent: 'bg-pink-500',
-    dot: 'bg-pink-400',
-    circles: ['bg-pink-700/30', 'bg-purple-600/20'],
-    icon: '👗',
-  },
-  {
-    id: 4,
-    title: 'Electronics',
-    subtitle: 'Laptops, TVs, cameras & more',
-    cta: 'View Deals',
-    ctaLink: '/search?category=Electronics',
-    bg: 'from-amber-950 via-orange-900 to-red-950',
-    accent: 'bg-orange-500',
-    dot: 'bg-orange-400',
-    circles: ['bg-orange-700/30', 'bg-red-600/20'],
-    icon: '💻',
-  },
-];
+import { useTranslation } from 'next-i18next';
 
 export default function BannerSlider() {
+  const { t } = useTranslation('common');
   const [current, setCurrent] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  const banners = [
+    {
+      id: 1,
+      title: t('banner.slide1_title'),
+      subtitle: t('banner.slide1_subtitle'),
+      cta: t('banner.browse_all'),
+      ctaLink: '/search',
+      bg: 'from-blue-950 via-blue-900 to-indigo-900',
+      accent: 'bg-blue-500',
+      dot: 'bg-blue-400',
+      circles: ['bg-blue-700/40', 'bg-blue-600/20'],
+      icon: '🛒',
+    },
+    {
+      id: 2,
+      title: t('banner.slide2_title'),
+      subtitle: t('banner.slide2_subtitle'),
+      cta: t('banner.shop_now'),
+      ctaLink: '/search?category=Mobile+%26+Tablets',
+      bg: 'from-gray-950 via-slate-900 to-zinc-900',
+      accent: 'bg-green-500',
+      dot: 'bg-green-400',
+      circles: ['bg-green-700/20', 'bg-emerald-600/10'],
+      icon: '📱',
+    },
+    {
+      id: 3,
+      title: t('banner.slide3_title'),
+      subtitle: t('banner.slide3_subtitle'),
+      cta: t('banner.explore'),
+      ctaLink: '/search?category=Fashion+%26+Beauty',
+      bg: 'from-rose-950 via-pink-900 to-purple-950',
+      accent: 'bg-pink-500',
+      dot: 'bg-pink-400',
+      circles: ['bg-pink-700/30', 'bg-purple-600/20'],
+      icon: '👗',
+    },
+    {
+      id: 4,
+      title: t('banner.slide4_title'),
+      subtitle: t('banner.slide4_subtitle'),
+      cta: t('banner.view_deals'),
+      ctaLink: '/search?category=Electronics',
+      bg: 'from-amber-950 via-orange-900 to-red-950',
+      accent: 'bg-orange-500',
+      dot: 'bg-orange-400',
+      circles: ['bg-orange-700/30', 'bg-red-600/20'],
+      icon: '💻',
+    },
+  ];
 
   useEffect(() => {
     const timer = setInterval(() => {

@@ -178,37 +178,31 @@ export default function Home() {
 
       {/* How It Works */}
       <section className="container-app py-10 lg:py-16">
-        <h2 className="text-xl lg:text-2xl font-bold text-gray-900 text-center mb-10">How It Works</h2>
-        
+        <h2 className="text-xl lg:text-2xl font-bold text-gray-900 text-center mb-10">{t('home.how_it_works')}</h2>
+
         <div className="grid lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
           <div className="text-center">
             <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
               1
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Post Your Ad</h3>
-            <p className="text-sm text-gray-600">
-              Create a listing with photos and description. It's quick and easy.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('home.how_step1_title')}</h3>
+            <p className="text-sm text-gray-600">{t('home.how_step1_desc')}</p>
           </div>
 
           <div className="text-center">
             <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
               2
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Connect with Buyers</h3>
-            <p className="text-sm text-gray-600">
-              Chat with interested buyers through our secure messaging system.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('home.how_step2_title')}</h3>
+            <p className="text-sm text-gray-600">{t('home.how_step2_desc')}</p>
           </div>
 
           <div className="text-center">
             <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
               3
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Complete the Deal</h3>
-            <p className="text-sm text-gray-600">
-              Meet safely, inspect the item, and complete your transaction.
-            </p>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('home.how_step3_title')}</h3>
+            <p className="text-sm text-gray-600">{t('home.how_step3_desc')}</p>
           </div>
         </div>
       </section>
