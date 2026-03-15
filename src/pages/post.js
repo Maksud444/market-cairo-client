@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
 import { FiUpload, FiX, FiCamera, FiAlertCircle, FiCheck, FiChevronDown, FiMapPin, FiShield, FiChevronRight } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import imageCompression from 'browser-image-compression';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
@@ -47,6 +48,7 @@ export default function PostListingPage() {
   const [locations, setLocations] = useState([]);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStep, setSubmitStep] = useState(''); // 'compressing' | 'uploading' | ''
   const [isLoading, setIsLoading] = useState(!!editId);
   const [isGeolocating, setIsGeolocating] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
@@ -292,6 +294,26 @@ export default function PostListingPage() {
     }
 
     try {
+      // Compress images before upload
+      setSubmitStep('compressing');
+      const compressionOptions = {
+        maxSizeMB: 0.5,        // max 500KB per image
+        maxWidthOrHeight: 1200, // max 1200px
+        useWebWorker: true,
+        fileType: 'image/jpeg',
+      };
+      const compressedImages = await Promise.all(
+        images.map(async ({ file }) => {
+          try {
+            const compressed = await imageCompression(file, compressionOptions);
+            return compressed;
+          } catch {
+            return file; // fallback to original if compression fails
+          }
+        })
+      );
+
+      setSubmitStep('uploading');
       const data = new FormData();
       data.append('title', formData.title.trim());
       data.append('description', formData.description.trim());
@@ -309,8 +331,8 @@ export default function PostListingPage() {
         data.append('existingImages', img);
       });
 
-      // Add new images
-      images.forEach(({ file }) => {
+      // Add compressed images
+      compressedImages.forEach((file) => {
         data.append('images', file);
       });
 
@@ -345,6 +367,7 @@ export default function PostListingPage() {
       }
     } finally {
       setIsSubmitting(false);
+      setSubmitStep('');
     }
   };
 
@@ -372,6 +395,32 @@ export default function PostListingPage() {
       <Head>
         <title>{editId ? t('post.edit_title') : t('post.title')} - MySouqify</title>
       </Head>
+
+      {/* Full-screen submission overlay */}
+      {isSubmitting && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 99999, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
+          <div style={{ backgroundColor: 'white', borderRadius: 20, padding: '40px 48px', textAlign: 'center', maxWidth: 320, width: '90%', boxShadow: '0 25px 60px rgba(0,0,0,0.3)' }}>
+            {/* Spinner */}
+            <div style={{ width: 64, height: 64, border: '5px solid #fee2e2', borderTopColor: '#dc2626', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 20px' }} />
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#111827', marginBottom: 8 }}>
+              {submitStep === 'compressing' ? 'Optimizing Images...' : 'Posting Your Ad...'}
+            </h3>
+            <p style={{ fontSize: 13, color: '#6b7280' }}>
+              {submitStep === 'compressing' ? 'Compressing images for faster upload' : 'Please wait, do not close this page'}
+            </p>
+            {/* Progress dots */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 20 }}>
+              {[0,1,2].map(i => (
+                <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#dc2626', animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite` }} />
+              ))}
+            </div>
+          </div>
+          <style>{`
+            @keyframes spin { to { transform: rotate(360deg); } }
+            @keyframes bounce { 0%,80%,100% { transform: scale(0.6); opacity:0.4; } 40% { transform: scale(1); opacity:1; } }
+          `}</style>
+        </div>
+      )}
 
       <div className="container-app py-6 lg:py-10">
         <div className="max-w-2xl mx-auto">
