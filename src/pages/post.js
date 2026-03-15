@@ -20,7 +20,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 export default function PostListingPage() {
   const router = useRouter();
   const { t, i18n } = useTranslation('common');
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, _hasHydrated } = useAuthStore();
   const { edit: editId } = router.query;
   const isArabic = i18n.language === 'ar';
 
@@ -61,13 +61,13 @@ export default function PostListingPage() {
   const [isLoading, setIsLoading] = useState(!!editId);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
 
-  // Redirect if not authenticated
+  // Redirect if not authenticated (wait for hydration first)
   useEffect(() => {
+    if (!_hasHydrated) return;
     if (!isAuthenticated) {
       router.push('/?login=true');
-      return;
     }
-  }, [isAuthenticated, router]);
+  }, [_hasHydrated, isAuthenticated, router]);
 
   // Fetch categories
   useEffect(() => {
@@ -437,7 +437,7 @@ export default function PostListingPage() {
     }
   };
 
-  if (!isAuthenticated) {
+  if (!_hasHydrated || !isAuthenticated) {
     return null;
   }
 

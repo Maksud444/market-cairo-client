@@ -17,7 +17,7 @@ export default function MessagesPage() {
   const router = useRouter();
   const { t } = useTranslation('common');
   const { conversationId } = router.query;
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, _hasHydrated } = useAuthStore();
   const socket = useSocketStore((state) => state.socket);
   const {
     conversations,
@@ -38,12 +38,13 @@ export default function MessagesPage() {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Redirect if not authenticated
+  // Redirect if not authenticated (wait for hydration first)
   useEffect(() => {
+    if (!_hasHydrated) return;
     if (!isAuthenticated) {
       router.push('/?login=true');
     }
-  }, [isAuthenticated, router]);
+  }, [_hasHydrated, isAuthenticated, router]);
 
   // Fetch conversations on mount
   useEffect(() => {
@@ -162,7 +163,7 @@ export default function MessagesPage() {
     return groups;
   }, {});
 
-  if (!isAuthenticated) {
+  if (!_hasHydrated || !isAuthenticated) {
     return null;
   }
 

@@ -13,16 +13,17 @@ import { useAuthStore } from '../lib/store';
 export default function FavoritesPage() {
   const router = useRouter();
   const { t } = useTranslation('common');
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, _hasHydrated } = useAuthStore();
   const [favorites, setFavorites] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Redirect if not authenticated
+  // Redirect if not authenticated (wait for hydration first)
   useEffect(() => {
+    if (!_hasHydrated) return;
     if (!isAuthenticated) {
       router.push('/?login=true');
     }
-  }, [isAuthenticated, router]);
+  }, [_hasHydrated, isAuthenticated, router]);
 
   // Fetch favorites
   useEffect(() => {
@@ -48,7 +49,7 @@ export default function FavoritesPage() {
     setFavorites(prev => prev.filter(item => item._id !== listingId));
   };
 
-  if (!isAuthenticated) {
+  if (!_hasHydrated || !isAuthenticated) {
     return null;
   }
 
