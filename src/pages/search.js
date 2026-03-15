@@ -116,6 +116,19 @@ export default function SearchPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Helper: update URL with new filter params (triggers fetchListings via router.query change)
+  const updateURL = (newParams) => {
+    const merged = {
+      ...(router.query.q && { q: router.query.q }),
+      ...(router.query.sort && { sort: router.query.sort }),
+      ...router.query,
+      ...newParams,
+    };
+    // Remove empty values
+    Object.keys(merged).forEach(k => { if (!merged[k]) delete merged[k]; });
+    router.push({ pathname: '/search', query: merged }, undefined, { shallow: true });
+  };
+
   const clearAllFilters = () => {
     setSubcategory('');
     resetFilters();
@@ -215,7 +228,7 @@ export default function SearchPage() {
                 <h3 className="text-base font-bold text-gray-900 mb-3">{t('filters.category')}</h3>
                 <div className="space-y-0.5">
                   <button
-                    onClick={() => { setCategory(''); setSubcategory(''); }}
+                    onClick={() => { setCategory(''); setSubcategory(''); updateURL({ category: '', subcategory: '' }); }}
                     className={`w-full text-left px-2 py-1.5 text-sm rounded transition-colors font-semibold ${
                       !category ? 'text-primary-600 font-bold' : 'text-gray-700 hover:text-primary-600'
                     }`}
@@ -225,7 +238,7 @@ export default function SearchPage() {
                   {categories.map((cat) => (
                     <div key={cat.name}>
                       <button
-                        onClick={() => { setCategory(cat.name); setSubcategory(''); }}
+                        onClick={() => { setCategory(cat.name); setSubcategory(''); updateURL({ category: cat.name, subcategory: '' }); }}
                         className={`w-full text-left px-2 py-1.5 text-sm rounded transition-colors flex items-center justify-between ${
                           category === cat.name
                             ? 'text-primary-600 font-bold bg-primary-50'
@@ -242,7 +255,7 @@ export default function SearchPage() {
                       {category === cat.name && cat.subcategories?.length > 0 && (
                         <div className="ml-3 mt-0.5 space-y-0.5 border-l-2 border-primary-100 pl-3">
                           <button
-                            onClick={() => setSubcategory('')}
+                            onClick={() => { setSubcategory(''); updateURL({ subcategory: '' }); }}
                             className={`w-full text-left py-1 text-xs rounded transition-colors ${
                               !subcategory ? 'text-primary-600 font-medium' : 'text-gray-500 hover:text-primary-600'
                             }`}
@@ -254,7 +267,7 @@ export default function SearchPage() {
                             return (
                               <button
                                 key={subName}
-                                onClick={() => setSubcategory(subName)}
+                                onClick={() => { setSubcategory(subName); updateURL({ subcategory: subName }); }}
                                 className={`w-full text-left py-1 text-xs rounded transition-colors ${
                                   subcategory === subName
                                     ? 'text-primary-600 font-medium'
@@ -275,7 +288,7 @@ export default function SearchPage() {
               {/* Location Filter */}
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.location')}</h3>
-                <select value={location} onChange={(e) => setLocation(e.target.value)}
+                <select value={location} onChange={(e) => { setLocation(e.target.value); updateURL({ location: e.target.value }); }}
                   className="input text-sm w-full">
                   <option value="">{t('filters.all_locations')}</option>
                   {locations.map((loc) => (
@@ -287,13 +300,17 @@ export default function SearchPage() {
               {/* Price Range Filter */}
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.price_range')} ({t('common.egp')})</h3>
-                <div className="flex gap-2">
+                <div className="flex gap-2 mb-2">
                   <input type="number" placeholder={t('filters.min_price')} value={priceMin}
                     onChange={(e) => setPriceMin(e.target.value)} className="input text-sm w-full" />
                   <span className="text-gray-400 self-center">-</span>
                   <input type="number" placeholder={t('filters.max_price')} value={priceMax}
                     onChange={(e) => setPriceMax(e.target.value)} className="input text-sm w-full" />
                 </div>
+                <button onClick={() => updateURL({ minPrice: priceMin, maxPrice: priceMax })}
+                  className="w-full py-1.5 text-xs bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                  Apply
+                </button>
               </div>
 
               {/* Condition Filter */}
@@ -302,14 +319,14 @@ export default function SearchPage() {
                 <div className="space-y-1">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input type="radio" name="condition" checked={!condition}
-                      onChange={() => setCondition('')}
+                      onChange={() => { setCondition(''); updateURL({ condition: '' }); }}
                       className="text-primary-600 focus:ring-primary-500" />
                     <span className="text-sm text-gray-600">{t('condition.all')}</span>
                   </label>
                   {conditions.map((cond) => (
                     <label key={cond} className="flex items-center gap-2 cursor-pointer">
                       <input type="radio" name="condition" checked={condition === cond}
-                        onChange={() => setCondition(cond)}
+                        onChange={() => { setCondition(cond); updateURL({ condition: cond }); }}
                         className="text-primary-600 focus:ring-primary-500" />
                       <span className="text-sm text-gray-600">{cond}</span>
                     </label>
@@ -327,7 +344,7 @@ export default function SearchPage() {
                 {category && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-primary-50 text-primary-700 text-sm rounded-full">
                     {category}
-                    <button onClick={() => setCategory('')} className="hover:text-primary-900">
+                    <button onClick={() => { setCategory(''); setSubcategory(''); updateURL({ category: '', subcategory: '' }); }} className="hover:text-primary-900">
                       <FiX size={14} />
                     </button>
                   </span>
@@ -335,7 +352,7 @@ export default function SearchPage() {
                 {condition && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-primary-50 text-primary-700 text-sm rounded-full">
                     {condition}
-                    <button onClick={() => setCondition('')} className="hover:text-primary-900">
+                    <button onClick={() => { setCondition(''); updateURL({ condition: '' }); }} className="hover:text-primary-900">
                       <FiX size={14} />
                     </button>
                   </span>
@@ -344,7 +361,7 @@ export default function SearchPage() {
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-primary-50 text-primary-700 text-sm rounded-full">
                     <FiMapPin size={12} />
                     {location}
-                    <button onClick={() => setLocation('')} className="hover:text-primary-900">
+                    <button onClick={() => { setLocation(''); updateURL({ location: '' }); }} className="hover:text-primary-900">
                       <FiX size={14} />
                     </button>
                   </span>
@@ -352,7 +369,7 @@ export default function SearchPage() {
                 {(priceMin || priceMax) && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-primary-50 text-primary-700 text-sm rounded-full">
                     {priceMin || '0'} - {priceMax || '∞'} {t('common.egp')}
-                    <button onClick={() => { setPriceMin(''); setPriceMax(''); }} className="hover:text-primary-900">
+                    <button onClick={() => { setPriceMin(''); setPriceMax(''); updateURL({ minPrice: '', maxPrice: '' }); }} className="hover:text-primary-900">
                       <FiX size={14} />
                     </button>
                   </span>
@@ -450,7 +467,7 @@ export default function SearchPage() {
                 <h3 className="text-sm font-semibold text-gray-800 mb-2">{t('filters.category')}</h3>
                 <div className="space-y-0.5">
                   <button
-                    onClick={() => { setCategory(''); setSubcategory(''); }}
+                    onClick={() => { setCategory(''); setSubcategory(''); updateURL({ category: '', subcategory: '' }); }}
                     className={`w-full text-left px-2 py-1.5 text-sm rounded ${!category ? 'text-primary-600 font-semibold' : 'text-gray-600'}`}
                   >
                     {t('categories.all')}
@@ -458,7 +475,7 @@ export default function SearchPage() {
                   {categories.map((cat) => (
                     <div key={cat.name}>
                       <button
-                        onClick={() => { setCategory(cat.name); setSubcategory(''); }}
+                        onClick={() => { setCategory(cat.name); setSubcategory(''); updateURL({ category: cat.name, subcategory: '' }); }}
                         className={`w-full text-left px-2 py-1.5 text-sm rounded flex items-center justify-between ${
                           category === cat.name ? 'text-primary-600 font-semibold bg-primary-50' : 'text-gray-600'
                         }`}
@@ -468,14 +485,14 @@ export default function SearchPage() {
                       </button>
                       {category === cat.name && cat.subcategories?.length > 0 && (
                         <div className="ml-3 mt-1 space-y-1 border-l-2 border-primary-100 pl-3">
-                          <button onClick={() => setSubcategory('')}
+                          <button onClick={() => { setSubcategory(''); updateURL({ subcategory: '' }); }}
                             className={`w-full text-left py-1 text-xs ${!subcategory ? 'text-primary-600 font-medium' : 'text-gray-500'}`}>
                             All {cat.name}
                           </button>
                           {cat.subcategories.map((sub) => {
                             const subName = typeof sub === 'string' ? sub : sub.name;
                             return (
-                              <button key={subName} onClick={() => setSubcategory(subName)}
+                              <button key={subName} onClick={() => { setSubcategory(subName); updateURL({ subcategory: subName }); }}
                                 className={`w-full text-left py-1 text-xs ${subcategory === subName ? 'text-primary-600 font-medium' : 'text-gray-500'}`}>
                                 {subName}
                               </button>
@@ -491,7 +508,7 @@ export default function SearchPage() {
               {/* Location Filter */}
               <div>
                 <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filters.location')}</h3>
-                <select value={location} onChange={(e) => setLocation(e.target.value)}
+                <select value={location} onChange={(e) => { setLocation(e.target.value); updateURL({ location: e.target.value }); }}
                   className="input text-sm w-full">
                   <option value="">{t('filters.all_locations')}</option>
                   {locations.map((loc) => (
@@ -518,14 +535,14 @@ export default function SearchPage() {
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input type="radio" name="mobile-condition" checked={!condition}
-                      onChange={() => setCondition('')}
+                      onChange={() => { setCondition(''); updateURL({ condition: '' }); }}
                       className="text-primary-600 focus:ring-primary-500" />
                     <span className="text-sm text-gray-600">{t('condition.all')}</span>
                   </label>
                   {conditions.map((cond) => (
                     <label key={cond} className="flex items-center gap-2 cursor-pointer">
                       <input type="radio" name="mobile-condition" checked={condition === cond}
-                        onChange={() => setCondition(cond)}
+                        onChange={() => { setCondition(cond); updateURL({ condition: cond }); }}
                         className="text-primary-600 focus:ring-primary-500" />
                       <span className="text-sm text-gray-600">{cond}</span>
                     </label>
@@ -542,7 +559,7 @@ export default function SearchPage() {
                 {t('buttons.clear')}
               </button>
               <button
-                onClick={() => setShowFilters(false)}
+                onClick={() => { updateURL({ minPrice: priceMin, maxPrice: priceMax }); setShowFilters(false); }}
                 className="btn btn-primary flex-1"
               >
                 {t('filters.apply_filters')}
