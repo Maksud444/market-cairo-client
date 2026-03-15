@@ -46,7 +46,7 @@ export default function SearchPage() {
     pages: 1,
   });
 
-  // Sync URL params with filters - reset stale filters not in URL
+  // Sync URL params with filters store (for sidebar UI state)
   useEffect(() => {
     if (!router.isReady) return;
     setCategory(router.query.category || '');
@@ -57,7 +57,7 @@ export default function SearchPage() {
     setPriceMin(router.query.minPrice || '');
     setPriceMax(router.query.maxPrice || '');
     if (router.query.sort) setSort(router.query.sort);
-  }, [router.asPath]);
+  }, [router.isReady, router.asPath]);
 
   // Fetch categories and locations
   useEffect(() => {
@@ -76,21 +76,23 @@ export default function SearchPage() {
     fetchFiltersData();
   }, []);
 
-  // Fetch listings with filters
+  // Fetch listings - reads directly from router.query to avoid store timing issues
   const fetchListings = useCallback(async (page = 1) => {
+    if (!router.isReady) return;
     setIsLoading(true);
     try {
+      const q = router.query;
       const params = {
         page,
         limit: 12,
-        ...(category && { category }),
-        ...(subcategory && { subcategory }),
-        ...(condition && { condition }),
-        ...(location && { location }),
-        ...(search && { search }),
-        ...(sort && { sort }),
-        ...(priceMin && { minPrice: priceMin }),
-        ...(priceMax && { maxPrice: priceMax }),
+        ...(q.category && { category: q.category }),
+        ...(q.subcategory && { subcategory: q.subcategory }),
+        ...(q.condition && { condition: q.condition }),
+        ...(q.location && { location: q.location }),
+        ...(q.q && { search: q.q }),
+        sort: q.sort || sort || 'newest',
+        ...(q.minPrice && { minPrice: q.minPrice }),
+        ...(q.maxPrice && { maxPrice: q.maxPrice }),
       };
 
       const res = await listingsAPI.getAll(params);
@@ -103,7 +105,7 @@ export default function SearchPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [category, subcategory, condition, location, search, sort, priceMin, priceMax]);
+  }, [router.isReady, router.query, sort]);
 
   useEffect(() => {
     fetchListings(1);
@@ -122,11 +124,13 @@ export default function SearchPage() {
 
   const activeFiltersCount = [category, subcategory, condition, location, priceMin, priceMax].filter(Boolean).length;
   const selectedCategoryData = categories.find(c => c.name === category);
+  const currentCategory = router.query.category || '';
+  const currentSearch = router.query.q || '';
 
   return (
     <Layout>
       <Head>
-        <title>{search ? `Search: ${search}` : category || 'Browse All'} - MySouqify</title>
+        <title>{currentSearch ? `Search: ${currentSearch}` : currentCategory || 'Browse All'} - MySouqify</title>
       </Head>
 
       <div className="container-app py-4 lg:py-8">
@@ -134,7 +138,7 @@ export default function SearchPage() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
           <div>
             <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
-              {search ? `Results for "${search}"` : category || 'All Listings'}
+              {currentSearch ? `Results for "${currentSearch}"` : currentCategory || 'All Listings'}
             </h1>
             <p className="text-sm text-gray-500 mt-1">
               {pagination.total} {pagination.total === 1 ? 'item' : 'items'} found
