@@ -9,6 +9,7 @@ export default function Footer() {
     { name: t('footer.browse_listings'), href: '/search' },
     { name: t('footer.post_ad'), href: '/post' },
     { name: t('footer.my_dashboard'), href: '/dashboard' },
+    { name: t('footer.safety_tips'), href: '/safety' },
   ];
 
   const categories = [
@@ -87,10 +88,23 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-gray-800">
-        <div className="container-app py-4">
-          <p className="text-sm text-gray-500 text-center">
+        <div className="container-app py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-sm text-gray-500">
             © {new Date().getFullYear()} MySouqify. {t('footer.all_rights')}
           </p>
+          <div className="flex items-center gap-4">
+            <Link href="/privacy" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
+              {t('footer.privacy_policy')}
+            </Link>
+            <span className="text-gray-700">·</span>
+            <Link href="/terms" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
+              {t('footer.terms')}
+            </Link>
+            <span className="text-gray-700">·</span>
+            <Link href="/safety" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
+              {t('footer.safety')}
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

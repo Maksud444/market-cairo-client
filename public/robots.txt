@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+Disallow: /cp-x4m9k2
+Disallow: /cp-x4m9k2/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /messages
+Disallow: /notifications
+Disallow: /verify
+Disallow: /profile
+
+Sitemap: https://mysouqify.com/sitemap.xml
