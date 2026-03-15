@@ -169,7 +169,17 @@
     "pending_cannot_post": "Your verification is still under review. Please wait.",
     "back_to_dashboard": "Back to Dashboard",
     "rejected_title": "Verification Rejected",
-    "rejected_resubmit": "You can resubmit with new documents below."
+    "rejected_resubmit": "You can resubmit with new documents below.",
+    "national_id": "Egyptian National ID",
+    "national_id_desc": "National ID Card (الرقم القومي)",
+    "national_id_upload_hint": "Upload clear photos of front and back of your National ID Card",
+    "egyptian_citizens": "For Egyptian Citizens",
+    "foreign_residents": "For Foreign Residents / Students",
+    "verify_modal_title": "Verify Your Identity",
+    "verify_modal_subtitle": "One-time verification required before posting",
+    "verify_modal_body": "Before posting your first ad, we need to verify your identity to maintain a safe marketplace.",
+    "verify_modal_pending": "Your verification is under review. We'll notify you once approved.",
+    "rejected_reason": "Reason"
   },
   "post": {
     "title": "Post a Listing",

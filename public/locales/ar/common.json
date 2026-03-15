@@ -169,7 +169,17 @@
     "pending_cannot_post": "التحقق بتاعك لسه تحت المراجعة. استنى شوية.",
     "back_to_dashboard": "ارجع للوحة التحكم",
     "rejected_title": "التحقق مرفوض",
-    "rejected_resubmit": "تقدر تبعت وثائق جديدة تحت."
+    "rejected_resubmit": "تقدر تبعت وثائق جديدة تحت.",
+    "national_id": "بطاقة الرقم القومي",
+    "national_id_desc": "بطاقة الهوية الوطنية المصرية",
+    "national_id_upload_hint": "ارفع صور واضحة للوش والضهر بتاع البطاقة",
+    "egyptian_citizens": "للمواطنين المصريين",
+    "foreign_residents": "للمقيمين الأجانب / الطلاب",
+    "verify_modal_title": "التحقق من الهوية",
+    "verify_modal_subtitle": "تحقق مرة واحدة قبل النشر",
+    "verify_modal_body": "قبل ما تنشر أول إعلان، محتاجين نتحقق من هويتك عشان نحافظ على أمان السوق.",
+    "verify_modal_pending": "التحقق بتاعك تحت المراجعة. هنبلغك لما يتم القبول.",
+    "rejected_reason": "السبب"
   },
   "post": {
     "title": "حط إعلان",

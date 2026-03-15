@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
-import { FiUpload, FiX, FiCamera, FiAlertCircle, FiCheck, FiChevronDown, FiMapPin } from 'react-icons/fi';
+import { FiUpload, FiX, FiCamera, FiAlertCircle, FiCheck, FiChevronDown, FiMapPin, FiShield, FiChevronRight } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
@@ -48,26 +49,15 @@ export default function PostListingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(!!editId);
   const [isGeolocating, setIsGeolocating] = useState(false);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
 
-  // Redirect if not authenticated or not verified
+  // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       router.push('/?login=true');
       return;
     }
-    // Check verification status (skip for admins)
-    if (user && !user.isAdmin) {
-      const vStatus = user.verification?.status;
-      if (vStatus !== 'approved') {
-        if (vStatus === 'pending') {
-          toast.error(t('verify.pending_cannot_post'));
-          router.push('/dashboard');
-        } else {
-          router.push('/verify');
-        }
-      }
-    }
-  }, [isAuthenticated, user, router]);
+  }, [isAuthenticated, router]);
 
   // Fetch categories and locations
   useEffect(() => {
@@ -293,6 +283,14 @@ export default function PostListingPage() {
     }
 
     setIsSubmitting(true);
+
+    // Check verification status (skip for admins)
+    if (user && !user.isAdmin && user.verification?.status !== 'approved') {
+      setIsSubmitting(false);
+      setShowVerifyModal(true);
+      return;
+    }
+
     try {
       const data = new FormData();
       data.append('title', formData.title.trim());
@@ -712,6 +710,75 @@ export default function PostListingPage() {
           </form>
         </div>
       </div>
+
+      {/* Verification Modal */}
+      {showVerifyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-red-600 to-red-700 px-6 py-5 text-white text-center">
+              <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                <FiShield size={28} />
+              </div>
+              {user?.verification?.status === 'pending' ? (
+                <>
+                  <h2 className="text-xl font-bold">Verification Under Review</h2>
+                  <p className="text-red-100 text-sm mt-1">Your submission is being processed</p>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-xl font-bold">Identity Verification Required</h2>
+                  <p className="text-red-100 text-sm mt-1">One-time verification to keep MySouqify safe</p>
+                </>
+              )}
+            </div>
+            {/* Body */}
+            <div className="p-6">
+              {user?.verification?.status === 'pending' ? (
+                <>
+                  <p className="text-gray-600 text-sm text-center mb-6">
+                    Your verification is under review. We&apos;ll notify you once approved. Please wait while our team reviews your documents.
+                  </p>
+                  <button onClick={() => setShowVerifyModal(false)}
+                    className="w-full py-2.5 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-xl transition-colors">
+                    Close
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="text-gray-600 text-sm text-center mb-5">
+                    Before posting your first ad, we need to verify your identity. This helps us maintain a trusted marketplace.
+                  </p>
+                  <div className="space-y-3 mb-6">
+                    <Link href="/verify?type=egyptian" onClick={() => setShowVerifyModal(false)}
+                      className="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl hover:border-red-500 hover:bg-red-50 transition-all group">
+                      <span className="text-3xl">🇪🇬</span>
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900 group-hover:text-red-700">Egyptian Citizen</p>
+                        <p className="text-xs text-gray-500">Submit your National ID Card (الرقم القومي)</p>
+                      </div>
+                      <FiChevronRight className="text-gray-400 group-hover:text-red-500" size={18} />
+                    </Link>
+                    <Link href="/verify?type=foreign" onClick={() => setShowVerifyModal(false)}
+                      className="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl hover:border-red-500 hover:bg-red-50 transition-all group">
+                      <span className="text-3xl">🌍</span>
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900 group-hover:text-red-700">Foreign Resident / Student</p>
+                        <p className="text-xs text-gray-500">Submit passport, student card or residential card</p>
+                      </div>
+                      <FiChevronRight className="text-gray-400 group-hover:text-red-500" size={18} />
+                    </Link>
+                  </div>
+                  <button onClick={() => setShowVerifyModal(false)}
+                    className="w-full py-2.5 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-xl transition-colors">
+                    Cancel
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }

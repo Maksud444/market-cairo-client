@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import '../styles/globals.css';
 import Head from 'next/head';
 import { Toaster } from 'react-hot-toast';
@@ -6,6 +6,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { appWithTranslation } from 'next-i18next';
 import nextI18NextConfig from '../../next-i18next.config';
 import AuthModal from '../components/AuthModal';
+import SplashScreen from '../components/SplashScreen';
 import { useAuthStore } from '../lib/store';
 import { useSocketStore } from '../lib/socket';
 import Cookies from 'js-cookie';
@@ -15,6 +16,15 @@ function MyApp({ Component, pageProps }) {
   const fetchUser = useAuthStore((state) => state.fetchUser);
   const user = useAuthStore((state) => state.user);
   const { connect, disconnect } = useSocketStore();
+  const [showSplash, setShowSplash] = useState(false);
+
+  // Show splash screen once per session
+  useEffect(() => {
+    if (!sessionStorage.getItem('splash_shown')) {
+      setShowSplash(true);
+      sessionStorage.setItem('splash_shown', '1');
+    }
+  }, []);
 
   // Fetch user data on mount
   useEffect(() => {
@@ -41,6 +51,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
+      {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <meta name="theme-color" content="#E00000" />

@@ -31,6 +31,12 @@ function VerifyPage() {
     fetchVerificationStatus();
   }, []);
 
+  useEffect(() => {
+    if (router.query.type === 'egyptian') {
+      setDocumentType('national_id');
+    }
+  }, [router.query.type]);
+
   const fetchVerificationStatus = async () => {
     try {
       const res = await verificationAPI.getStatus();
@@ -146,9 +152,10 @@ function VerifyPage() {
   };
 
   const documentTypes = [
-    { value: 'passport', label: t('verify.passport'), icon: '🛂', desc: t('verify.passport_desc') },
-    { value: 'student_card', label: t('verify.student_card'), icon: '🎓', desc: t('verify.student_card_desc') },
-    { value: 'residential_card', label: t('verify.residential_card'), icon: '🏠', desc: t('verify.residential_card_desc') },
+    { value: 'national_id', label: t('verify.national_id'), icon: '🪪', desc: t('verify.national_id_desc'), group: 'egyptian' },
+    { value: 'passport', label: t('verify.passport'), icon: '🛂', desc: t('verify.passport_desc'), group: 'foreign' },
+    { value: 'student_card', label: t('verify.student_card'), icon: '🎓', desc: t('verify.student_card_desc'), group: 'foreign' },
+    { value: 'residential_card', label: t('verify.residential_card'), icon: '🏠', desc: t('verify.residential_card_desc'), group: 'foreign' },
   ];
 
   if (isLoading) {
@@ -247,8 +254,38 @@ function VerifyPage() {
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 {t('verify.select_document_type')} <span className="text-red-500">*</span>
               </label>
+
+              {/* Egyptian Citizens */}
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">🇪🇬 {t('verify.egyptian_citizens')}</p>
+              <div className="grid grid-cols-1 gap-3 mb-4">
+                {documentTypes.filter(d => d.group === 'egyptian').map((doc) => (
+                  <label
+                    key={doc.value}
+                    className={`flex flex-col items-center gap-2 p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                      documentType === doc.value
+                        ? 'border-primary-500 bg-primary-50 shadow-sm'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="documentType"
+                      value={doc.value}
+                      checked={documentType === doc.value}
+                      onChange={(e) => setDocumentType(e.target.value)}
+                      className="sr-only"
+                    />
+                    <span className="text-3xl">{doc.icon}</span>
+                    <span className="font-medium text-gray-900 text-sm">{doc.label}</span>
+                    <span className="text-xs text-gray-500 text-center">{doc.desc}</span>
+                  </label>
+                ))}
+              </div>
+
+              {/* Foreign Residents */}
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">🌍 {t('verify.foreign_residents')}</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {documentTypes.map((doc) => (
+                {documentTypes.filter(d => d.group === 'foreign').map((doc) => (
                   <label
                     key={doc.value}
                     className={`flex flex-col items-center gap-2 p-4 border-2 rounded-xl cursor-pointer transition-all ${
@@ -287,6 +324,8 @@ function VerifyPage() {
                 <p className="text-sm text-gray-500 mb-3">
                   {documentType === 'passport'
                     ? t('verify.passport_upload_hint')
+                    : documentType === 'national_id'
+                    ? t('verify.national_id_upload_hint')
                     : t('verify.card_upload_hint')}
                 </p>
 
