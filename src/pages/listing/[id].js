@@ -32,7 +32,7 @@ export default function ListingDetailPage({ initialListing }) {
 
   const [listing, setListing] = useState(initialListing || null);
   const [similarListings, setSimilarListings] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!initialListing);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
@@ -70,6 +70,12 @@ export default function ListingDetailPage({ initialListing }) {
 
   useEffect(() => {
     if (!id) return;
+    if (initialListing) {
+      listingsAPI.getSimilar(id).then(res => {
+        if (res.data.success) setSimilarListings(res.data.listings);
+      }).catch(() => {});
+      return;
+    }
 
     const fetchListing = async () => {
       setIsLoading(true);
@@ -207,9 +213,8 @@ export default function ListingDetailPage({ initialListing }) {
   const pageTitle = `${listing.title} | EGP ${listing.price?.toLocaleString()} | ${listing.location || 'Cairo'} - MySouqify`;
   const pageDesc = listing.description?.slice(0, 160) || '';
   const pageUrl = `https://mysouqify.com/listing/${listing._id}`;
-  const pageImage = listing.images?.[0]
-    ? (listing.images[0].startsWith('http') ? listing.images[0] : `https://mysouqify.com${listing.images[0]}`)
-    : 'https://mysouqify.com/og-default.jpg';
+  const rawImage = listing.images?.[0] ? getImageUrl(listing.images[0]) : null;
+  const pageImage = rawImage || 'https://mysouqify.com/og-default.jpg';
 
   const jsonLd = {
     '@context': 'https://schema.org',
