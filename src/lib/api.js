@@ -119,6 +119,8 @@ export const messagesAPI = {
   },
   sendMessage: (conversationId, content, type = 'text', offerAmount = null) =>
     api.post(`/messages/${conversationId}`, { content, type, ...(offerAmount ? { offerAmount } : {}) }),
+  respondToOffer: (messageId, status) =>
+    api.patch(`/messages/${messageId}/offer`, { status }),
   getUnreadCount: () => api.get('/messages/unread/count'),
   deleteConversation: (id) => api.delete(`/messages/conversations/${id}`),
 };

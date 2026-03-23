@@ -201,6 +201,12 @@ export const useMessagesStore = create((set, get) => ({
     }));
   },
 
+  updateMessage: (updated) => {
+    set((state) => ({
+      messages: state.messages.map((m) => m._id === updated._id ? { ...m, ...updated } : m)
+    }));
+  },
+
   fetchUnreadCount: async () => {
     try {
       const { data } = await messagesAPI.getUnreadCount();

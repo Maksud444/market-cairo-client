@@ -260,6 +260,18 @@ export default function MessagesPage() {
     }
   };
 
+  const handleRespondToOffer = async (messageId, status) => {
+    try {
+      const res = await messagesAPI.respondToOffer(messageId, status);
+      if (res.data.success) {
+        useMessagesStore.getState().updateMessage(res.data.message);
+        toast.success(status === 'accepted' ? 'Offer accepted!' : 'Offer declined');
+      }
+    } catch {
+      toast.error('Failed to respond to offer');
+    }
+  };
+
   if (!_hasHydrated || !isAuthenticated) {
     return null;
   }
@@ -379,12 +391,29 @@ export default function MessagesPage() {
                       )}
                       <div style={{ maxWidth: '78%' }}>
                         {message.type === 'offer' ? (
-                          <div style={{ background: isOwn ? '#7f1d1d' : '#f9fafb', border: isOwn ? 'none' : '2px solid #dc2626', borderRadius: 12, padding: '10px 14px', minWidth: 160 }}>
-                            <div style={{ fontSize: 11, color: isOwn ? '#fca5a5' : '#dc2626', fontWeight: 600, marginBottom: 4 }}>PRICE OFFER</div>
+                          <div style={{ background: isOwn ? '#7f1d1d' : '#f9fafb', border: isOwn ? 'none' : '2px solid #dc2626', borderRadius: 12, padding: '10px 14px', minWidth: 180 }}>
+                            <div style={{ fontSize: 11, color: isOwn ? '#fca5a5' : '#dc2626', fontWeight: 600, marginBottom: 4 }}>💰 PRICE OFFER</div>
                             <div style={{ fontSize: 20, fontWeight: 800, color: isOwn ? 'white' : '#dc2626' }}>
                               {message.offerAmount?.toLocaleString() || ''} EGP
                             </div>
-                            <div style={{ fontSize: 11, color: isOwn ? '#fca5a5' : '#6b7280', marginTop: 2 }}>Tap to negotiate</div>
+                            {message.offerStatus === 'accepted' && (
+                              <div style={{ marginTop: 6, fontSize: 11, fontWeight: 700, color: '#16a34a', background: '#dcfce7', borderRadius: 6, padding: '2px 8px', display: 'inline-block' }}>✓ Accepted</div>
+                            )}
+                            {message.offerStatus === 'rejected' && (
+                              <div style={{ marginTop: 6, fontSize: 11, fontWeight: 700, color: '#dc2626', background: '#fee2e2', borderRadius: 6, padding: '2px 8px', display: 'inline-block' }}>✗ Declined</div>
+                            )}
+                            {!isOwn && message.offerStatus === 'pending' && (
+                              <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                                <button onClick={() => handleRespondToOffer(message._id, 'accepted')}
+                                  style={{ flex: 1, padding: '5px 0', background: '#16a34a', color: 'white', border: 'none', borderRadius: 7, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+                                  Accept
+                                </button>
+                                <button onClick={() => handleRespondToOffer(message._id, 'rejected')}
+                                  style={{ flex: 1, padding: '5px 0', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: 7, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+                                  Decline
+                                </button>
+                              </div>
+                            )}
                           </div>
                         ) : (
                           <div style={{ padding: '9px 13px', borderRadius: 18, fontSize: 14, wordBreak: 'break-word', overflowWrap: 'anywhere', backgroundColor: isOwn ? '#dc2626' : '#fff', color: isOwn ? '#fff' : '#111827', borderBottomRightRadius: isOwn ? 4 : 18, borderBottomLeftRadius: isOwn ? 18 : 4, boxShadow: isOwn ? 'none' : '0 1px 3px rgba(0,0,0,0.08)' }}>
@@ -744,12 +773,29 @@ export default function MessagesPage() {
 
                           <div className={`max-w-[70%] ${isOwn ? 'order-1' : ''}`}>
                             {message.type === 'offer' ? (
-                              <div style={{ background: isOwn ? '#7f1d1d' : '#f9fafb', border: isOwn ? 'none' : '2px solid #dc2626', borderRadius: 12, padding: '10px 14px', minWidth: 160 }}>
-                                <div style={{ fontSize: 11, color: isOwn ? '#fca5a5' : '#dc2626', fontWeight: 600, marginBottom: 4 }}>PRICE OFFER</div>
+                              <div style={{ background: isOwn ? '#7f1d1d' : '#f9fafb', border: isOwn ? 'none' : '2px solid #dc2626', borderRadius: 12, padding: '10px 14px', minWidth: 180 }}>
+                                <div style={{ fontSize: 11, color: isOwn ? '#fca5a5' : '#dc2626', fontWeight: 600, marginBottom: 4 }}>💰 PRICE OFFER</div>
                                 <div style={{ fontSize: 20, fontWeight: 800, color: isOwn ? 'white' : '#dc2626' }}>
                                   {message.offerAmount?.toLocaleString() || ''} EGP
                                 </div>
-                                <div style={{ fontSize: 11, color: isOwn ? '#fca5a5' : '#6b7280', marginTop: 2 }}>Tap to negotiate</div>
+                                {message.offerStatus === 'accepted' && (
+                                  <div style={{ marginTop: 6, fontSize: 11, fontWeight: 700, color: '#16a34a', background: '#dcfce7', borderRadius: 6, padding: '2px 8px', display: 'inline-block' }}>✓ Accepted</div>
+                                )}
+                                {message.offerStatus === 'rejected' && (
+                                  <div style={{ marginTop: 6, fontSize: 11, fontWeight: 700, color: '#dc2626', background: '#fee2e2', borderRadius: 6, padding: '2px 8px', display: 'inline-block' }}>✗ Declined</div>
+                                )}
+                                {!isOwn && message.offerStatus === 'pending' && (
+                                  <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                                    <button onClick={() => handleRespondToOffer(message._id, 'accepted')}
+                                      style={{ flex: 1, padding: '5px 0', background: '#16a34a', color: 'white', border: 'none', borderRadius: 7, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+                                      Accept
+                                    </button>
+                                    <button onClick={() => handleRespondToOffer(message._id, 'rejected')}
+                                      style={{ flex: 1, padding: '5px 0', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: 7, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+                                      Decline
+                                    </button>
+                                  </div>
+                                )}
                               </div>
                             ) : (
                               <div className={`chat-bubble ${isOwn ? 'chat-bubble-sent' : 'chat-bubble-received'}`}>
