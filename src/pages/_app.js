@@ -53,7 +53,7 @@ function MyApp({ Component, pageProps }) {
     <GoogleOAuthProvider clientId={googleClientId}>
       {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
       <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#E00000" />
         <link rel="icon" href="/favicon.ico" />
         <title>MySouqify - Buy & Sell Used Items in Cairo</title>

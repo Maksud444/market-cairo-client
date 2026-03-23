@@ -8,14 +8,40 @@
   html {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-gray-50 text-gray-900 antialiased;
+    overflow-x: hidden;
+    min-width: 0;
   }
 
   * {
     @apply box-border;
+    max-width: 100%;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Minimum touch target size for interactive elements */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Ensure text is readable on mobile */
+  @media (max-width: 768px) {
+    .text-xs {
+      font-size: 0.8125rem; /* 13px → floor up to near 14px */
+      line-height: 1.25rem;
+    }
+    label {
+      font-size: 0.875rem;
+    }
   }
 }
 
@@ -23,6 +49,7 @@
   /* Button styles */
   .btn {
     @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    min-height: 44px;
   }
 
   .btn-primary {
@@ -52,6 +79,8 @@
   /* Input styles */
   .input {
     @apply w-full px-4 py-2.5 text-sm bg-white border border-gray-300 rounded-lg transition-all duration-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 placeholder:text-gray-400;
+    min-height: 44px;
+    font-size: 16px; /* prevents iOS zoom on focus */
   }
 
   .input-error {
@@ -187,5 +216,44 @@
   /* Safe area padding for mobile */
   .pb-safe {
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  /* Responsive grid helpers */
+  .grid-responsive-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  @media (min-width: 640px) {
+    .grid-responsive-2 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1024px) {
+    .grid-responsive-2 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+  }
+}
+
+/* Prevent horizontal overflow from any fixed-width children */
+@media (max-width: 768px) {
+  .container-app {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Native select/input: prevent iOS zoom */
+  select,
+  textarea,
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"] {
+    font-size: 16px !important;
   }
 }

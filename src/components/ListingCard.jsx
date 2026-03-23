@@ -83,7 +83,7 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
       <div className="group bg-white rounded-xl border border-gray-100 hover:shadow-md transition-shadow overflow-hidden">
         <div className="flex gap-3">
           {/* Image */}
-          <Link href={`/listing/${listing._id}`} className="relative w-44 sm:w-52 flex-shrink-0 bg-gray-100 block">
+          <Link href={`/listing/${listing._id}`} className="relative w-28 sm:w-44 md:w-52 flex-shrink-0 bg-gray-100 block">
             <Image
               src={imageUrl}
               alt={listing.title}

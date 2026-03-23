@@ -119,14 +119,14 @@ export default function Home() {
       <RamadanBanner />
 
       {/* Browse Categories - Desktop only (mobile uses Header icons) */}
-      <section className="hidden lg:block container-app py-16">
+      <section className="hidden lg:block container-app py-8 lg:py-16">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">{t('home.browse_categories')}</h2>
+          <h2 className="text-xl lg:text-2xl font-bold text-gray-900">{t('home.browse_categories')}</h2>
           <Link href="/search" className="text-sm text-primary-600 hover:underline flex items-center gap-1">
             {t('home.view_all')} <FiArrowRight size={14} />
           </Link>
         </div>
-        <div className="grid grid-cols-8 gap-4">
+        <div className="grid grid-cols-4 lg:grid-cols-8 gap-3 lg:gap-4">
           {categories.map((category) => {
             const Icon = categoryIcons[category.name] || FiPackage;
             return (
@@ -235,7 +235,7 @@ export default function Home() {
       <section className="container-app py-10 lg:py-16">
         <h2 className="text-xl lg:text-2xl font-bold text-gray-900 text-center mb-10">{t('home.how_it_works')}</h2>
 
-        <div className="grid lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-8 max-w-4xl mx-auto">
           <div className="text-center">
             <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
               1
