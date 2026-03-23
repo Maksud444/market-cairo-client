@@ -123,25 +123,24 @@ export default function Home() {
       {/* Ramadan Banner */}
       <RamadanBanner />
 
-      {/* Browse Categories - Desktop only (mobile uses Header icons) */}
-      <section className="hidden lg:block container-app py-8 lg:py-16">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl lg:text-2xl font-bold text-gray-900">{t('home.browse_categories')}</h2>
+      {/* Browse Categories — shown on tablet (md) only; desktop uses header nav, mobile uses header icon strip */}
+      <section className="hidden md:block lg:hidden container-app py-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-gray-900">{t('home.browse_categories')}</h2>
           <Link href="/search" className="text-sm text-primary-600 hover:underline flex items-center gap-1">
             {t('home.view_all')} <FiArrowRight size={14} />
           </Link>
         </div>
-        <div className="grid grid-cols-4 lg:grid-cols-8 gap-3 lg:gap-4">
+        <div className="grid grid-cols-4 gap-3">
           {categories.map((category) => {
             const Icon = categoryIcons[category.name] || FiPackage;
             return (
               <Link key={category.name} href={`/search?category=${encodeURIComponent(category.name)}`}
-                className="flex flex-col items-center p-4 bg-white rounded-xl border border-gray-100 hover:border-primary-500 hover:shadow-card transition-all group">
-                <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mb-2 group-hover:bg-primary-50 transition-colors">
-                  <Icon className="text-primary-600 group-hover:text-primary-700" size={24} />
+                className="flex flex-col items-center p-3 bg-white rounded-xl border border-gray-100 hover:border-primary-500 hover:shadow-card transition-all group">
+                <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center mb-1.5 group-hover:bg-primary-50 transition-colors">
+                  <Icon className="text-primary-600" size={20} />
                 </div>
-                <span className="text-sm text-gray-800 text-center font-bold leading-tight">{catKeyMap[category.name] ? t(`categories.${catKeyMap[category.name]}`) : category.name}</span>
-                <span className="text-xs text-gray-400 mt-0.5">{category.count || 0} ads</span>
+                <span className="text-xs text-gray-700 text-center font-semibold leading-tight">{catKeyMap[category.name] ? t(`categories.${catKeyMap[category.name]}`) : category.name}</span>
               </Link>
             );
           })}

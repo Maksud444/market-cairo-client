@@ -27,7 +27,7 @@ export default function Header() {
   const router = useRouter();
   const isArabic = router.locale === 'ar';
   const showMobileSearchBar = router.pathname === '/' || router.pathname === '/search';
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, _hasHydrated } = useAuthStore();
   const { unreadCount, fetchUnreadCount } = useMessagesStore();
   const { toggleMobileMenu, isMobileMenuOpen, setMobileMenuOpen, openLoginModal } = useUIStore();
   const [searchQuery, setSearchQuery] = useState('');
@@ -203,7 +203,9 @@ export default function Header() {
             {/* Right Actions */}
             <div className="flex items-center gap-1 flex-shrink-0">
               <LanguageSwitcher />
-              {isAuthenticated ? (
+              {!_hasHydrated ? (
+                <div className="w-8 h-8 bg-gray-100 rounded-full animate-pulse" />
+              ) : isAuthenticated ? (
                 <>
                   <Link href="/messages" className="relative flex items-center px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors">
                     <FiMessageSquare size={20} />
@@ -224,30 +226,30 @@ export default function Header() {
                     </button>
 
                     {showProfileDropdown && (
-                      <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50">
+                      <div className="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 py-1 z-[200]" style={{ minWidth: '220px' }}>
                         {/* User info */}
                         <div className="px-4 py-3 border-b border-gray-100">
-                          <p className="font-semibold text-gray-900 text-sm truncate">{user?.name}</p>
-                          <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                          <p className="font-semibold text-gray-900 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px]">{user?.name}</p>
+                          <p className="text-xs text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px]">{user?.email}</p>
                         </div>
-                        <Link href="/dashboard" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setShowProfileDropdown(false)}>
-                          <FiUser size={16} /> {t('nav.dashboard')}
+                        <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap" onClick={() => setShowProfileDropdown(false)}>
+                          <FiUser size={16} className="flex-shrink-0" /> {t('nav.dashboard')}
                         </Link>
-                        <Link href="/profile?tab=listings" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setShowProfileDropdown(false)}>
-                          <FiImage size={16} /> {t('nav.my_ads')}
+                        <Link href="/profile?tab=listings" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap" onClick={() => setShowProfileDropdown(false)}>
+                          <FiImage size={16} className="flex-shrink-0" /> {t('nav.my_ads')}
                         </Link>
-                        <Link href="/favorites" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setShowProfileDropdown(false)}>
-                          <FiHeart size={16} /> {t('nav.favorites')}
+                        <Link href="/favorites" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap" onClick={() => setShowProfileDropdown(false)}>
+                          <FiHeart size={16} className="flex-shrink-0" /> {t('nav.favorites')}
                         </Link>
                         {user?.isAdmin && (
-                          <Link href="/cp-x4m9k2" className="flex items-center gap-3 px-4 py-2.5 text-sm text-primary-600 hover:bg-primary-50 transition-colors" onClick={() => setShowProfileDropdown(false)}>
-                            <FiShield size={16} /> {t('nav.admin_panel')}
+                          <Link href="/cp-x4m9k2" className="flex items-center gap-3 px-4 py-3 text-sm text-primary-600 hover:bg-primary-50 transition-colors whitespace-nowrap" onClick={() => setShowProfileDropdown(false)}>
+                            <FiShield size={16} className="flex-shrink-0" /> {t('nav.admin_panel')}
                           </Link>
                         )}
                         <div className="border-t border-gray-100 mt-1" />
                         <button onClick={() => { useAuthStore.getState().logout(); setShowProfileDropdown(false); router.push('/'); }}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors w-full">
-                          <FiX size={16} /> {t('nav.sign_out')}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors w-full whitespace-nowrap">
+                          <FiX size={16} className="flex-shrink-0" /> {t('nav.sign_out')}
                         </button>
                       </div>
                     )}
