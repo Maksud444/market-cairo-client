@@ -6,7 +6,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { useTranslation } from 'next-i18next';
 import { useAuthStore, useUIStore } from '../lib/store';
 import { listingsAPI } from '../lib/api';
-import { getImageUrl } from '../lib/utils';
+import { getImageUrl, PLACEHOLDER_IMG } from '../lib/utils';
 import toast from 'react-hot-toast';
 
 const conditionColors = {
@@ -31,6 +31,7 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
     user?.favorites?.includes(listing._id) || false
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [imgSrc, setImgSrc] = useState(getImageUrl(listing.images?.[0]));
 
   const handleFavorite = async (e) => {
     e.preventDefault();
@@ -73,7 +74,7 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
     return phone.replace(/[\s\-\(\)]/g, '').replace(/^\+/, '');
   };
 
-  const imageUrl = getImageUrl(listing.images?.[0]);
+  const imageUrl = imgSrc;
   const sellerPhone = listing.seller?.phone;
   const whatsappNumber = formatWhatsApp(sellerPhone);
 
@@ -83,13 +84,14 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
       <div className="group bg-white rounded-xl border border-gray-100 hover:shadow-md transition-shadow overflow-hidden">
         <div className="flex gap-3">
           {/* Image */}
-          <Link href={`/listing/${listing._id}`} className="relative w-28 sm:w-44 md:w-52 flex-shrink-0 bg-gray-100 block">
+          <Link href={`/listing/${listing._id}`} className="relative w-28 sm:w-36 flex-shrink-0 bg-gray-100 block" style={{ minHeight: '7rem' }}>
             <Image
               src={imageUrl}
               alt={listing.title}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"
-              sizes="200px"
+              sizes="(max-width: 640px) 112px, 144px"
+              onError={() => setImgSrc(PLACEHOLDER_IMG)}
             />
             {listing.isDeleted ? (
               <span className="absolute top-2 left-2 badge bg-gray-500 text-white">{t('common.sold')}</span>
@@ -200,6 +202,7 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            onError={() => setImgSrc(PLACEHOLDER_IMG)}
           />
           <div className="absolute top-2 left-2 flex flex-wrap gap-1.5">
             {listing.isDeleted ? (

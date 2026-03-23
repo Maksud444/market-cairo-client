@@ -47,8 +47,13 @@ export default function Home() {
           categoriesAPI.getAll(),
         ]);
 
-        if (featuredRes.data.success) setFeaturedListings(featuredRes.data.listings);
-        if (recentRes.data.success) setRecentListings(recentRes.data.listings);
+        const featured = featuredRes.data.success ? featuredRes.data.listings : [];
+        if (featured.length) setFeaturedListings(featured);
+
+        if (recentRes.data.success) {
+          const featuredIds = new Set(featured.map(l => l._id));
+          setRecentListings(recentRes.data.listings.filter(l => !featuredIds.has(l._id)));
+        }
         if (categoriesRes.data.success) setCategories(categoriesRes.data.categories);
       } catch (error) {
         console.error('Failed to fetch homepage data:', error);

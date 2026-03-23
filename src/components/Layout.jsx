@@ -7,12 +7,17 @@ export default function Layout({ children, hideFooter = false, hideBottomNav = f
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className={`flex-1 ${!hideBottomNav ? 'pb-20 md:pb-0' : ''}`}>
+      <main className="flex-1">
         {children}
       </main>
 
       {!hideFooter && <Footer />}
-      {!hideBottomNav && <BottomNav />}
+      {!hideBottomNav && (
+        <>
+          <div className="h-16 md:hidden" aria-hidden="true" />
+          <BottomNav />
+        </>
+      )}
     </div>
   );
 }
