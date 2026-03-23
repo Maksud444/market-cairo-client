@@ -83,8 +83,8 @@ function UserDashboard() {
           </div>
         </div>
 
-        {/* Verification Banner */}
-        {user && !user.isAdmin && user.verification?.status !== 'approved' && (
+        {/* Verification Banner - DISABLED TEMPORARILY */}
+        {false && user && !user.isAdmin && user.verification?.status !== 'approved' && (
           <div className={`rounded-xl border p-4 mb-6 lg:mb-8 ${
             user.verification?.status === 'pending'
               ? 'bg-yellow-50 border-yellow-200'

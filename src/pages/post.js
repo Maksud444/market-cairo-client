@@ -354,12 +354,12 @@ export default function PostListingPage() {
 
     setIsSubmitting(true);
 
-    // Check verification status (skip for admins)
-    if (user && !user.isAdmin && user.verification?.status !== 'approved') {
-      setIsSubmitting(false);
-      setShowVerifyModal(true);
-      return;
-    }
+    // VERIFICATION DISABLED TEMPORARILY
+    // if (user && !user.isAdmin && user.verification?.status !== 'approved') {
+    //   setIsSubmitting(false);
+    //   setShowVerifyModal(true);
+    //   return;
+    // }
 
     try {
       setSubmitStep('compressing');
@@ -419,10 +419,11 @@ export default function PostListingPage() {
     } catch (error) {
       console.error('Post listing error:', error.response?.data);
 
-      if (error.response?.data?.requiresVerification) {
-        router.push('/verify');
-        return;
-      }
+      // VERIFICATION DISABLED TEMPORARILY
+      // if (error.response?.data?.requiresVerification) {
+      //   router.push('/verify');
+      //   return;
+      // }
 
       if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
         error.response.data.errors.forEach(err => {
@@ -950,8 +951,8 @@ export default function PostListingPage() {
         )}
       </div>
 
-      {/* Verification Modal */}
-      {showVerifyModal && (
+      {/* Verification Modal - DISABLED TEMPORARILY */}
+      {false && showVerifyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
             {/* Header */}
