@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 
 export default function BannerSlider() {
@@ -14,11 +15,10 @@ export default function BannerSlider() {
       subtitle: t('banner.slide1_subtitle'),
       cta: t('banner.browse_all'),
       ctaLink: '/search',
-      bg: 'from-blue-950 via-blue-900 to-indigo-900',
-      accent: 'bg-blue-500',
-      dot: 'bg-blue-400',
-      circles: ['bg-blue-700/40', 'bg-blue-600/20'],
+      bg: 'from-[#1a1a2e] via-[#16213e] to-[#0f3460]',
+      accentColor: '#e94560',
       icon: '🛒',
+      tag: 'Best Deals',
     },
     {
       id: 2,
@@ -26,11 +26,10 @@ export default function BannerSlider() {
       subtitle: t('banner.slide2_subtitle'),
       cta: t('banner.shop_now'),
       ctaLink: '/search?category=Mobile+%26+Tablets',
-      bg: 'from-gray-950 via-slate-900 to-zinc-900',
-      accent: 'bg-green-500',
-      dot: 'bg-green-400',
-      circles: ['bg-green-700/20', 'bg-emerald-600/10'],
+      bg: 'from-[#0d1b2a] via-[#1b263b] to-[#415a77]',
+      accentColor: '#48cae4',
       icon: '📱',
+      tag: 'Top Electronics',
     },
     {
       id: 3,
@@ -38,11 +37,10 @@ export default function BannerSlider() {
       subtitle: t('banner.slide3_subtitle'),
       cta: t('banner.explore'),
       ctaLink: '/search?category=Fashion+%26+Beauty',
-      bg: 'from-rose-950 via-pink-900 to-purple-950',
-      accent: 'bg-pink-500',
-      dot: 'bg-pink-400',
-      circles: ['bg-pink-700/30', 'bg-purple-600/20'],
+      bg: 'from-[#2d1b4e] via-[#3d2065] to-[#6b3fa0]',
+      accentColor: '#f72585',
       icon: '👗',
+      tag: 'Fashion & Style',
     },
     {
       id: 4,
@@ -50,88 +48,107 @@ export default function BannerSlider() {
       subtitle: t('banner.slide4_subtitle'),
       cta: t('banner.view_deals'),
       ctaLink: '/search?category=Electronics',
-      bg: 'from-amber-950 via-orange-900 to-red-950',
-      accent: 'bg-orange-500',
-      dot: 'bg-orange-400',
-      circles: ['bg-orange-700/30', 'bg-red-600/20'],
+      bg: 'from-[#1a0a00] via-[#3d1a00] to-[#7c3000]',
+      accentColor: '#fb8500',
       icon: '💻',
+      tag: 'Electronics',
     },
   ];
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setIsAnimating(true);
-      setTimeout(() => {
-        setCurrent(prev => (prev + 1) % banners.length);
-        setIsAnimating(false);
-      }, 200);
-    }, 4500);
-    return () => clearInterval(timer);
-  }, []);
-
-  const goTo = (idx) => {
+  const goTo = useCallback((idx) => {
+    if (isAnimating) return;
     setIsAnimating(true);
     setTimeout(() => {
       setCurrent(idx);
       setIsAnimating(false);
-    }, 150);
-  };
+    }, 200);
+  }, [isAnimating]);
+
+  const prev = () => goTo((current - 1 + banners.length) % banners.length);
+  const next = () => goTo((current + 1) % banners.length);
+
+  useEffect(() => {
+    const timer = setInterval(next, 5000);
+    return () => clearInterval(timer);
+  }, [current]);
 
   const banner = banners[current];
+
+  const content = (isMobile) => (
+    <div className={`relative z-10 h-full flex items-center transition-all duration-300 ${isAnimating ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'} ${isMobile ? 'px-4' : 'px-10'}`}>
+      <div className="flex-1">
+        {/* Tag */}
+        <div className="flex items-center gap-2 mb-2">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold text-white/90"
+            style={{ backgroundColor: banner.accentColor + '33', border: `1px solid ${banner.accentColor}55` }}>
+            <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ backgroundColor: banner.accentColor }} />
+            {banner.tag}
+          </span>
+        </div>
+        {/* Title */}
+        <h3 className={`text-white font-bold leading-tight ${isMobile ? 'text-lg' : 'text-2xl lg:text-3xl'}`}>
+          {banner.title}
+        </h3>
+        <p className={`text-white/50 mt-1 ${isMobile ? 'text-xs' : 'text-sm'}`}>{banner.subtitle}</p>
+        {/* CTA */}
+        <Link href={banner.ctaLink}
+          className={`inline-flex items-center gap-1.5 font-semibold rounded-xl text-white mt-3 transition-all hover:scale-105 active:scale-95 ${isMobile ? 'text-xs px-3 py-1.5' : 'text-sm px-5 py-2'}`}
+          style={{ backgroundColor: banner.accentColor }}>
+          {banner.cta}
+          <FiChevronRight size={isMobile ? 13 : 15} />
+        </Link>
+      </div>
+      {/* Icon */}
+      <div className={`flex-shrink-0 select-none ${isMobile ? 'text-5xl opacity-25 mr-2' : 'text-8xl opacity-20 mr-4'}`}>
+        {banner.icon}
+      </div>
+    </div>
+  );
+
+  const dots = (
+    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
+      {banners.map((_, i) => (
+        <button key={i} onClick={() => goTo(i)}
+          className="rounded-full transition-all duration-300 focus:outline-none"
+          style={{
+            width: i === current ? '20px' : '6px',
+            height: '6px',
+            backgroundColor: i === current ? banner.accentColor : 'rgba(255,255,255,0.3)',
+          }} />
+      ))}
+    </div>
+  );
+
+  const arrows = (size = 'md') => (
+    <>
+      <button onClick={prev}
+        className={`absolute left-3 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/10 text-white transition-all hover:scale-110 flex items-center justify-center ${size === 'sm' ? 'w-7 h-7' : 'w-8 h-8'}`}>
+        <FiChevronLeft size={size === 'sm' ? 14 : 16} />
+      </button>
+      <button onClick={next}
+        className={`absolute right-3 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/10 text-white transition-all hover:scale-110 flex items-center justify-center ${size === 'sm' ? 'w-7 h-7' : 'w-8 h-8'}`}>
+        <FiChevronRight size={size === 'sm' ? 14 : 16} />
+      </button>
+    </>
+  );
 
   return (
     <>
       {/* Mobile */}
-      <div className="lg:hidden mx-4 mt-3 mb-1">
-        <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-r ${banner.bg} transition-all duration-300`} style={{ height: '130px' }}>
-          <div className={`absolute right-10 top-1/2 -translate-y-1/2 w-28 h-28 ${banner.circles[0]} rounded-full blur-sm`} />
-          <div className={`absolute right-4 top-1/2 -translate-y-1/2 w-16 h-16 ${banner.circles[1]} rounded-full`} />
-          <div className={`relative z-10 p-4 h-full flex flex-col justify-between transition-opacity duration-200 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
-            <div>
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className={`w-2 h-2 ${banner.accent} rounded-full`} />
-                <span className="text-white/60 text-xs uppercase tracking-wider font-medium">MySouqify</span>
-              </div>
-              <h3 className="text-white font-bold text-lg leading-tight">{banner.title}</h3>
-              <p className="text-white/60 text-xs mt-0.5">{banner.subtitle}</p>
-            </div>
-            <Link href={banner.ctaLink} className="self-start px-4 py-1.5 bg-white/15 backdrop-blur-sm border border-white/20 text-white text-xs font-semibold rounded-lg hover:bg-white/25 transition-colors">
-              {banner.cta} →
-            </Link>
-          </div>
-          <div className="absolute right-6 top-1/2 -translate-y-1/2 text-5xl opacity-20 select-none">{banner.icon}</div>
-          <div className="absolute bottom-2.5 right-4 flex gap-1.5">
-            {banners.map((_, i) => (
-              <button key={i} onClick={() => goTo(i)} className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-4 bg-white' : 'w-1.5 bg-white/40'}`} />
-            ))}
-          </div>
+      <div className="lg:hidden mx-3 mt-3 mb-1">
+        <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-r ${banner.bg}`} style={{ height: '140px' }}>
+          {content(true)}
+          {arrows('sm')}
+          {dots}
         </div>
       </div>
 
       {/* Desktop */}
       <div className="hidden lg:block container-app mt-4 mb-2">
-        <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-r ${banner.bg} transition-all duration-300`} style={{ height: '160px' }}>
-          <div className="h-full relative">
-            <div className={`absolute right-32 top-1/2 -translate-y-1/2 w-52 h-52 ${banner.circles[0]} rounded-full blur-sm`} />
-            <div className={`absolute right-16 top-1/2 -translate-y-1/2 w-32 h-32 ${banner.circles[1]} rounded-full`} />
-            <div className={`relative z-10 px-8 h-full flex flex-col justify-center gap-2 transition-opacity duration-200 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
-              <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 ${banner.accent} rounded-full`} />
-                <span className="text-white/60 text-xs uppercase tracking-wider font-medium">MySouqify</span>
-              </div>
-              <h3 className="text-white font-bold text-2xl leading-tight">{banner.title}</h3>
-              <p className="text-white/60 text-sm">{banner.subtitle}</p>
-              <Link href={banner.ctaLink} className="self-start px-5 py-1.5 bg-white/15 backdrop-blur-sm border border-white/20 text-white text-sm font-semibold rounded-lg hover:bg-white/25 transition-colors mt-1">
-                {banner.cta} →
-              </Link>
-            </div>
-            <div className="absolute right-20 top-1/2 -translate-y-1/2 text-8xl opacity-20 select-none">{banner.icon}</div>
-          </div>
-          <div className="absolute bottom-3 right-6 flex gap-1.5">
-            {banners.map((_, i) => (
-              <button key={i} onClick={() => goTo(i)} className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-4 bg-white' : 'w-1.5 bg-white/40'}`} />
-            ))}
-          </div>
+        <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-r ${banner.bg}`} style={{ height: '170px' }}>
+          {content(false)}
+          {arrows('md')}
+          {dots}
         </div>
       </div>
     </>
