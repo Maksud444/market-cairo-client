@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 import { FiArrowLeft, FiSend, FiMoreVertical, FiTrash2, FiImage, FiCheck, FiCheckCircle, FiPhone } from 'react-icons/fi';
 import { format, isToday, isYesterday } from 'date-fns';
 import toast from 'react-hot-toast';
@@ -61,10 +62,11 @@ export default function MessagesPage() {
   const [offerAmount, setOfferAmount] = useState('');
   const [isSendingOffer, setIsSendingOffer] = useState(false);
 
-  // Redirect if not authenticated (wait for hydration first)
+  // Redirect if not authenticated — check cookie as backup against hydration race
   useEffect(() => {
     if (!_hasHydrated) return;
-    if (!isAuthenticated) {
+    const hasToken = !!Cookies.get('token');
+    if (!isAuthenticated && !hasToken) {
       router.push('/?login=true');
     }
   }, [_hasHydrated, isAuthenticated, router]);

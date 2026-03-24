@@ -7,6 +7,7 @@ import { useDropzone } from 'react-dropzone';
 import { FiUpload, FiX, FiCamera, FiAlertCircle, FiCheck, FiChevronDown, FiMapPin, FiShield, FiChevronRight, FiNavigation } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import imageCompression from 'browser-image-compression';
+import Cookies from 'js-cookie';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
@@ -61,10 +62,11 @@ export default function PostListingPage() {
   const [isLoading, setIsLoading] = useState(!!editId);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
 
-  // Redirect if not authenticated (wait for hydration first)
+  // Redirect if not authenticated — check Zustand state + token cookie as backup
   useEffect(() => {
     if (!_hasHydrated) return;
-    if (!isAuthenticated) {
+    const hasToken = !!Cookies.get('token');
+    if (!isAuthenticated && !hasToken) {
       router.push('/?login=true');
     }
   }, [_hasHydrated, isAuthenticated, router]);

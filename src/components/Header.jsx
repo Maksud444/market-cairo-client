@@ -158,7 +158,7 @@ export default function Header() {
   );
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-200 ${isScrolled ? 'shadow-md' : 'shadow-sm'}`}>
+    <header className={`z-50 bg-white transition-shadow duration-200 lg:fixed lg:top-0 lg:left-0 lg:right-0 ${isScrolled ? 'shadow-md' : 'shadow-sm'}`}>
 
       {/* ───── DESKTOP HEADER ───── */}
       <div className="hidden lg:block">

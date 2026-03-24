@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FiHeart, FiSearch } from 'react-icons/fi';
+import Cookies from 'js-cookie';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
@@ -17,10 +18,11 @@ export default function FavoritesPage() {
   const [favorites, setFavorites] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Redirect if not authenticated (wait for hydration first)
+  // Redirect if not authenticated — check cookie as backup against hydration race
   useEffect(() => {
     if (!_hasHydrated) return;
-    if (!isAuthenticated) {
+    const hasToken = !!Cookies.get('token');
+    if (!isAuthenticated && !hasToken) {
       router.push('/?login=true');
     }
   }, [_hasHydrated, isAuthenticated, router]);
