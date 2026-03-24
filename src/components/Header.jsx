@@ -140,7 +140,7 @@ export default function Header() {
       <div className="py-1">
         {cairoAreas.map((area) => (
           <button key={area.en} onClick={() => { setSelectedLocation(area.en === 'All Cairo' ? null : area); setShowLocationDropdown(false); router.push(`/search?location=${encodeURIComponent(area.en === 'All Cairo' ? '' : area.en)}`); }}
-            className={`w-full text-left px-4 py-2 text-sm transition-colors ${selectedLocation?.en === area.en ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-700 hover:bg-primary-50 hover:text-primary-600'}`}>
+            className={`w-full text-left px-4 py-2 text-sm transition-colors whitespace-nowrap ${selectedLocation?.en === area.en ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-700 hover:bg-primary-50 hover:text-primary-600'}`}>
             {isArabic ? area.ar : area.en}
           </button>
         ))}
@@ -149,7 +149,7 @@ export default function Header() {
       <div className="py-1">
         {cairoCompounds.map((compound) => (
           <button key={compound.en} onClick={() => { setSelectedLocation(compound); setShowLocationDropdown(false); router.push(`/search?location=${encodeURIComponent(compound.en)}`); }}
-            className={`w-full text-left px-4 py-2 text-sm transition-colors ${selectedLocation?.en === compound.en ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-700 hover:bg-primary-50 hover:text-primary-600'}`}>
+            className={`w-full text-left px-4 py-2 text-sm transition-colors whitespace-nowrap ${selectedLocation?.en === compound.en ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-700 hover:bg-primary-50 hover:text-primary-600'}`}>
             {isArabic ? compound.ar : compound.en}
           </button>
         ))}
@@ -166,7 +166,7 @@ export default function Header() {
           <div className="flex items-center h-16 gap-4">
             {/* Logo */}
             <Link href="/" className="flex items-center flex-shrink-0">
-              <img src="/logo.jpeg" alt="MySouqify" className="h-10 w-auto object-contain" />
+              <img src="/logo.jpeg" alt="MySouqify" className="h-12 w-auto object-contain" />
             </Link>
 
             {/* Location + Search (Dubizzle style combined box) */}
@@ -179,7 +179,7 @@ export default function Header() {
                   <FiChevronDown size={12} className={`transition-transform ${showLocationDropdown ? 'rotate-180' : ''}`} />
                 </button>
                 {showLocationDropdown && (
-                  <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-xl shadow-xl border border-gray-100 z-50 max-h-96 overflow-y-auto">
+                  <div className="absolute top-full left-0 mt-1 w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-50 max-h-96 overflow-y-auto">
                     <LocationDropdownContent />
                   </div>
                 )}
@@ -320,7 +320,7 @@ export default function Header() {
               {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
             <Link href="/" className="flex items-center flex-shrink-0">
-              <img src="/logo.jpeg" alt="MySouqify" className="h-8 w-auto object-contain" />
+              <img src="/logo.jpeg" alt="MySouqify" className="h-10 w-auto object-contain" />
             </Link>
             <div className="flex-1" />
             <LanguageSwitcher />
@@ -406,10 +406,7 @@ export default function Header() {
           <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setMobileMenuOpen(false)} />
           <div className="fixed top-0 left-0 w-72 h-full bg-white z-50 lg:hidden overflow-y-auto">
             <div className="p-4 border-b border-gray-100 flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">M</span>
-              </div>
-              <span className="text-xl font-semibold">MySouqify</span>
+              <img src="/logo.jpeg" alt="MySouqify" className="h-10 w-auto object-contain" />
             </div>
             <nav className="p-4 space-y-1">
               {isAuthenticated ? (

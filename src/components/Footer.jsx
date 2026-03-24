@@ -31,11 +31,8 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">M</span>
-              </div>
-              <span className="text-xl font-semibold text-white">MySouqify</span>
+            <div className="mb-4">
+              <img src="/logo.jpeg" alt="MySouqify" className="h-12 w-auto object-contain brightness-0 invert" />
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
               {t('footer.tagline')}
