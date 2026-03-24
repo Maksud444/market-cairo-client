@@ -1,16 +1,19 @@
 import { useRouter } from 'next/router';
 import { FiZap, FiTag, FiShield, FiArrowRight } from 'react-icons/fi';
-import { useAuthStore } from '../lib/store';
+import Cookies from 'js-cookie';
+import { useAuthStore, useUIStore } from '../lib/store';
 
 export default function PromoBanner() {
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
+  const { openLoginModal } = useUIStore();
 
   const handlePostAd = () => {
-    if (isAuthenticated) {
+    const hasToken = !!Cookies.get('token');
+    if (isAuthenticated || hasToken) {
       router.push('/post');
     } else {
-      router.push('/?login=true');
+      openLoginModal();
     }
   };
 

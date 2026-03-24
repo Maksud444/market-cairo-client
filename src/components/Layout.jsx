@@ -1,6 +1,7 @@
 import Header from './Header';
 import Footer from './Footer';
 import BottomNav from './BottomNav';
+import BackToTop from './BackToTop';
 
 export default function Layout({ children, hideFooter = false, hideBottomNav = false }) {
   return (
@@ -15,6 +16,7 @@ export default function Layout({ children, hideFooter = false, hideBottomNav = f
       </main>
 
       {!hideFooter && <Footer />}
+      <BackToTop />
       {!hideBottomNav && (
         <>
           <div className="h-16 md:hidden" aria-hidden="true" />
