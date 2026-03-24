@@ -263,9 +263,9 @@ export default function Header() {
                   <button onClick={openLoginModal} className="px-4 py-2 text-gray-700 text-sm font-medium hover:text-gray-900 transition-colors">
                     {t('nav.login')}
                   </button>
-                  <Link href="/post" className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-lg hover:bg-primary-700 transition-colors">
+                  <button onClick={openLoginModal} className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-lg hover:bg-primary-700 transition-colors">
                     <FiPlus size={16} /> {t('nav.post_your_ad')}
-                  </Link>
+                  </button>
                 </>
               )}
             </div>

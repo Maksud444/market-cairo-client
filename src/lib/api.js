@@ -29,10 +29,10 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Clear token and redirect to login
+      // Clear token and redirect to login modal on homepage
       Cookies.remove('token');
-      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
+      if (typeof window !== 'undefined' && !window.location.search.includes('login=true')) {
+        window.location.href = '/?login=true';
       }
     }
     return Promise.reject(error);
@@ -97,7 +97,7 @@ export const usersAPI = {
 listingsAPI.getMyListings = (params) => api.get('/users/me/listings', { params });
 listingsAPI.getMySoldListings = (params) => api.get('/users/me/listings', { params: { ...params, status: 'sold' } });
 listingsAPI.getFavorites = () => api.get('/users/me/favorites');
-listingsAPI.markAsSold = (id) => api.put(`/listings/${id}/sold`);
+
 
 // Messages API
 export const messagesAPI = {
