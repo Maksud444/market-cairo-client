@@ -75,29 +75,30 @@ export default function BannerSlider() {
   const banner = banners[current];
 
   const content = (isMobile) => (
-    <div className={`relative z-10 h-full flex items-center justify-center transition-all duration-300 ${isAnimating ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'} ${isMobile ? 'px-10' : 'px-16'}`}>
-      <div className="flex-1 text-center">
-        {/* Tag */}
-        <div className="flex items-center justify-center gap-2 mb-2">
+    <div className={`relative z-10 h-full flex items-center transition-all duration-300 ${isAnimating ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'} ${isMobile ? 'px-10' : 'px-14'}`}>
+      {/* Left: text */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-2">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold text-white/90"
             style={{ backgroundColor: banner.accentColor + '33', border: `1px solid ${banner.accentColor}55` }}>
             <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ backgroundColor: banner.accentColor }} />
             {banner.tag}
           </span>
         </div>
-        {/* Icon + Title */}
-        <div className={`select-none mb-1 ${isMobile ? 'text-3xl' : 'text-5xl'}`}>{banner.icon}</div>
         <h3 className={`text-white font-bold leading-tight ${isMobile ? 'text-lg' : 'text-2xl lg:text-3xl'}`}>
           {banner.title}
         </h3>
         <p className={`text-white/50 mt-1 ${isMobile ? 'text-xs' : 'text-sm'}`}>{banner.subtitle}</p>
-        {/* CTA */}
         <Link href={banner.ctaLink}
           className={`inline-flex items-center gap-1.5 font-semibold rounded-xl text-white mt-3 transition-all hover:scale-105 active:scale-95 ${isMobile ? 'text-xs px-3 py-1.5' : 'text-sm px-5 py-2'}`}
           style={{ backgroundColor: banner.accentColor }}>
           {banner.cta}
           <FiChevronRight size={isMobile ? 13 : 15} />
         </Link>
+      </div>
+      {/* Right: icon */}
+      <div className={`flex-shrink-0 select-none ${isMobile ? 'text-5xl opacity-20' : 'text-7xl opacity-20'}`}>
+        {banner.icon}
       </div>
     </div>
   );
