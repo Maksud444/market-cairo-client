@@ -7,6 +7,9 @@ export default function Layout({ children, hideFooter = false, hideBottomNav = f
     <div className="min-h-screen flex flex-col">
       <Header />
 
+      {/* Spacer for fixed header: mobile ~56px, desktop ~109px */}
+      <div className="h-14 lg:h-[109px]" aria-hidden="true" />
+
       <main className="flex-1">
         {children}
       </main>
