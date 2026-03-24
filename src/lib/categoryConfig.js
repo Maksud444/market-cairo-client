@@ -2,7 +2,14 @@ export const categoryConfig = {
   'Mobile & Tablets': {
     icon: '📱',
     fields: [
-      { key: 'brand', label: 'Brand', labelAr: 'الماركة', type: 'select', options: ['Apple', 'Samsung', 'Xiaomi', 'Oppo', 'Huawei', 'Nokia', 'Realme', 'Tecno', 'Motorola', 'Other'] },
+      { key: 'brand', label: 'Brand', labelAr: 'الماركة', type: 'select', options: [
+        'Apple','Samsung','Xiaomi','Huawei','Oppo','Vivo','Realme','OnePlus','Google',
+        'Nokia','Motorola','Sony','Tecno','Infinix','Itel','Redmi','Lava','Honor',
+        'Lenovo','Poco','HTC','Meizu','ZTE','AGM','Alcatel','Archos','Asus','BlackBerry',
+        'Blackview','BLU','BQ','Cat','Coolpad','Cubot','Doogee','Elephone','Energizer',
+        'Fairphone','Gionee','Karbonn','LeEco','Micromax','Nothing','Oukitel','Panasonic',
+        'Philips','Prestigio','Sharp','TCL','Ulefone','Umidigi','Vertu','Wiko','Yota','Other'
+      ] },
       { key: 'model', label: 'Model', labelAr: 'الموديل', type: 'text', placeholder: 'e.g. iPhone 14 Pro' },
       { key: 'storage', label: 'Storage', labelAr: 'المساحة', type: 'select', options: ['16GB', '32GB', '64GB', '128GB', '256GB', '512GB', '1TB'] },
       { key: 'ram', label: 'RAM', labelAr: 'الرام', type: 'select', options: ['2GB', '3GB', '4GB', '6GB', '8GB', '12GB', '16GB', 'Other'] },
@@ -11,7 +18,7 @@ export const categoryConfig = {
   'Electronics': {
     icon: '💻',
     fields: [
-      { key: 'type', label: 'Type', labelAr: 'النوع', type: 'select', options: ['Laptop', 'TV', 'Camera', 'Printer', 'Monitor', 'Gaming Console', 'Headphones', 'Speaker', 'Other'] },
+      { key: 'type', label: 'Type', labelAr: 'النوع', type: 'select', options: ['Laptop', 'TV', 'Camera', 'Printer', 'Monitor', 'Gaming Console', 'Headphones', 'Speaker', 'Smart Watch', 'Smart Band', 'Other'] },
       { key: 'brand', label: 'Brand', labelAr: 'الماركة', type: 'text', placeholder: 'e.g. Sony, LG, Dell' },
       { key: 'model', label: 'Model', labelAr: 'الموديل', type: 'text', placeholder: 'e.g. WH-1000XM5' },
       { key: 'year', label: 'Year', labelAr: 'السنة', type: 'select', options: ['2024', '2023', '2022', '2021', '2020', '2019', 'Older'] },
@@ -50,6 +57,22 @@ export const categoryConfig = {
   'Other': {
     icon: '📦',
     fields: []
+  },
+  'Smart Watch & Band': {
+    icon: '⌚',
+    fields: [
+      { key: 'brand', label: 'Brand', labelAr: 'الماركة', type: 'select', options: [
+        'Apple','Samsung','Huawei','Xiaomi','Amazfit','Garmin','Fitbit','Honor','Realme',
+        'Oppo','Noise','boAt','Fire-Boltt','Fossil','Mobvoi','Casio','Withings','Zeblaze',
+        'Zebronics','Haylou','Imilab','Polar','Suunto','TAG Heuer','Timex','Skagen',
+        'Michael Kors','Diesel','Emporio Armani','Montblanc','Hublot','Louis Vuitton',
+        'Alcatel','Archos','Asus','Blackview','Cubot','Doogee','Energizer','Infinix',
+        'Itel','Lenovo','Meizu','Micromax','Motorola','Nothing','OnePlus','Philips',
+        'Redmi','Sony','Ulefone','Umidigi','Wiko','Yamay','Other'
+      ]},
+      { key: 'model', label: 'Model', labelAr: 'الموديل', type: 'text', placeholder: 'e.g. Apple Watch Series 9' },
+      { key: 'connectivity', label: 'Connectivity', labelAr: 'الاتصال', type: 'select', options: ['Bluetooth', 'Cellular + Bluetooth', 'GPS + Cellular', 'WiFi + Bluetooth'] },
+    ]
   },
 };
 

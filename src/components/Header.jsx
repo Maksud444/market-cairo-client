@@ -165,11 +165,8 @@ export default function Header() {
         <div className="container-app">
           <div className="flex items-center h-16 gap-4">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-              <div className="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">M</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900">MySouqify</span>
+            <Link href="/" className="flex items-center flex-shrink-0">
+              <img src="/logo.png" alt="MySouqify" className="h-10 w-auto object-contain" />
             </Link>
 
             {/* Location + Search (Dubizzle style combined box) */}
@@ -322,11 +319,8 @@ export default function Header() {
             <button onClick={toggleMobileMenu} className="p-2 -ml-2 text-gray-600">
               {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
-            <Link href="/" className="flex items-center gap-1.5">
-              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-base">M</span>
-              </div>
-              <span className="text-lg font-bold text-gray-900">MySouqify</span>
+            <Link href="/" className="flex items-center flex-shrink-0">
+              <img src="/logo.png" alt="MySouqify" className="h-8 w-auto object-contain" />
             </Link>
             <div className="flex-1" />
             <LanguageSwitcher />
