@@ -24,7 +24,8 @@ export default function PromoBanner() {
   ];
 
   return (
-    <div className="bg-[#0f1923] mx-3 lg:mx-0 lg:container-app rounded-2xl lg:rounded-xl my-3 lg:my-4 overflow-hidden">
+    <div className="container-app my-3 lg:my-4">
+      <div className="bg-[#0f1923] rounded-2xl overflow-hidden">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-5 py-4 lg:px-8 lg:py-5">
 
         {/* Left: title */}
@@ -54,6 +55,7 @@ export default function PromoBanner() {
         >
           Post Free Ad <FiArrowRight size={15} />
         </button>
+      </div>
       </div>
     </div>
   );
