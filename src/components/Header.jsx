@@ -163,10 +163,10 @@ export default function Header() {
       {/* ───── DESKTOP HEADER ───── */}
       <div className="hidden lg:block">
         <div className="container-app">
-          <div className="flex items-center h-16 gap-4">
+          <div className="flex items-center h-20 gap-4">
             {/* Logo */}
             <Link href="/" className="flex items-center flex-shrink-0">
-              <img src="/logo.png" alt="MySouqify" className="h-14 w-auto object-contain" />
+              <img src="/logo.png" alt="MySouqify" className="h-16 w-auto object-contain" />
             </Link>
 
             {/* Location + Search (Dubizzle style combined box) */}
@@ -320,7 +320,7 @@ export default function Header() {
               {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
             <Link href="/" className="flex items-center flex-shrink-0">
-              <img src="/logo.png" alt="MySouqify" className="h-11 w-auto object-contain" />
+              <img src="/logo.png" alt="MySouqify" className="h-12 w-auto object-contain" />
             </Link>
             <div className="flex-1" />
             <LanguageSwitcher />
@@ -406,7 +406,7 @@ export default function Header() {
           <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setMobileMenuOpen(false)} />
           <div className="fixed top-0 left-0 w-72 h-full bg-white z-50 lg:hidden overflow-y-auto">
             <div className="p-4 border-b border-gray-100 flex items-center gap-3">
-              <img src="/logo.png" alt="MySouqify" className="h-11 w-auto object-contain" />
+              <img src="/logo.png" alt="MySouqify" className="h-12 w-auto object-contain" />
             </div>
             <nav className="p-4 space-y-1">
               {isAuthenticated ? (

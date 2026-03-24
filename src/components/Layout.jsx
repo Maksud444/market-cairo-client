@@ -9,7 +9,7 @@ export default function Layout({ children, hideFooter = false, hideBottomNav = f
       <Header />
 
       {/* Spacer for fixed desktop header only */}
-      <div className="hidden lg:block h-[109px]" aria-hidden="true" />
+      <div className="hidden lg:block h-[125px]" aria-hidden="true" />
 
       <main className="flex-1">
         {children}
