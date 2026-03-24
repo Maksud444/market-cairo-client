@@ -75,7 +75,7 @@ export default function BannerSlider() {
   const banner = banners[current];
 
   const content = (isMobile) => (
-    <div className={`relative z-10 h-full flex items-center transition-all duration-300 ${isAnimating ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'} ${isMobile ? 'px-4' : 'px-10'}`}>
+    <div className={`relative z-10 h-full flex items-center transition-all duration-300 ${isAnimating ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'} ${isMobile ? 'px-10' : 'px-14'}`}>
       <div className="flex-1">
         {/* Tag */}
         <div className="flex items-center gap-2 mb-2">
@@ -106,28 +106,33 @@ export default function BannerSlider() {
   );
 
   const dots = (
-    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
+    <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1 z-20">
       {banners.map((_, i) => (
-        <button key={i} onClick={() => goTo(i)}
-          className="rounded-full transition-all duration-300 focus:outline-none"
+        <span
+          key={i}
+          onClick={() => goTo(i)}
+          className="cursor-pointer block rounded-full transition-all duration-300"
           style={{
-            width: i === current ? '20px' : '6px',
-            height: '6px',
-            backgroundColor: i === current ? banner.accentColor : 'rgba(255,255,255,0.3)',
-          }} />
+            width: i === current ? '18px' : '5px',
+            height: '5px',
+            minWidth: 0,
+            padding: 0,
+            backgroundColor: i === current ? banner.accentColor : 'rgba(255,255,255,0.35)',
+          }}
+        />
       ))}
     </div>
   );
 
   const arrows = (size = 'md') => (
     <>
-      <button onClick={prev}
-        className={`absolute left-3 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/10 text-white transition-all hover:scale-110 flex items-center justify-center ${size === 'sm' ? 'w-7 h-7' : 'w-8 h-8'}`}>
-        <FiChevronLeft size={size === 'sm' ? 14 : 16} />
+      <button onClick={prev} aria-label="Previous"
+        className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 rounded-full bg-black/20 hover:bg-black/40 text-white transition-all flex items-center justify-center ${size === 'sm' ? 'w-6 h-6' : 'w-7 h-7'}`}>
+        <FiChevronLeft size={size === 'sm' ? 13 : 15} />
       </button>
-      <button onClick={next}
-        className={`absolute right-3 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/10 text-white transition-all hover:scale-110 flex items-center justify-center ${size === 'sm' ? 'w-7 h-7' : 'w-8 h-8'}`}>
-        <FiChevronRight size={size === 'sm' ? 14 : 16} />
+      <button onClick={next} aria-label="Next"
+        className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 rounded-full bg-black/20 hover:bg-black/40 text-white transition-all flex items-center justify-center ${size === 'sm' ? 'w-6 h-6' : 'w-7 h-7'}`}>
+        <FiChevronRight size={size === 'sm' ? 13 : 15} />
       </button>
     </>
   );
