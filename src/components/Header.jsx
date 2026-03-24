@@ -166,7 +166,7 @@ export default function Header() {
           <div className="flex items-center h-16 gap-4">
             {/* Logo */}
             <Link href="/" className="flex items-center flex-shrink-0">
-              <img src="/logo.png" alt="MySouqify" className="h-10 w-auto object-contain" />
+              <img src="/logo.jpeg" alt="MySouqify" className="h-10 w-auto object-contain" />
             </Link>
 
             {/* Location + Search (Dubizzle style combined box) */}
@@ -320,7 +320,7 @@ export default function Header() {
               {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
             <Link href="/" className="flex items-center flex-shrink-0">
-              <img src="/logo.png" alt="MySouqify" className="h-8 w-auto object-contain" />
+              <img src="/logo.jpeg" alt="MySouqify" className="h-8 w-auto object-contain" />
             </Link>
             <div className="flex-1" />
             <LanguageSwitcher />
