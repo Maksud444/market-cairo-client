@@ -179,7 +179,7 @@ export default function Header() {
                   <FiChevronDown size={12} className={`transition-transform ${showLocationDropdown ? 'rotate-180' : ''}`} />
                 </button>
                 {showLocationDropdown && (
-                  <div className="absolute top-full left-0 mt-1 w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-50 max-h-96 overflow-y-auto">
+                  <div className="absolute top-full left-0 mt-1 min-w-[320px] w-auto bg-white rounded-xl shadow-xl border border-gray-100 z-50 max-h-96 overflow-y-auto overflow-x-hidden">
                     <LocationDropdownContent />
                   </div>
                 )}
