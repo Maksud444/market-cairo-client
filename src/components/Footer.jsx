@@ -32,7 +32,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="mb-4">
-              <img src="/logo.png" alt="MySouqify" className="h-12 w-auto object-contain" />
+              <img src="/logoFooter.png" alt="MySouqify" className="h-12 w-auto object-contain" />
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
               {t('footer.tagline')}
