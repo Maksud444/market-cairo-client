@@ -388,5 +388,13 @@
     "sales": "sales",
     "no_image": "No image",
     "featured": "Featured"
+  },
+  "promo": {
+    "sell_anything_title": "Sell anything in Cairo",
+    "sell_anything_subtitle": "Egypt's trusted buy & sell marketplace",
+    "post_free_ad": "Post Free Ad",
+    "feature_1": "Post in 60 seconds",
+    "feature_2": "100% Free to List",
+    "feature_3": "Safe & Trusted"
   }
 }

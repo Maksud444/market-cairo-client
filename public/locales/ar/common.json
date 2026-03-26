@@ -388,5 +388,13 @@
     "sales": "بيعة",
     "no_image": "مفيش صورة",
     "featured": "مميز"
+  },
+  "promo": {
+    "sell_anything_title": "بيع أي حاجة في القاهرة",
+    "sell_anything_subtitle": "السوق الموثوق للبيع والشراء في مصر",
+    "post_free_ad": "انشر إعلان مجاني",
+    "feature_1": "انشر في 60 ثانية",
+    "feature_2": "100% مجاني للنشر",
+    "feature_3": "آمن وموثوق"
   }
 }

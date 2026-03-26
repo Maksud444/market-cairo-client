@@ -2,9 +2,11 @@ import { useRouter } from 'next/router';
 import { FiZap, FiTag, FiShield, FiArrowRight } from 'react-icons/fi';
 import Cookies from 'js-cookie';
 import { useAuthStore, useUIStore } from '../lib/store';
+import { useTranslation } from 'next-i18next';
 
 export default function PromoBanner() {
   const router = useRouter();
+  const { t } = useTranslation('common');
   const { isAuthenticated } = useAuthStore();
   const { openLoginModal } = useUIStore();
 
@@ -18,9 +20,9 @@ export default function PromoBanner() {
   };
 
   const features = [
-    { icon: FiZap,    label: 'Post in 60 seconds', color: 'text-yellow-400' },
-    { icon: FiTag,    label: '100% Free to List',  color: 'text-green-400'  },
-    { icon: FiShield, label: 'Safe & Trusted',      color: 'text-blue-400'   },
+    { icon: FiZap,    label: t('promo.feature_1'), color: 'text-yellow-400' },
+    { icon: FiTag,    label: t('promo.feature_2'), color: 'text-green-400'  },
+    { icon: FiShield, label: t('promo.feature_3'), color: 'text-blue-400'   },
   ];
 
   return (
@@ -31,10 +33,10 @@ export default function PromoBanner() {
         {/* Left: title */}
         <div className="text-center sm:text-left">
           <p className="text-white font-bold text-base lg:text-lg leading-tight">
-            Sell anything in Cairo
+            {t('promo.sell_anything_title')}
           </p>
           <p className="text-gray-400 text-xs lg:text-sm mt-0.5">
-            Egypt's trusted buy &amp; sell marketplace
+            {t('promo.sell_anything_subtitle')}
           </p>
         </div>
 
@@ -53,7 +55,7 @@ export default function PromoBanner() {
           onClick={handlePostAd}
           className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-bold text-sm px-6 py-2.5 rounded-xl transition-all whitespace-nowrap flex-shrink-0"
         >
-          Post Free Ad <FiArrowRight size={15} />
+          {t('promo.post_free_ad')} <FiArrowRight size={15} />
         </button>
       </div>
       </div>
