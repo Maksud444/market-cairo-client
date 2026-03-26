@@ -503,6 +503,17 @@ export default function ListingDetailPage({ initialListing }) {
                       {t('listing_detail.call_seller')}
                     </a>
                   )}
+                  {listing.seller.phone && (
+                    <a
+                      href={`https://wa.me/${listing.seller.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(t('listing_detail.whatsapp_message', { title: listing.title }))}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 border border-emerald-500 text-emerald-500 rounded-lg hover:bg-emerald-50 transition-colors font-semibold"
+                    >
+                      <FiMessageCircle size={18} className="text-emerald-500" />
+                      {t('listing_detail.whatsapp_seller')}
+                    </a>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-2">

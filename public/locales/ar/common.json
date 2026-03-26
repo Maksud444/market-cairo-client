@@ -339,6 +339,8 @@
     "seller": "البايع",
     "send_message": "ابعت رسالة",
     "call_seller": "كلم البايع",
+    "whatsapp_seller": "واتساب البايع",
+    "whatsapp_message": "مرحبا، أنا مهتم بـ \"{title}\". هل هو متاح؟",
     "edit_listing": "عدل الإعلان",
     "mark_as_sold": "علم كمباع",
     "sold": "اتباع",
