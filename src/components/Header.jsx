@@ -166,7 +166,7 @@ export default function Header() {
           <div className="flex items-center h-20 gap-4">
             {/* Logo */}
             <Link href="/" className="flex items-center flex-shrink-0">
-              <img src="/logo.png" alt="MySouqify" className="h-20 w-auto object-contain" />
+              <img src="/logo.png" alt="MySouqify" className="h-24 w-auto object-contain" />
             </Link>
 
             {/* Location + Search (Dubizzle style combined box) */}
