@@ -103,6 +103,11 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
           </div>
         </Link>
 
+        <div className="px-3 py-2">
+          <h3 className="font-semibold text-gray-900 truncate text-base">{listing.title}</h3>
+          <p className="text-primary-600 font-bold text-lg mt-1">{t('common.egp')} {listing.price?.toLocaleString()}</p>
+        </div>
+
         <div className="flex items-center justify-between px-2 py-2">
           <button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (sellerPhone) window.location.href = `tel:${sellerPhone}`; }}
