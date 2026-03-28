@@ -35,20 +35,25 @@ export default function TermsPage() {
                 <p>MySouqify منصة للبيع والشراء بين الأفراد. نحن لسنا طرفاً في أي صفقة بين المستخدمين. المسؤولية الكاملة عن الصفقات تقع على المستخدمين أنفسهم.</p>
               </section>
               <section>
-                <h2 className="text-lg font-bold text-gray-800 mb-2">٣. المحتوى المحظور</h2>
-                <p>يُحظر نشر: الأسلحة، المخدرات، المنتجات المقلدة، المحتوى الإباحي، أو أي منتجات مخالفة للقانون المصري. مخالفة ذلك يؤدي إلى حذف الحساب فوراً.</p>
+                <h2 className="text-lg font-bold text-gray-800 mb-2">٣. الخدمة المجانية والغرض</h2>
+                <p>MySouqify منصة مجانية تماماً تم إنشاؤها لخدمة المجتمع ومساعدة الناس على شراء وبيع السلع بسهولة.</p>
+                <p>لا نتقاضى أي رسوم أو عمولات أو نشارك في أي معاملات مالية بين المستخدمين.</p>
               </section>
               <section>
-                <h2 className="text-lg font-bold text-gray-800 mb-2">٤. التحقق من الهوية</h2>
-                <p>نطلب التحقق من الهوية لضمان سلامة المجتمع. البيانات المقدمة للتحقق تُستخدم فقط لهذا الغرض.</p>
+                <h2 className="text-lg font-bold text-gray-800 mb-2">٤. المحتوى المحظور</h2>
+                <p>يُحظر نشر: الأسلحة، المخدرات، المنتجات المقلدة، المحتوى الإباحي، أو أي شيء غير قانوني بموجب القانون المصري. قد يؤدي الانتهاك إلى تعليق الحساب أو حذفه فوراً.</p>
               </section>
               <section>
-                <h2 className="text-lg font-bold text-gray-800 mb-2">٥. إخلاء المسؤولية</h2>
-                <p>MySouqify غير مسؤولة عن جودة المنتجات أو صحة المعلومات المقدمة من المستخدمين. نوصي دائماً بالفحص الشخصي قبل الشراء.</p>
+                <h2 className="text-lg font-bold text-gray-800 mb-2">٥. التحقق من الهوية</h2>
+                <p>قد نطلب التحقق من الهوية لضمان سلامة المجتمع. يتم استخدام بيانات التحقق فقط لهذا الغرض ويتم التعامل معها بحرص.</p>
               </section>
               <section>
-                <h2 className="text-lg font-bold text-gray-800 mb-2">٦. التعديلات</h2>
-                <p>نحتفظ بحق تعديل هذه الشروط في أي وقت. سيتم إشعارك بأي تغييرات جوهرية عبر البريد الإلكتروني.</p>
+                <h2 className="text-lg font-bold text-gray-800 mb-2">٦. إخلاء المسؤولية</h2>
+                <p>MySouqify غير مسؤولة عن جودة المنتج أو التسليم أو دقة المعلومات المقدمة من المستخدمين. يُنصح المستخدمون بشدة بالتحقق من العناصر والبائعين قبل إتمام أي معاملة.</p>
+              </section>
+              <section>
+                <h2 className="text-lg font-bold text-gray-800 mb-2">٧. التعديلات</h2>
+                <p>نحتفظ بالحق في تعديل هذه الشروط في أي وقت. سيتم إشعار المستخدمين بأي تغييرات جوهرية عبر البريد الإلكتروني أو إشعار المنصة.</p>
               </section>
             </>
           ) : (
@@ -62,20 +67,25 @@ export default function TermsPage() {
                 <p>MySouqify is a peer-to-peer marketplace. We are not a party to any transaction between users. Full responsibility for transactions rests with the users themselves.</p>
               </section>
               <section>
-                <h2 className="text-lg font-bold text-gray-800 mb-2">3. Prohibited Content</h2>
-                <p>It is prohibited to list: weapons, drugs, counterfeit products, adult content, or anything illegal under Egyptian law. Violations result in immediate account deletion.</p>
+                <h2 className="text-lg font-bold text-gray-800 mb-2">3. Free Service & Purpose</h2>
+                <p>MySouqify is a completely free platform created to serve the community and help people buy and sell items easily.</p>
+                <p>We do not charge any fees, commissions, or participate in any financial transactions between users.</p>
               </section>
               <section>
-                <h2 className="text-lg font-bold text-gray-800 mb-2">4. Identity Verification</h2>
-                <p>We require identity verification to ensure community safety. Verification data is used solely for this purpose.</p>
+                <h2 className="text-lg font-bold text-gray-800 mb-2">4. Prohibited Content</h2>
+                <p>It is prohibited to list: weapons, drugs, counterfeit products, adult content, or anything illegal under Egyptian law. Violations may result in immediate account suspension or deletion.</p>
               </section>
               <section>
-                <h2 className="text-lg font-bold text-gray-800 mb-2">5. Disclaimer</h2>
-                <p>MySouqify is not responsible for product quality or accuracy of user-submitted information. We always recommend personal inspection before purchasing.</p>
+                <h2 className="text-lg font-bold text-gray-800 mb-2">5. Identity Verification</h2>
+                <p>We may require identity verification to ensure community safety. Verification data is used solely for this purpose and handled with care.</p>
               </section>
               <section>
-                <h2 className="text-lg font-bold text-gray-800 mb-2">6. Modifications</h2>
-                <p>We reserve the right to modify these terms at any time. You will be notified of any material changes via email.</p>
+                <h2 className="text-lg font-bold text-gray-800 mb-2">6. Disclaimer</h2>
+                <p>MySouqify is not responsible for product quality, delivery, or accuracy of user-submitted information. Users are strongly advised to verify items and sellers before completing any transaction.</p>
+              </section>
+              <section>
+                <h2 className="text-lg font-bold text-gray-800 mb-2">7. Modifications</h2>
+                <p>We reserve the right to modify these terms at any time. Users will be notified of any significant changes via email or platform notification.</p>
               </section>
             </>
           )}
