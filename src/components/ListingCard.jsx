@@ -80,69 +80,144 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
 
   // ── List (horizontal) layout — dubizzle style ───────────────────────────────
   if (viewMode === 'list') {
+    const sellerJoinYear = listing.seller?.createdAt
+      ? new Date(listing.seller.createdAt).toLocaleString('en', { month: 'long', year: 'numeric' })
+      : null;
+
     return (
-      <div className="group bg-white rounded-xl border border-gray-200 hover:shadow-md hover:border-gray-300 transition-all overflow-hidden">
-        <Link href={`/listing/${listing._id}`} className="block">
-          <div className="relative w-full aspect-video bg-gray-100 overflow-hidden">
-            <Image
-              src={imageUrl}
-              alt={listing.title}
-              fill
-              className="object-cover group-hover:scale-110 transition-transform duration-500"
-              sizes="100vw"
-              onError={() => setImgSrc(PLACEHOLDER_IMG)}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-            <div className="absolute left-2 top-2 flex flex-wrap gap-1">
-              {listing.isDeleted ? (
-                <span className="badge bg-gray-600 text-white text-xs px-2 py-0.5">{t('common.sold')}</span>
-              ) : listing.featured ? (
-                <span className="badge badge-featured text-xs px-2 py-0.5">{t('common.featured')}</span>
-              ) : null}
-            </div>
-          </div>
+      <div className="group bg-white rounded-xl border border-gray-200 hover:shadow-md hover:border-gray-300 transition-all overflow-hidden flex flex-row">
+
+        {/* Left — Image */}
+        <Link href={`/listing/${listing._id}`} className="relative flex-shrink-0 w-56 md:w-64 bg-gray-100 overflow-hidden">
+          <Image
+            src={imageUrl}
+            alt={listing.title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="256px"
+            onError={() => setImgSrc(PLACEHOLDER_IMG)}
+          />
+          {listing.featured && !listing.isDeleted && (
+            <span className="absolute top-2 left-0 bg-yellow-500 text-white text-xs font-bold px-2 py-0.5 rounded-r-full shadow">
+              ★ Featured
+            </span>
+          )}
+          {listing.isDeleted && (
+            <span className="absolute top-2 left-0 bg-gray-600 text-white text-xs font-bold px-2 py-0.5 rounded-r-full shadow">
+              Sold
+            </span>
+          )}
         </Link>
 
-        <div className="px-3 py-2">
-          <h3 className="font-semibold text-gray-900 truncate text-base">{listing.title}</h3>
-          <p className="text-primary-600 font-bold text-lg mt-1">{t('common.egp')} {listing.price?.toLocaleString()}</p>
+        {/* Middle — Details */}
+        <div className="flex-1 flex flex-col justify-between p-4 min-w-0">
+          <div>
+            <Link href={`/listing/${listing._id}`}>
+              <h3 className="font-bold text-gray-900 text-lg leading-snug hover:text-primary-600 transition-colors line-clamp-2">
+                {listing.title}
+              </h3>
+            </Link>
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              <span className="text-primary-600 font-bold text-xl">
+                {t('common.egp')} {listing.price?.toLocaleString()}
+              </span>
+              {listing.condition && (
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${conditionColors[listing.condition] || 'badge-fair'}`}>
+                  {listing.condition}
+                </span>
+              )}
+            </div>
+            {listing.description && (
+              <p className="text-gray-500 text-sm mt-2 line-clamp-2 leading-relaxed">
+                {listing.description}
+              </p>
+            )}
+          </div>
+
+          <div className="mt-3">
+            <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
+              <span className="flex items-center gap-1">
+                <FiMapPin size={11} />
+                {listing.location?.area ? `${listing.location.area}, ${listing.location?.city || 'Cairo'}` : 'Cairo'}
+              </span>
+              <span>•</span>
+              <span>{formatDate(listing.createdAt)} ago</span>
+              {listing.views > 0 && (
+                <>
+                  <span>•</span>
+                  <span className="flex items-center gap-1"><FiEye size={11} />{listing.views}</span>
+                </>
+              )}
+            </div>
+
+            {!listing.isDeleted && (
+              <div className="flex items-center gap-2 flex-wrap">
+                {sellerPhone && (
+                  <a
+                    href={`tel:${sellerPhone}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-1.5 px-4 py-1.5 border border-red-300 text-red-600 rounded-lg text-sm font-medium hover:bg-red-50 transition-colors"
+                  >
+                    <FiPhone size={14} /> Call
+                  </a>
+                )}
+                <Link
+                  href={`/listing/${listing._id}#contact`}
+                  className="flex items-center gap-1.5 px-4 py-1.5 border border-primary-300 text-primary-600 rounded-lg text-sm font-medium hover:bg-primary-50 transition-colors"
+                >
+                  <FiMessageCircle size={14} /> Chat
+                </Link>
+                {whatsappNumber && (
+                  <a
+                    href={`https://wa.me/${whatsappNumber}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-1.5 px-4 py-1.5 border border-green-300 text-green-600 rounded-lg text-sm font-medium hover:bg-green-50 transition-colors"
+                  >
+                    <WhatsAppIcon size={14} /> WhatsApp
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="flex items-center justify-between px-2 py-2">
-          <button
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (sellerPhone) window.location.href = `tel:${sellerPhone}`; }}
-            className="w-10 h-10 rounded-full border border-red-200 bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-100 transition-colors"
-          >
-            <FiPhone size={16} />
-          </button>
+        {/* Right — Seller info */}
+        <div className="hidden md:flex flex-col items-center justify-between w-44 border-l border-gray-100 p-4 flex-shrink-0">
+          <div className="flex flex-col items-center text-center gap-2 w-full">
+            <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+              {listing.seller?.avatar ? (
+                <Image src={listing.seller.avatar} alt={listing.seller?.name || ''} width={48} height={48} className="object-cover rounded-full" />
+              ) : (
+                <span className="text-primary-600 font-bold text-lg">
+                  {(listing.seller?.name || 'U')[0].toUpperCase()}
+                </span>
+              )}
+            </div>
+            <div>
+              <p className="font-semibold text-gray-800 text-sm line-clamp-1">{listing.seller?.name || 'Seller'}</p>
+              {sellerJoinYear && (
+                <p className="text-xs text-gray-400 mt-0.5">Member since {sellerJoinYear}</p>
+              )}
+            </div>
+            {listing.seller?.verification?.status === 'approved' && (
+              <span className="flex items-center gap-1 text-xs text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded-full border border-blue-200">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                Verified
+              </span>
+            )}
+          </div>
 
           <button
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = `/listing/${listing._id}#contact`; }}
-            className="w-10 h-10 rounded-full border border-primary-200 bg-primary-50 text-primary-600 flex items-center justify-center hover:bg-primary-100 transition-colors"
-          >
-            <FiMessageCircle size={16} />
-          </button>
-
-          {whatsappNumber && (
-            <a
-              href={`https://wa.me/${whatsappNumber}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="w-10 h-10 rounded-full border border-green-200 bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-100 transition-colors"
-            >
-              <WhatsAppIcon size={16} />
-            </a>
-          )}
-
-          <button
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleFavorite(e); }}
+            onClick={handleFavorite}
             disabled={isLoading}
-            className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all ${
+            className={`mt-3 w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg border text-sm transition-all ${
               isFavorited ? 'bg-primary-600 text-white border-primary-600' : 'text-gray-400 border-gray-200 hover:text-primary-600 hover:border-primary-300'
             }`}
           >
-            <FiHeart size={16} className={isFavorited ? 'fill-current' : ''} />
+            <FiHeart size={14} className={isFavorited ? 'fill-current' : ''} />
+            {isFavorited ? 'Saved' : 'Save'}
           </button>
         </div>
       </div>
