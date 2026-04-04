@@ -29,11 +29,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Clear token and redirect to login modal on homepage
+      // Clear token only — no redirect, let auth store handle state reset on next fetchUser
       Cookies.remove('token');
-      if (typeof window !== 'undefined' && !window.location.search.includes('login=true')) {
-        window.location.href = '/?login=true';
-      }
     }
     return Promise.reject(error);
   }

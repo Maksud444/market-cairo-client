@@ -91,7 +91,7 @@ export const useAuthStore = create(
       fetchUser: async () => {
         const token = Cookies.get('token');
         if (!token) {
-          set({ isLoading: false });
+          set({ isLoading: false, isAuthenticated: false, user: null });
           return;
         }
         
