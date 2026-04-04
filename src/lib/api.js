@@ -48,6 +48,8 @@ export const authAPI = {
   getNotifications: () => api.get('/auth/notifications'),
   markAllNotificationsRead: () => api.put('/auth/notifications/read'),
   markNotificationRead: (id) => api.put(`/auth/notifications/${id}/read`),
+  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
+  resetPassword: (token, password) => api.post(`/auth/reset-password/${token}`, { password }),
 };
 
 // Listings API
@@ -161,6 +163,13 @@ export const adminAPI = {
   getVerifications: (params) => api.get('/admin/verifications', { params }),
   reviewVerification: (userId, action, reason) =>
     api.put(`/admin/verifications/${userId}/review`, { action, reason }),
+
+  // Super Admin: Admins Management
+  getAdmins: () => api.get('/admin/admins'),
+  createAdmin: (data) => api.post('/admin/admins', data),
+  removeAdmin: (id) => api.delete(`/admin/admins/${id}`),
+  resetAdminPassword: (id, newPassword) => api.put(`/admin/admins/${id}/reset-password`, { newPassword }),
+  getActivity: (params) => api.get('/admin/activity', { params }),
 
   // Categories Management
   getCategories: () => api.get('/admin/categories'),

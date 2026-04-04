@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { useGoogleLogin } from '@react-oauth/google';
 import { FiX, FiMail, FiLock, FiUser, FiPhone, FiEye, FiEyeOff } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
@@ -250,9 +251,9 @@ export default function AuthModal() {
 
             {isLogin && (
               <div className="flex justify-end">
-                <button type="button" className="text-sm text-primary-600 hover:underline">
+                <Link href="/forgot-password" onClick={closeAuthModals} className="text-sm text-primary-600 hover:underline">
                   Forgot password?
-                </button>
+                </Link>
               </div>
             )}
 

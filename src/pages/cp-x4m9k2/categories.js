@@ -221,6 +221,7 @@ function AdminCategories() {
     { href: '/cp-x4m9k2/verifications', label: 'Verifications' },
     { href: '/cp-x4m9k2/reports', label: 'Reports' },
     { href: '/cp-x4m9k2/categories', label: 'Categories', active: true },
+    { href: '/cp-x4m9k2/admins', label: 'Admins' },
     { href: '/', label: 'View Site' },
   ];
 

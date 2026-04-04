@@ -162,6 +162,9 @@ function AdminVerifications() {
             <Link href="/cp-x4m9k2/reports" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
               Reports
             </Link>
+            <Link href="/cp-x4m9k2/admins" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
+              Admins
+            </Link>
             <Link href="/" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
               View Site
             </Link>
