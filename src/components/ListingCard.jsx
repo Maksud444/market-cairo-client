@@ -77,95 +77,100 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
   const imageUrl = imgSrc;
   const sellerPhone = listing.seller?.phone;
   const whatsappNumber = formatWhatsApp(sellerPhone);
+  const locationText = listing.location?.area
+    ? `${listing.location.area}${listing.location?.city ? `, ${listing.location.city}` : ''}`
+    : 'Cairo';
 
-  // ── List (horizontal) layout — dubizzle style ───────────────────────────────
+  // ── List (horizontal) layout — Dubizzle mobile style ──────────────────────
   if (viewMode === 'list') {
     const sellerJoinYear = listing.seller?.createdAt
       ? new Date(listing.seller.createdAt).toLocaleString('en', { month: 'long', year: 'numeric' })
       : null;
 
     return (
-      <div className="group bg-white rounded-xl border border-gray-200 hover:shadow-md hover:border-gray-300 transition-all overflow-hidden flex flex-row">
+      <div className="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-row">
 
-        {/* Left — Image */}
-        <Link href={`/listing/${listing._id}`} className="relative flex-shrink-0 w-56 md:w-64 bg-gray-100 overflow-hidden">
+        {/* Left — Image (compact on mobile, wider on desktop) */}
+        <Link
+          href={`/listing/${listing._id}`}
+          className="relative flex-shrink-0 w-28 md:w-52 bg-gray-100 overflow-hidden"
+        >
           <Image
             src={imageUrl}
             alt={listing.title}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
-            sizes="256px"
+            sizes="(max-width: 767px) 112px, 208px"
             onError={() => setImgSrc(PLACEHOLDER_IMG)}
           />
           {listing.featured && !listing.isDeleted && (
-            <span className="absolute top-2 left-0 bg-yellow-500 text-white text-xs font-bold px-2 py-0.5 rounded-r-full shadow">
+            <span className="absolute top-2 left-0 bg-yellow-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-r-full shadow">
               ★ Featured
             </span>
           )}
           {listing.isDeleted && (
-            <span className="absolute top-2 left-0 bg-gray-600 text-white text-xs font-bold px-2 py-0.5 rounded-r-full shadow">
+            <span className="absolute top-2 left-0 bg-gray-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-r-full shadow">
               Sold
             </span>
           )}
         </Link>
 
         {/* Middle — Details */}
-        <div className="flex-1 flex flex-col justify-between p-4 min-w-0">
+        <div className="flex-1 flex flex-col justify-between p-3 min-w-0">
           <div>
             <Link href={`/listing/${listing._id}`}>
-              <h3 className="font-bold text-gray-900 text-lg leading-snug hover:text-primary-600 transition-colors line-clamp-2">
+              <h3 className="font-bold text-gray-900 text-sm md:text-base leading-snug hover:text-primary-600 transition-colors line-clamp-2">
                 {listing.title}
               </h3>
             </Link>
-            <div className="flex items-center gap-2 mt-1 flex-wrap">
-              <span className="text-primary-600 font-bold text-xl">
+            <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+              <span className="text-primary-600 font-bold text-base md:text-lg">
                 {t('common.egp')} {listing.price?.toLocaleString()}
               </span>
               {listing.condition && (
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${conditionColors[listing.condition] || 'badge-fair'}`}>
+                <span className={`text-[10px] md:text-xs px-1.5 py-0.5 rounded-full font-medium ${conditionColors[listing.condition] || 'badge-fair'}`}>
                   {listing.condition}
                 </span>
               )}
             </div>
+            {/* Description — hidden on very small screens */}
             {listing.description && (
-              <p className="text-gray-500 text-sm mt-2 line-clamp-2 leading-relaxed">
+              <p className="hidden sm:block text-gray-400 text-xs mt-1 line-clamp-1">
                 {listing.description}
               </p>
             )}
           </div>
 
-          <div className="mt-3">
-            <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
-              <span className="flex items-center gap-1">
-                <FiMapPin size={11} />
-                {listing.location?.area ? `${listing.location.area}, ${listing.location?.city || 'Cairo'}` : 'Cairo'}
-              </span>
+          <div className="mt-2">
+            <div className="flex items-center gap-1.5 text-[11px] text-gray-400 mb-2">
+              <FiMapPin size={10} />
+              <span className="truncate">{locationText}</span>
               <span>•</span>
               <span>{formatDate(listing.createdAt)} ago</span>
               {listing.views > 0 && (
                 <>
-                  <span>•</span>
-                  <span className="flex items-center gap-1"><FiEye size={11} />{listing.views}</span>
+                  <span className="hidden sm:inline">•</span>
+                  <span className="hidden sm:flex items-center gap-0.5"><FiEye size={10} />{listing.views}</span>
                 </>
               )}
             </div>
 
             {!listing.isDeleted && (
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-1.5 flex-wrap">
                 {sellerPhone && (
                   <a
                     href={`tel:${sellerPhone}`}
                     onClick={(e) => e.stopPropagation()}
-                    className="flex items-center gap-1.5 px-4 py-1.5 border border-red-300 text-red-600 rounded-lg text-sm font-medium hover:bg-red-50 transition-colors"
+                    className="flex items-center gap-1 px-2.5 py-1 border border-red-300 text-red-600 rounded-lg text-[11px] md:text-sm font-medium hover:bg-red-50 transition-colors"
                   >
-                    <FiPhone size={14} /> Call
+                    <FiPhone size={11} /> Call
                   </a>
                 )}
                 <Link
                   href={`/listing/${listing._id}#contact`}
-                  className="flex items-center gap-1.5 px-4 py-1.5 border border-primary-300 text-primary-600 rounded-lg text-sm font-medium hover:bg-primary-50 transition-colors"
+                  className="flex items-center gap-1 px-2.5 py-1 border border-primary-300 text-primary-600 rounded-lg text-[11px] md:text-sm font-medium hover:bg-primary-50 transition-colors"
                 >
-                  <FiMessageCircle size={14} /> Chat
+                  <FiMessageCircle size={11} /> Chat
                 </Link>
                 {whatsappNumber && (
                   <a
@@ -173,9 +178,9 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="flex items-center gap-1.5 px-4 py-1.5 border border-green-300 text-green-600 rounded-lg text-sm font-medium hover:bg-green-50 transition-colors"
+                    className="hidden sm:flex items-center gap-1 px-2.5 py-1 border border-green-300 text-green-600 rounded-lg text-[11px] md:text-sm font-medium hover:bg-green-50 transition-colors"
                   >
-                    <WhatsAppIcon size={14} /> WhatsApp
+                    <WhatsAppIcon size={11} /> WhatsApp
                   </a>
                 )}
               </div>
@@ -183,27 +188,27 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
           </div>
         </div>
 
-        {/* Right — Seller info */}
-        <div className="hidden md:flex flex-col items-center justify-between w-44 border-l border-gray-100 p-4 flex-shrink-0">
+        {/* Right — Favorite + Seller info (desktop only) */}
+        <div className="hidden md:flex flex-col items-center justify-between w-36 border-l border-gray-100 p-3 flex-shrink-0">
           <div className="flex flex-col items-center text-center gap-2 w-full">
-            <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center overflow-hidden flex-shrink-0">
               {listing.seller?.avatar ? (
-                <Image src={listing.seller.avatar} alt={listing.seller?.name || ''} width={48} height={48} className="object-cover rounded-full" />
+                <Image src={listing.seller.avatar} alt={listing.seller?.name || ''} width={40} height={40} className="object-cover rounded-full" />
               ) : (
-                <span className="text-primary-600 font-bold text-lg">
+                <span className="text-primary-600 font-bold text-sm">
                   {(listing.seller?.name || 'U')[0].toUpperCase()}
                 </span>
               )}
             </div>
             <div>
-              <p className="font-semibold text-gray-800 text-sm line-clamp-1">{listing.seller?.name || 'Seller'}</p>
+              <p className="font-semibold text-gray-800 text-xs line-clamp-1">{listing.seller?.name || 'Seller'}</p>
               {sellerJoinYear && (
-                <p className="text-xs text-gray-400 mt-0.5">Member since {sellerJoinYear}</p>
+                <p className="text-[10px] text-gray-400 mt-0.5">Since {sellerJoinYear}</p>
               )}
             </div>
             {listing.seller?.verification?.status === 'approved' && (
-              <span className="flex items-center gap-1 text-xs text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded-full border border-blue-200">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+              <span className="flex items-center gap-1 text-[10px] text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded-full border border-blue-200">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
                 Verified
               </span>
             )}
@@ -212,11 +217,11 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
           <button
             onClick={handleFavorite}
             disabled={isLoading}
-            className={`mt-3 w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg border text-sm transition-all ${
+            className={`mt-2 w-full flex items-center justify-center gap-1 py-1.5 rounded-lg border text-xs transition-all ${
               isFavorited ? 'bg-primary-600 text-white border-primary-600' : 'text-gray-400 border-gray-200 hover:text-primary-600 hover:border-primary-300'
             }`}
           >
-            <FiHeart size={14} className={isFavorited ? 'fill-current' : ''} />
+            <FiHeart size={12} className={isFavorited ? 'fill-current' : ''} />
             {isFavorited ? 'Saved' : 'Save'}
           </button>
         </div>
@@ -224,11 +229,12 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
     );
   }
 
-  // ── Grid layout (default) ───────────────────────────────────────────────────
+  // ── Grid layout — Dubizzle style ────────────────────────────────────────────
   return (
-    <div className="card group">
+    <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow group">
+      {/* Image with overlaid badges + heart */}
       <Link href={`/listing/${listing._id}`} className="block">
-        <div className="relative aspect-card overflow-hidden bg-gray-100">
+        <div className="relative overflow-hidden bg-gray-100" style={{ aspectRatio: '4/3' }}>
           <Image
             src={imageUrl}
             alt={listing.title}
@@ -237,60 +243,76 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             onError={() => setImgSrc(PLACEHOLDER_IMG)}
           />
-          <div className="absolute top-2 left-2 flex flex-wrap gap-1.5">
-            {listing.isDeleted ? (
-              <span className="badge bg-gray-500 text-white">{t('common.sold')}</span>
-            ) : listing.featured && (
-              <span className="badge badge-featured">{t('common.featured')}</span>
-            )}
-          </div>
-          <div className="absolute top-2 right-2">
-            {!listing.isDeleted && (
-              <span className={`badge ${conditionColors[listing.condition] || 'badge-fair'}`}>
-                {listing.condition}
-              </span>
-            )}
-          </div>
-        </div>
 
-        <div className="p-3">
-          <h3 className="font-medium text-gray-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
-            {listing.title}
-          </h3>
-          <p className="text-lg font-bold text-primary-600 mt-1">
-            {t('common.egp')} {listing.price?.toLocaleString()}
-          </p>
-          <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
-            <div className="flex items-center gap-1">
-              <FiMapPin size={12} />
-              <span className="truncate max-w-[100px]">{listing.location?.area || 'Cairo'}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              {listing.views > 0 && (
-                <span className="flex items-center gap-1">
-                  <FiEye size={12} />
-                  {listing.views}
-                </span>
-              )}
-              <span>{formatDate(listing.createdAt)}</span>
-            </div>
+          {/* Top-left badge */}
+          <div className="absolute top-2 left-2">
+            {listing.isDeleted ? (
+              <span className="badge bg-gray-500 text-white text-[10px]">{t('common.sold')}</span>
+            ) : listing.featured && (
+              <span className="badge badge-featured text-[10px]">★ {t('common.featured')}</span>
+            )}
           </div>
+
+          {/* Heart button — top-right overlay on mobile */}
+          <button
+            onClick={handleFavorite}
+            disabled={isLoading}
+            className={`absolute top-2 right-2 lg:hidden w-7 h-7 rounded-full flex items-center justify-center shadow-md transition-all ${
+              isFavorited
+                ? 'bg-primary-600 text-white'
+                : 'bg-white/90 text-gray-400 hover:text-primary-600'
+            }`}
+          >
+            <FiHeart size={13} className={isFavorited ? 'fill-current' : ''} />
+          </button>
         </div>
       </Link>
 
-      {/* Action buttons + favorite for grid */}
-      <div className="px-3 pb-3 flex items-center gap-1.5">
-        <button
-          onClick={handleFavorite}
-          disabled={isLoading}
-          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all flex-shrink-0 border ${
-            isFavorited
-              ? 'bg-primary-600 text-white border-primary-600'
-              : 'text-gray-400 border-gray-200 hover:text-primary-600 hover:border-primary-300'
-          }`}
-        >
-          <FiHeart size={14} className={isFavorited ? 'fill-current' : ''} />
-        </button>
+      {/* Card body */}
+      <Link href={`/listing/${listing._id}`} className="block p-2.5 lg:p-3">
+        {/* Price row */}
+        <div className="flex items-start justify-between gap-1">
+          <p className="text-sm lg:text-base font-bold text-gray-900">
+            {t('common.egp')} {listing.price?.toLocaleString()}
+          </p>
+          {/* Desktop heart */}
+          <button
+            onClick={handleFavorite}
+            disabled={isLoading}
+            className={`hidden lg:flex w-7 h-7 rounded-full items-center justify-center border transition-all flex-shrink-0 ${
+              isFavorited
+                ? 'bg-primary-600 text-white border-primary-600'
+                : 'text-gray-400 border-gray-200 hover:text-primary-600 hover:border-primary-300'
+            }`}
+          >
+            <FiHeart size={13} className={isFavorited ? 'fill-current' : ''} />
+          </button>
+        </div>
+
+        {/* Condition badge */}
+        {!listing.isDeleted && listing.condition && (
+          <span className={`inline-block text-[10px] lg:text-xs px-1.5 py-0.5 rounded-full font-medium mt-1 ${conditionColors[listing.condition] || 'badge-fair'}`}>
+            {listing.condition}
+          </span>
+        )}
+
+        {/* Title */}
+        <h3 className="text-xs lg:text-sm font-medium text-gray-700 line-clamp-2 mt-1 group-hover:text-primary-600 transition-colors leading-snug">
+          {listing.title}
+        </h3>
+
+        {/* Location + time */}
+        <div className="flex items-center justify-between mt-1.5 text-[10px] lg:text-xs text-gray-400">
+          <span className="flex items-center gap-0.5 truncate">
+            <FiMapPin size={10} />
+            <span className="truncate max-w-[90px]">{listing.location?.area || 'Cairo'}</span>
+          </span>
+          <span className="flex-shrink-0">{formatDate(listing.createdAt)}</span>
+        </div>
+      </Link>
+
+      {/* Desktop-only action buttons */}
+      <div className="hidden lg:flex px-3 pb-3 items-center gap-1.5">
         {!listing.isDeleted && (
           <>
             {sellerPhone && (

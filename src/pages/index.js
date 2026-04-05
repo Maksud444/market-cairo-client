@@ -149,15 +149,15 @@ export default function Home() {
 
       {/* Featured Listings */}
       {featuredListings.length > 0 && (
-        <section className="container-app pb-10 lg:pb-16">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl lg:text-2xl font-bold text-gray-900">{t('home.featured_listings')}</h2>
-            <Link href="/search?featured=true" className="text-sm text-primary-600 hover:underline flex items-center gap-1">
+        <section className="px-3 lg:container-app pb-6 lg:pb-16">
+          <div className="flex items-center justify-between mb-3 lg:mb-6">
+            <h2 className="text-base font-bold text-gray-900 lg:text-2xl">{t('home.featured_listings')}</h2>
+            <Link href="/search?featured=true" className="text-sm font-semibold text-primary-600 hover:underline flex items-center gap-0.5">
               {t('home.view_all')} <FiArrowRight size={14} />
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 lg:gap-4">
             {featuredListings.slice(0, 4).map((listing) => (
               <ListingCard key={listing._id} listing={listing} />
             ))}
@@ -166,47 +166,53 @@ export default function Home() {
       )}
 
       {/* Recent Listings */}
-      <section className="pb-10 lg:pb-16">
-        <div className="px-4 lg:container-app">
-          <div className="flex items-center justify-between mb-4 lg:mb-6">
-            <h2 className="text-base lg:text-2xl font-bold text-gray-900">{t('home.recent_listings')}</h2>
-            <Link href="/search" className="text-sm text-primary-600 hover:underline flex items-center gap-1">
+      <section className="pb-8 lg:pb-16">
+        <div className="px-3 lg:container-app">
+          <div className="flex items-center justify-between mb-3 lg:mb-6">
+            <h2 className="text-base font-bold text-gray-900 lg:text-2xl">{t('home.recent_listings')}</h2>
+            <Link href="/search" className="text-sm font-semibold text-primary-600 hover:underline flex items-center gap-0.5">
               {t('home.view_all')} <FiArrowRight size={14} />
             </Link>
           </div>
 
           {isLoading ? (
-            <div className="space-y-3 lg:grid lg:space-y-0 lg:grid-cols-4 lg:gap-4">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="lg:hidden flex gap-3 bg-white rounded-xl border border-gray-100 overflow-hidden h-28">
-                  <div className="w-28 skeleton flex-shrink-0" />
-                  <div className="flex-1 p-3 space-y-2">
-                    <div className="h-4 skeleton w-3/4" />
-                    <div className="h-5 skeleton w-1/2" />
-                    <div className="h-3 skeleton w-2/3" />
-                  </div>
-                </div>
-              ))}
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="hidden lg:block card">
-                  <div className="aspect-card skeleton" />
-                  <div className="p-3 space-y-2">
-                    <div className="h-4 skeleton w-3/4" />
-                    <div className="h-5 skeleton w-1/2" />
-                    <div className="h-3 skeleton w-full" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
             <>
-              {/* Mobile: list view */}
-              <div className="lg:hidden space-y-2">
-                {recentListings.map((listing) => (
-                  <ListingCard key={listing._id} listing={listing} viewMode="list" />
+              {/* Mobile skeleton: 2-col grid */}
+              <div className="grid grid-cols-2 gap-2.5 lg:hidden">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+                    <div className="skeleton" style={{ aspectRatio: '4/3' }} />
+                    <div className="p-2.5 space-y-1.5">
+                      <div className="h-4 skeleton w-2/3" />
+                      <div className="h-3 skeleton w-3/4" />
+                      <div className="h-3 skeleton w-1/2" />
+                    </div>
+                  </div>
                 ))}
               </div>
-              {/* Desktop: grid view */}
+              {/* Desktop skeleton: 4-col grid */}
+              <div className="hidden lg:grid lg:grid-cols-4 gap-4">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="card">
+                    <div className="aspect-card skeleton" />
+                    <div className="p-3 space-y-2">
+                      <div className="h-4 skeleton w-3/4" />
+                      <div className="h-5 skeleton w-1/2" />
+                      <div className="h-3 skeleton w-full" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Mobile: 2-column grid (Dubizzle style) */}
+              <div className="grid grid-cols-2 gap-2.5 lg:hidden">
+                {recentListings.map((listing) => (
+                  <ListingCard key={listing._id} listing={listing} viewMode="grid" />
+                ))}
+              </div>
+              {/* Desktop: 4-column grid */}
               <div className="hidden lg:grid lg:grid-cols-4 gap-4">
                 {recentListings.map((listing) => (
                   <ListingCard key={listing._id} listing={listing} viewMode="grid" />
