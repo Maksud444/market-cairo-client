@@ -311,40 +311,43 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
         </div>
       </Link>
 
-      {/* Desktop-only action buttons */}
-      <div className="hidden lg:flex px-3 pb-3 items-center gap-1.5">
-        {!listing.isDeleted && (
-          <>
-            {sellerPhone && (
-              <a
-                href={`tel:${sellerPhone}`}
-                className="flex items-center justify-center w-9 h-9 bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
-                title="Call"
-              >
-                <FiPhone size={17} />
-              </a>
-            )}
-            <Link
-              href={`/listing/${listing._id}#contact`}
-              className="flex items-center justify-center w-9 h-9 bg-primary-50 text-primary-600 border border-primary-200 rounded-lg hover:bg-primary-100 transition-colors"
-              title="Chat"
+      {/* Action buttons — all screen sizes */}
+      {!listing.isDeleted && (
+        <div className="px-2.5 pb-2.5 flex items-center gap-1.5">
+          {whatsappNumber && (
+            <a
+              href={`https://wa.me/${whatsappNumber}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-green-50 text-green-600 border border-green-200 rounded-lg text-[11px] font-semibold hover:bg-green-100 transition-colors"
+              title="WhatsApp"
             >
-              <FiMessageCircle size={17} />
-            </Link>
-            {whatsappNumber && (
-              <a
-                href={`https://wa.me/${whatsappNumber}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center w-9 h-9 bg-green-50 text-green-600 border border-green-200 rounded-lg hover:bg-green-100 transition-colors"
-                title="WhatsApp"
-              >
-                <WhatsAppIcon size={17} />
-              </a>
-            )}
-          </>
-        )}
-      </div>
+              <WhatsAppIcon size={12} />
+              <span>WA</span>
+            </a>
+          )}
+          {sellerPhone && (
+            <a
+              href={`tel:${sellerPhone}`}
+              onClick={(e) => e.stopPropagation()}
+              className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-red-50 text-red-600 border border-red-200 rounded-lg text-[11px] font-semibold hover:bg-red-100 transition-colors"
+              title="Call"
+            >
+              <FiPhone size={12} />
+              <span>Call</span>
+            </a>
+          )}
+          <Link
+            href={`/listing/${listing._id}#contact`}
+            className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-primary-50 text-primary-600 border border-primary-200 rounded-lg text-[11px] font-semibold hover:bg-primary-100 transition-colors"
+            title="Chat"
+          >
+            <FiMessageCircle size={12} />
+            <span>Chat</span>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

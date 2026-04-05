@@ -39,7 +39,7 @@ export default function SearchPage() {
   const [subcategory, setSubcategory] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState('list');
+  const [viewMode, setViewMode] = useState('grid');
   const [pagination, setPagination] = useState({
     page: 1,
     total: 0,

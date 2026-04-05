@@ -149,15 +149,39 @@ export default function Home() {
 
       {/* Featured Listings */}
       {featuredListings.length > 0 && (
-        <section className="px-3 lg:container-app pb-6 lg:pb-16">
-          <div className="flex items-center justify-between mb-3 lg:mb-6">
+        <section className="pb-6 lg:pb-16">
+          <div className="flex items-center justify-between mb-3 lg:mb-6 px-3 lg:container-app">
             <h2 className="text-base font-bold text-gray-900 lg:text-2xl">{t('home.featured_listings')}</h2>
             <Link href="/search?featured=true" className="text-sm font-semibold text-primary-600 hover:underline flex items-center gap-0.5">
               {t('home.view_all')} <FiArrowRight size={14} />
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 lg:gap-4">
+          {/* Mobile: horizontal slider */}
+          <div className="lg:hidden overflow-x-auto no-scrollbar pl-3">
+            <div className="flex gap-2.5 pr-3" style={{ width: 'max-content' }}>
+              {isLoading
+                ? [...Array(4)].map((_, i) => (
+                    <div key={i} className="bg-white rounded-xl border border-gray-100 overflow-hidden flex-shrink-0" style={{ width: '160px' }}>
+                      <div className="skeleton" style={{ aspectRatio: '4/3' }} />
+                      <div className="p-2.5 space-y-1.5">
+                        <div className="h-3 skeleton w-2/3" />
+                        <div className="h-4 skeleton w-1/2" />
+                        <div className="h-3 skeleton w-3/4" />
+                      </div>
+                    </div>
+                  ))
+                : featuredListings.slice(0, 8).map((listing) => (
+                    <div key={listing._id} className="flex-shrink-0" style={{ width: '160px' }}>
+                      <ListingCard listing={listing} viewMode="grid" />
+                    </div>
+                  ))
+              }
+            </div>
+          </div>
+
+          {/* Desktop: 4-col grid */}
+          <div className="hidden lg:grid lg:grid-cols-4 gap-4 container-app">
             {featuredListings.slice(0, 4).map((listing) => (
               <ListingCard key={listing._id} listing={listing} />
             ))}
@@ -167,32 +191,41 @@ export default function Home() {
 
       {/* Recent Listings */}
       <section className="pb-8 lg:pb-16">
-        <div className="px-3 lg:container-app">
-          <div className="flex items-center justify-between mb-3 lg:mb-6">
+        <div className="lg:container-app">
+          <div className="flex items-center justify-between mb-3 lg:mb-6 px-3 lg:px-0">
             <h2 className="text-base font-bold text-gray-900 lg:text-2xl">{t('home.recent_listings')}</h2>
             <Link href="/search" className="text-sm font-semibold text-primary-600 hover:underline flex items-center gap-0.5">
               {t('home.view_all')} <FiArrowRight size={14} />
             </Link>
           </div>
 
-          {isLoading ? (
-            <>
-              {/* Mobile skeleton: 2-col grid */}
-              <div className="grid grid-cols-2 gap-2.5 lg:hidden">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-                    <div className="skeleton" style={{ aspectRatio: '4/3' }} />
-                    <div className="p-2.5 space-y-1.5">
-                      <div className="h-4 skeleton w-2/3" />
-                      <div className="h-3 skeleton w-3/4" />
-                      <div className="h-3 skeleton w-1/2" />
+          {/* Mobile: horizontal slider */}
+          <div className="lg:hidden overflow-x-auto no-scrollbar pl-3">
+            <div className="flex gap-2.5 pr-3" style={{ width: 'max-content' }}>
+              {isLoading
+                ? [...Array(4)].map((_, i) => (
+                    <div key={i} className="bg-white rounded-xl border border-gray-100 overflow-hidden flex-shrink-0" style={{ width: '160px' }}>
+                      <div className="skeleton" style={{ aspectRatio: '4/3' }} />
+                      <div className="p-2.5 space-y-1.5">
+                        <div className="h-3 skeleton w-2/3" />
+                        <div className="h-4 skeleton w-1/2" />
+                        <div className="h-3 skeleton w-3/4" />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-              {/* Desktop skeleton: 4-col grid */}
-              <div className="hidden lg:grid lg:grid-cols-4 gap-4">
-                {[...Array(8)].map((_, i) => (
+                  ))
+                : recentListings.map((listing) => (
+                    <div key={listing._id} className="flex-shrink-0" style={{ width: '160px' }}>
+                      <ListingCard listing={listing} viewMode="grid" />
+                    </div>
+                  ))
+              }
+            </div>
+          </div>
+
+          {/* Desktop: 4-col grid */}
+          <div className="hidden lg:grid lg:grid-cols-4 gap-4">
+            {isLoading
+              ? [...Array(8)].map((_, i) => (
                   <div key={i} className="card">
                     <div className="aspect-card skeleton" />
                     <div className="p-3 space-y-2">
@@ -201,25 +234,12 @@ export default function Home() {
                       <div className="h-3 skeleton w-full" />
                     </div>
                   </div>
-                ))}
-              </div>
-            </>
-          ) : (
-            <>
-              {/* Mobile: 2-column grid (Dubizzle style) */}
-              <div className="grid grid-cols-2 gap-2.5 lg:hidden">
-                {recentListings.map((listing) => (
+                ))
+              : recentListings.map((listing) => (
                   <ListingCard key={listing._id} listing={listing} viewMode="grid" />
-                ))}
-              </div>
-              {/* Desktop: 4-column grid */}
-              <div className="hidden lg:grid lg:grid-cols-4 gap-4">
-                {recentListings.map((listing) => (
-                  <ListingCard key={listing._id} listing={listing} viewMode="grid" />
-                ))}
-              </div>
-            </>
-          )}
+                ))
+            }
+          </div>
         </div>
       </section>
 
