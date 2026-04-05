@@ -39,7 +39,7 @@ export default function SearchPage() {
   const [subcategory, setSubcategory] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState('grid');
+  const [viewMode, setViewMode] = useState('list');
   const [pagination, setPagination] = useState({
     page: 1,
     total: 0,
@@ -378,18 +378,39 @@ export default function SearchPage() {
             )}
 
             {isLoading ? (
-              <div className={`grid gap-3 lg:gap-4 ${viewMode === 'grid' ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-                {[...Array(12)].map((_, i) => (
-                  <div key={i} className="card">
-                    <div className="aspect-card skeleton" />
-                    <div className="p-3 space-y-2">
-                      <div className="h-4 skeleton w-3/4" />
-                      <div className="h-5 skeleton w-1/2" />
-                      <div className="h-3 skeleton w-full" />
+              <>
+                {/* Mobile skeleton — 1-col vertical cards */}
+                <div className="lg:hidden space-y-3">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+                      <div className="skeleton w-full" style={{ aspectRatio: '16/9' }} />
+                      <div className="p-3 space-y-2">
+                        <div className="h-5 skeleton w-1/3" />
+                        <div className="h-4 skeleton w-3/4" />
+                        <div className="h-3 skeleton w-1/2" />
+                      </div>
+                      <div className="flex border-t border-gray-100">
+                        <div className="flex-1 h-11 skeleton" />
+                        <div className="flex-1 h-11 skeleton" />
+                        <div className="flex-1 h-11 skeleton" />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+                {/* Desktop skeleton */}
+                <div className={`hidden lg:grid gap-4 ${viewMode === 'grid' ? 'lg:grid-cols-3' : 'lg:grid-cols-1'}`}>
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="card">
+                      <div className="aspect-card skeleton" />
+                      <div className="p-3 space-y-2">
+                        <div className="h-4 skeleton w-3/4" />
+                        <div className="h-5 skeleton w-1/2" />
+                        <div className="h-3 skeleton w-full" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             ) : listings.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -403,7 +424,15 @@ export default function SearchPage() {
               </div>
             ) : (
               <>
-                <div className={`grid gap-3 lg:gap-4 ${viewMode === 'grid' ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+                {/* Mobile — always vertical list cards (image top, details, WA/Call/Chat) */}
+                <div className="lg:hidden space-y-3">
+                  {listings.map((listing) => (
+                    <ListingCard key={listing._id} listing={listing} viewMode="list" />
+                  ))}
+                </div>
+
+                {/* Desktop — grid or list based on toggle */}
+                <div className={`hidden lg:grid gap-4 ${viewMode === 'grid' ? 'lg:grid-cols-3' : 'lg:grid-cols-1'}`}>
                   {listings.map((listing) => (
                     <ListingCard key={listing._id} listing={listing} viewMode={viewMode} />
                   ))}
