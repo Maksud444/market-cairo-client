@@ -99,7 +99,7 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
         <div className="p-2.5">
           {/* Price + Heart */}
           <div className="flex items-center justify-between gap-1">
-            <p className="font-bold text-gray-900 text-sm leading-tight">
+            <p className="font-bold text-gray-900 text-sm lg:text-base leading-tight">
               {t('common.egp')} {listing.price?.toLocaleString()}
             </p>
             <button
@@ -117,7 +117,7 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
 
           {/* Title */}
           <Link href={`/listing/${listing._id}`}>
-            <h3 className="text-xs text-gray-700 line-clamp-2 mt-1 leading-snug group-hover:text-primary-600 transition-colors">
+            <h3 className="text-xs lg:text-sm font-medium lg:font-semibold text-gray-800 line-clamp-2 mt-1 leading-snug group-hover:text-primary-600 transition-colors">
               {listing.title}
             </h3>
           </Link>
@@ -130,10 +130,10 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
           )}
 
           {/* Location + time */}
-          <div className="flex items-center justify-between mt-1.5 text-[10px] text-gray-400">
-            <span className="flex items-center gap-0.5 truncate">
+          <div className="flex items-center justify-between mt-1.5 text-[10px] lg:text-xs text-gray-500">
+            <span className="flex items-center gap-0.5 truncate font-medium">
               <FiMapPin size={9} />
-              <span className="truncate max-w-[80px]">{listing.location?.area || 'Cairo'}</span>
+              <span className="truncate max-w-[90px] lg:max-w-[110px]">{listing.location?.area || 'Cairo'}</span>
             </span>
             <span className="flex-shrink-0">{formatDate(listing.createdAt)}</span>
           </div>
@@ -291,16 +291,16 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
         <div className="flex-1 flex flex-col justify-between p-4 min-w-0">
           <div>
             <Link href={`/listing/${listing._id}`}>
-              <h3 className="font-bold text-gray-900 text-lg leading-snug hover:text-primary-600 transition-colors line-clamp-2">
+              <h3 className="font-bold text-gray-900 text-xl leading-snug hover:text-primary-600 transition-colors line-clamp-2">
                 {listing.title}
               </h3>
             </Link>
-            <div className="flex items-center gap-2 mt-1 flex-wrap">
-              <span className="text-primary-600 font-bold text-xl">
+            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+              <span className="text-primary-600 font-bold text-2xl">
                 {t('common.egp')} {listing.price?.toLocaleString()}
               </span>
               {listing.condition && (
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${conditionColors[listing.condition] || 'badge-fair'}`}>
+                <span className={`text-sm px-2.5 py-0.5 rounded-full font-semibold ${conditionColors[listing.condition] || 'badge-fair'}`}>
                   {listing.condition}
                 </span>
               )}
@@ -313,12 +313,12 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
           </div>
 
           <div className="mt-3">
-            <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
-              <span className="flex items-center gap-1"><FiMapPin size={11} />{locationText}</span>
+            <div className="flex items-center gap-3 text-sm font-semibold text-gray-600 mb-3">
+              <span className="flex items-center gap-1"><FiMapPin size={13} />{locationText}</span>
               <span>•</span>
               <span>{formatDate(listing.createdAt)}</span>
               {listing.views > 0 && (
-                <><span>•</span><span className="flex items-center gap-1"><FiEye size={11} />{listing.views}</span></>
+                <><span>•</span><span className="flex items-center gap-1 font-normal text-gray-400"><FiEye size={13} />{listing.views}</span></>
               )}
             </div>
 
