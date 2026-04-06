@@ -25,6 +25,29 @@ export default function PostListingPage() {
   const { edit: editId } = router.query;
   const isArabic = i18n.language === 'ar';
 
+  const countryCodes = [
+    { code: '+20', flag: '🇪🇬', name: 'Egypt' },
+    { code: '+971', flag: '🇦🇪', name: 'UAE' },
+    { code: '+966', flag: '🇸🇦', name: 'Saudi Arabia' },
+    { code: '+974', flag: '🇶🇦', name: 'Qatar' },
+    { code: '+965', flag: '🇰🇼', name: 'Kuwait' },
+    { code: '+973', flag: '🇧🇭', name: 'Bahrain' },
+    { code: '+968', flag: '🇴🇲', name: 'Oman' },
+    { code: '+962', flag: '🇯🇴', name: 'Jordan' },
+    { code: '+961', flag: '🇱🇧', name: 'Lebanon' },
+    { code: '+249', flag: '🇸🇩', name: 'Sudan' },
+    { code: '+218', flag: '🇱🇾', name: 'Libya' },
+    { code: '+213', flag: '🇩🇿', name: 'Algeria' },
+    { code: '+216', flag: '🇹🇳', name: 'Tunisia' },
+    { code: '+212', flag: '🇲🇦', name: 'Morocco' },
+    { code: '+44', flag: '🇬🇧', name: 'UK' },
+    { code: '+1', flag: '🇺🇸', name: 'USA/Canada' },
+    { code: '+49', flag: '🇩🇪', name: 'Germany' },
+    { code: '+33', flag: '🇫🇷', name: 'France' },
+    { code: '+7', flag: '🇷🇺', name: 'Russia' },
+    { code: '+90', flag: '🇹🇷', name: 'Turkey' },
+  ];
+
   const conditions = [
     { value: 'New', label: t('post.condition_new'), description: t('post.condition_new_desc') },
     { value: 'Like New', label: t('post.condition_like_new'), description: t('post.condition_like_new_desc') },
@@ -63,6 +86,8 @@ export default function PostListingPage() {
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [isDonation, setIsDonation] = useState(false);
   const [donationNote, setDonationNote] = useState('');
+  const [whatsappCountryCode, setWhatsappCountryCode] = useState('+20');
+  const [whatsappNumber, setWhatsappNumber] = useState('');
 
   // Redirect if not authenticated — open login modal and return here after login
   useEffect(() => {
@@ -126,6 +151,16 @@ export default function PostListingPage() {
             if (listing.isDonation) {
               setIsDonation(true);
               setDonationNote(listing.donationNote || '');
+              if (listing.whatsappPhone) {
+                const raw = listing.whatsappPhone;
+                const match = raw.match(/^(\+\d{1,4})(.*)$/);
+                if (match) {
+                  setWhatsappCountryCode(match[1]);
+                  setWhatsappNumber(match[2].trim());
+                } else {
+                  setWhatsappNumber(raw);
+                }
+              }
             }
 
             // Restore category/subcategory selection
@@ -409,6 +444,9 @@ export default function PostListingPage() {
       data.append('condition', formData.condition);
       data.append('isDonation', isDonation ? 'true' : 'false');
       data.append('donationNote', donationNote);
+      if (isDonation && whatsappNumber.trim()) {
+        data.append('whatsappPhone', `${whatsappCountryCode}${whatsappNumber.trim()}`);
+      }
       data.append('location', JSON.stringify({
         area: locationCompound || locationCity || 'Other',
         city: locationRegion || 'Cairo'
@@ -822,6 +860,43 @@ export default function PostListingPage() {
                     maxLength={300}
                   />
                   <p className="text-xs text-gray-400 mt-1">{t('donate.donation_note_hint')}</p>
+
+                  {/* WhatsApp Number */}
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <span className="flex items-center gap-1.5">
+                        <span>📱</span> WhatsApp Number <span className="text-gray-400 font-normal">(optional)</span>
+                      </span>
+                    </label>
+                    <div className="flex gap-2">
+                      {/* Country code selector */}
+                      <div className="relative">
+                        <select
+                          value={whatsappCountryCode}
+                          onChange={(e) => setWhatsappCountryCode(e.target.value)}
+                          className="input appearance-none pl-3 pr-8 w-36 text-sm"
+                          style={{ backgroundImage: 'none' }}
+                        >
+                          {countryCodes.map(c => (
+                            <option key={c.code} value={c.code}>
+                              {c.flag} {c.code} {c.name}
+                            </option>
+                          ))}
+                        </select>
+                        <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={15} />
+                      </div>
+                      {/* Phone number */}
+                      <input
+                        type="tel"
+                        value={whatsappNumber}
+                        onChange={(e) => setWhatsappNumber(e.target.value.replace(/[^0-9]/g, ''))}
+                        placeholder="1012345678"
+                        className="input flex-1"
+                        maxLength={15}
+                      />
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">People can contact you directly on WhatsApp</p>
+                  </div>
                 </div>
               ) : (
                 <div>

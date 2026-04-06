@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FiMapPin, FiGift, FiUser } from 'react-icons/fi';
+import { FiMapPin, FiGift, FiUser, FiPhone } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 
 const conditionColors = {
@@ -74,9 +74,23 @@ export default function DonateCard({ listing }) {
             )}
             <span className="text-xs text-gray-500 truncate max-w-[80px]">{listing.seller?.name || t('donate.anonymous')}</span>
           </div>
-          <span className="text-xs font-semibold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
-            {t('donate.request_item')}
-          </span>
+          <div className="flex items-center gap-1.5">
+            {listing.whatsappPhone && (
+              <a
+                href={`https://wa.me/${listing.whatsappPhone.replace(/[^0-9]/g, '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 text-xs font-semibold text-white bg-green-500 hover:bg-green-600 px-2 py-0.5 rounded-full transition-colors"
+              >
+                <FiPhone size={10} />
+                WhatsApp
+              </a>
+            )}
+            <span className="text-xs font-semibold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
+              {t('donate.request_item')}
+            </span>
+          </div>
         </div>
       </div>
     </Link>
