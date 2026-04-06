@@ -522,16 +522,16 @@ export default function PostListingPage() {
             <button
               type="button"
               onClick={() => { setIsDonation(true); setStep(3); }}
-              className="w-full flex items-center gap-4 p-4 mb-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl hover:border-green-500 hover:shadow-md transition-all text-left group"
+              className="w-full flex items-center gap-4 p-4 mb-4 bg-primary-50 border-2 border-primary-200 rounded-xl hover:border-primary-500 hover:shadow-md transition-all text-left group"
             >
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <FiGift size={24} className="text-green-600" />
+              <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <FiGift size={24} className="text-primary-600" />
               </div>
               <div className="flex-1">
-                <p className="font-bold text-green-800">{t('donate.post_donation')}</p>
-                <p className="text-sm text-green-600">{t('donate.post_donation_desc')}</p>
+                <p className="font-bold text-primary-800">{t('donate.post_donation')}</p>
+                <p className="text-sm text-primary-600">{t('donate.post_donation_desc')}</p>
               </div>
-              <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">{t('donate.free_badge')}</span>
+              <span className="bg-primary-600 text-white text-xs font-bold px-3 py-1 rounded-full">{t('donate.free_badge')}</span>
             </button>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -610,15 +610,15 @@ export default function PostListingPage() {
 
             {/* Donation mode banner */}
             {isDonation && (
-              <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 mb-6">
+              <div className="flex items-center justify-between bg-primary-50 border border-primary-200 rounded-xl px-4 py-3 mb-6">
                 <div className="flex items-center gap-3">
-                  <FiGift size={20} className="text-green-600 flex-shrink-0" />
+                  <FiGift size={20} className="text-primary-600 flex-shrink-0" />
                   <div>
-                    <p className="text-sm font-semibold text-green-800">{t('donate.mode_active')}</p>
-                    <p className="text-xs text-green-600">{t('donate.mode_desc')}</p>
+                    <p className="text-sm font-semibold text-primary-800">{t('donate.mode_active')}</p>
+                    <p className="text-xs text-primary-600">{t('donate.mode_desc')}</p>
                   </div>
                 </div>
-                <button type="button" onClick={() => setIsDonation(false)} className="text-xs text-green-600 hover:text-green-800 underline">
+                <button type="button" onClick={() => setIsDonation(false)} className="text-xs text-primary-600 hover:text-primary-800 underline">
                   {t('donate.switch_to_sale')}
                 </button>
               </div>
@@ -805,7 +805,7 @@ export default function PostListingPage() {
               {isDonation ? (
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">{t('donate.free_badge')}</div>
+                    <div className="bg-primary-600 text-white text-xs font-bold px-3 py-1 rounded-full">{t('donate.free_badge')}</div>
                     <span className="text-sm text-gray-500">{t('donate.price_zero_note')}</span>
                   </div>
                   <label htmlFor="donationNote" className="block text-sm font-medium text-gray-700 mb-2">
@@ -912,7 +912,7 @@ export default function PostListingPage() {
 
                 {/* Detected location label */}
                 {detectedLocation && (
-                  <div className="flex items-center gap-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg text-xs text-green-700">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-primary-50 border border-primary-200 rounded-lg text-xs text-primary-700">
                     <FiMapPin size={13} className="flex-shrink-0" />
                     <span className="font-medium">Detected:</span>
                     <span>{detectedLocation}</span>

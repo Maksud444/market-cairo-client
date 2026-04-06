@@ -101,7 +101,7 @@ function AdminListings() {
     switch (status) {
       case 'approved':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-primary-50 text-primary-700 text-xs rounded-full">
             <FiCheck size={12} />
             Approved
           </span>
@@ -230,7 +230,7 @@ function AdminListings() {
                 <span className="flex items-center gap-1.5">
                   <FiGift size={14} /> Donations
                   {donationPendingCount > 0 && (
-                    <span className="ml-1 px-1.5 py-0.5 bg-green-600 text-white text-xs rounded-full font-bold">
+                    <span className="ml-1 px-1.5 py-0.5 bg-primary-600 text-white text-xs rounded-full font-bold">
                       {donationPendingCount}
                     </span>
                   )}
@@ -244,7 +244,7 @@ function AdminListings() {
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 typeFilter === key
                   ? key === 'donations'
-                    ? 'bg-green-600 text-white shadow'
+                    ? 'bg-primary-600 text-white shadow'
                     : 'bg-primary-600 text-white shadow'
                   : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-300'
               }`}
@@ -348,7 +348,7 @@ function AdminListings() {
                             <div className="flex items-center gap-2 flex-wrap">
                               <p className="font-medium text-gray-900 line-clamp-1">{listing.title}</p>
                               {listing.isDonation && (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-full flex-shrink-0">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary-50 text-primary-700 text-xs font-bold rounded-full flex-shrink-0">
                                   <FiGift size={10} /> FREE
                                 </span>
                               )}
@@ -366,7 +366,7 @@ function AdminListings() {
                       </td>
                       <td className="px-6 py-4">
                         {listing.isDonation ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-50 text-primary-700 text-xs font-bold rounded-full">
                             <FiGift size={11} /> FREE
                           </span>
                         ) : (
@@ -397,7 +397,7 @@ function AdminListings() {
                             <>
                               <button
                                 onClick={() => handleModerate(listing._id, 'approve')}
-                                className="p-2 text-green-600 hover:bg-green-50 rounded-lg"
+                                className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg"
                                 title="Approve"
                               >
                                 <FiCheck size={18} />

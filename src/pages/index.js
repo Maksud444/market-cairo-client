@@ -248,19 +248,19 @@ export default function Home() {
       </section>
 
       {/* Community Donations Section */}
-      <section className="py-10 lg:py-16 bg-gradient-to-b from-white to-green-50">
+      <section className="py-10 lg:py-16 bg-gray-50">
         <div className="container-app">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
             <div>
-              <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold mb-2">
+              <div className="inline-flex items-center gap-2 bg-primary-50 text-primary-700 px-3 py-1 rounded-full text-xs font-semibold mb-2">
                 <FiGift size={13} />
                 {t('donate.section_badge')}
               </div>
               <h2 className="text-xl lg:text-2xl font-bold text-gray-900">{t('donate.section_title')}</h2>
               <p className="text-sm text-gray-500 mt-1 max-w-lg">{t('donate.section_subtitle')}</p>
             </div>
-            <Link href="/donate" className="inline-flex items-center gap-1 text-sm font-semibold text-green-600 hover:underline flex-shrink-0">
+            <Link href="/donate" className="inline-flex items-center gap-1 text-sm font-semibold text-primary-600 hover:underline flex-shrink-0">
               {t('home.view_all')} <FiArrowRight size={14} />
             </Link>
           </div>
@@ -285,27 +285,23 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-green-200">
-              <FiHeart size={32} className="text-green-300 mx-auto mb-3" />
-              <p className="text-gray-500 text-sm mb-4">{t('donate.no_items_yet')}</p>
-              <Link href="/post?donate=true" className="inline-flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-green-700 transition-colors">
-                <FiGift size={15} />
-                {t('donate.post_donation')}
-              </Link>
+            <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-primary-200">
+              <FiHeart size={32} className="text-primary-300 mx-auto mb-3" />
+              <p className="text-gray-500 text-sm">{t('donate.no_items_yet')}</p>
             </div>
           )}
 
-          {/* Impact strip */}
-          <div className="mt-8 bg-green-600 rounded-2xl p-5 lg:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-white">
+          {/* Single CTA strip */}
+          <div className="mt-8 bg-primary-600 rounded-2xl p-5 lg:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-white">
             <div className="text-center sm:text-left">
               <p className="font-bold text-lg">{t('donate.impact_title')}</p>
-              <p className="text-green-100 text-sm">{t('donate.impact_desc')}</p>
+              <p className="text-primary-100 text-sm">{t('donate.impact_desc')}</p>
             </div>
             <Link
-              href="/post?donate=true"
-              className="flex-shrink-0 bg-white text-green-700 font-bold px-6 py-2.5 rounded-xl hover:bg-green-50 transition-colors text-sm"
+              href="/donate"
+              className="flex-shrink-0 bg-white text-primary-700 font-bold px-6 py-2.5 rounded-xl hover:bg-primary-50 transition-colors text-sm"
             >
-              {t('donate.post_donation')}
+              {t('donate.section_cta')}
             </Link>
           </div>
         </div>
