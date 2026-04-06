@@ -128,6 +128,7 @@ export const messagesAPI = {
 // Categories API
 export const categoriesAPI = {
   getAll: () => api.get('/categories'),
+  getDonation: () => api.get('/categories/donation'),
   getLocations: () => api.get('/categories/locations'),
   getConditions: () => api.get('/categories/conditions'),
   getFilters: () => api.get('/categories/filters'),
@@ -173,7 +174,7 @@ export const adminAPI = {
   getActivity: (params) => api.get('/admin/activity', { params }),
 
   // Categories Management
-  getCategories: () => api.get('/admin/categories'),
+  getCategories: (type) => api.get('/admin/categories', { params: type ? { type } : {} }),
   createCategory: (data) => api.post('/admin/categories', data),
   updateCategory: (id, data) => api.put(`/admin/categories/${id}`, data),
   deleteCategory: (id) => api.delete(`/admin/categories/${id}`),

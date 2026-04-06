@@ -5,36 +5,38 @@ import { getI18nProps } from '../../lib/i18n';
 import { withAdmin } from '../../hoc/withAdmin';
 import { useAuthStore } from '../../lib/store';
 import { adminAPI } from '../../lib/api';
-import { FiPlus, FiEdit2, FiTrash2, FiChevronDown, FiChevronRight, FiLogOut, FiX, FiCheck } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiChevronDown, FiChevronRight, FiLogOut, FiX, FiCheck, FiGift, FiGrid } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 function slugify(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
-const ICONS = ['box', 'smartphone', 'monitor', 'shirt', 'sofa', 'utensils', 'book', 'camera', 'heart', 'star', 'tag', 'grid'];
+const ICONS = ['box', 'smartphone', 'monitor', 'shirt', 'sofa', 'utensils', 'book', 'camera', 'heart', 'star', 'tag', 'grid', 'gift', 'package', 'home', 'tool', 'baby', 'bicycle', 'car', 'music'];
 
 function AdminCategories() {
   const { user, logout } = useAuthStore();
+  const [tab, setTab] = useState('regular'); // 'regular' | 'donation'
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expanded, setExpanded] = useState({});
 
   // Modal state
-  const [modal, setModal] = useState(null); // null | 'category' | 'subcategory' | 'subsubcategory'
-  const [editing, setEditing] = useState(null); // the item being edited
-  const [parentId, setParentId] = useState(null); // category _id
-  const [subParentIdx, setSubParentIdx] = useState(null); // subcategory index
+  const [modal, setModal] = useState(null);
+  const [editing, setEditing] = useState(null);
+  const [parentId, setParentId] = useState(null);
+  const [subParentIdx, setSubParentIdx] = useState(null);
 
   const [form, setForm] = useState({ name: '', icon: 'box', slug: '', order: 0 });
   const [subForm, setSubForm] = useState({ name: '' });
 
-  useEffect(() => { fetchCategories(); }, []);
+  useEffect(() => { fetchCategories(); }, [tab]);
 
   const fetchCategories = async () => {
     setIsLoading(true);
+    setExpanded({});
     try {
-      const res = await adminAPI.getCategories();
+      const res = await adminAPI.getCategories(tab);
       if (res.data.success) setCategories(res.data.categories);
     } catch {
       toast.error('Failed to load categories');
@@ -77,7 +79,7 @@ function AdminCategories() {
         await adminAPI.updateCategory(editing._id, { ...form, slug });
         toast.success('Category updated');
       } else {
-        await adminAPI.createCategory({ ...form, slug });
+        await adminAPI.createCategory({ ...form, slug, isDonation: tab === 'donation' });
         toast.success('Category created');
       }
       setModal(null);
@@ -100,7 +102,7 @@ function AdminCategories() {
 
   const toggleActive = async (cat) => {
     try {
-      await adminAPI.updateCategory(cat._id, { ...cat, isActive: !cat.isActive });
+      await adminAPI.updateCategory(cat._id, { isActive: !cat.isActive });
       fetchCategories();
     } catch {
       toast.error('Failed to update');
@@ -225,6 +227,8 @@ function AdminCategories() {
     { href: '/', label: 'View Site' },
   ];
 
+  const isDonationTab = tab === 'donation';
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Head><title>Categories - Admin</title></Head>
@@ -270,26 +274,72 @@ function AdminCategories() {
             <p className="text-sm text-gray-500 mt-1">Add categories, subcategories, and sub-subcategories</p>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={handleSeedCategories}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
-            >
-              Seed Defaults
-            </button>
+            {!isDonationTab && (
+              <button onClick={handleSeedCategories}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+              >
+                Seed Defaults
+              </button>
+            )}
             <button onClick={openAddCategory}
               className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium"
             >
-              <FiPlus size={16} /> Add Category
+              <FiPlus size={16} /> {isDonationTab ? 'Add Donation Category' : 'Add Category'}
             </button>
           </div>
         </div>
+
+        {/* Tab switcher */}
+        <div className="flex gap-1 p-1 bg-gray-100 rounded-xl mb-6 w-fit">
+          <button
+            onClick={() => setTab('regular')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              tab === 'regular'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <FiGrid size={16} />
+            Regular Categories
+          </button>
+          <button
+            onClick={() => setTab('donation')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              tab === 'donation'
+                ? 'bg-white text-primary-600 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <FiGift size={16} />
+            Donation Categories
+          </button>
+        </div>
+
+        {/* Tab description */}
+        {isDonationTab && (
+          <div className="flex items-start gap-3 p-4 bg-primary-50 border border-primary-100 rounded-xl mb-6">
+            <FiGift className="text-primary-600 mt-0.5 shrink-0" size={18} />
+            <div>
+              <p className="text-sm font-medium text-primary-800">Donation Categories</p>
+              <p className="text-xs text-primary-600 mt-0.5">
+                These categories appear on the Donate page. Users select from these when posting a free item.
+              </p>
+            </div>
+          </div>
+        )}
 
         {isLoading ? (
           <div className="text-center py-12 text-gray-500">Loading...</div>
         ) : categories.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-            <p className="text-gray-500 mb-4">No categories yet.</p>
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${isDonationTab ? 'bg-primary-100' : 'bg-gray-100'}`}>
+              {isDonationTab ? <FiGift className="text-primary-600" size={22} /> : <FiGrid className="text-gray-400" size={22} />}
+            </div>
+            <p className="text-gray-500 mb-4">
+              {isDonationTab ? 'No donation categories yet.' : 'No regular categories yet.'}
+            </p>
             <button onClick={openAddCategory} className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm">
-              Add First Category
+              {isDonationTab ? 'Add First Donation Category' : 'Add First Category'}
             </button>
           </div>
         ) : (
@@ -306,6 +356,9 @@ function AdminCategories() {
                       <span className="font-semibold text-gray-900">{cat.name}</span>
                       <span className="text-xs text-gray-400">/{cat.slug}</span>
                       <span className="text-xs px-2 py-0.5 bg-gray-100 rounded text-gray-500">{cat.icon}</span>
+                      {isDonationTab && (
+                        <span className="text-xs px-2 py-0.5 bg-primary-100 text-primary-600 rounded font-medium">Donation</span>
+                      )}
                       {!cat.isActive && (
                         <span className="text-xs px-2 py-0.5 bg-red-100 text-red-600 rounded">Inactive</span>
                       )}
@@ -399,9 +452,11 @@ function AdminCategories() {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
               <h3 className="font-semibold text-gray-900">
-                {modal === 'category' ? (editing ? 'Edit Category' : 'Add Category') :
-                 modal === 'subcategory' ? (editing ? 'Edit Subcategory' : 'Add Subcategory') :
-                 (editing ? 'Edit Sub-subcategory' : 'Add Sub-subcategory')}
+                {modal === 'category'
+                  ? (editing ? 'Edit Category' : isDonationTab ? 'Add Donation Category' : 'Add Category')
+                  : modal === 'subcategory'
+                  ? (editing ? 'Edit Subcategory' : 'Add Subcategory')
+                  : (editing ? 'Edit Sub-subcategory' : 'Add Sub-subcategory')}
               </h3>
               <button onClick={() => setModal(null)} className="text-gray-400 hover:text-gray-600">
                 <FiX size={20} />
@@ -411,6 +466,12 @@ function AdminCategories() {
             <div className="p-6 space-y-4">
               {modal === 'category' ? (
                 <>
+                  {isDonationTab && !editing && (
+                    <div className="flex items-center gap-2 p-3 bg-primary-50 rounded-lg text-xs text-primary-700">
+                      <FiGift size={14} />
+                      This category will appear on the Donation page.
+                    </div>
+                  )}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
                     <input
@@ -418,7 +479,7 @@ function AdminCategories() {
                       value={form.name}
                       onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value, slug: prev.slug || slugify(e.target.value) }))}
                       className="input w-full"
-                      placeholder="e.g. Mobile & Tablets"
+                      placeholder="e.g. Clothes & Shoes"
                     />
                   </div>
                   <div>
@@ -428,7 +489,7 @@ function AdminCategories() {
                       value={form.slug}
                       onChange={(e) => setForm(prev => ({ ...prev, slug: e.target.value }))}
                       className="input w-full"
-                      placeholder="e.g. mobile-tablets"
+                      placeholder="e.g. clothes-shoes"
                     />
                   </div>
                   <div>

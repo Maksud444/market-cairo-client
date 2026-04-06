@@ -26,7 +26,7 @@ export default function DonatePage() {
       try {
         const [donationsRes, categoriesRes] = await Promise.all([
           listingsAPI.getAll({ isDonation: 'true', limit: 100, sort: 'recent' }),
-          categoriesAPI.getAll(),
+          categoriesAPI.getDonation(),
         ]);
         if (donationsRes.data.success) setDonations(donationsRes.data.listings);
         if (categoriesRes.data.success) setCategories(categoriesRes.data.categories);
