@@ -842,7 +842,7 @@ export default function PostListingPage() {
                     <p className="text-xs text-primary-600">{t('donate.mode_desc')}</p>
                   </div>
                 </div>
-                <button type="button" onClick={() => setIsDonation(false)} className="text-xs text-primary-600 hover:text-primary-800 underline">
+                <button type="button" onClick={() => { setIsDonation(false); setStep(1); setSelectedCategory(''); setSelectedSubcategory(''); setFormData(prev => ({ ...prev, category: '', subcategory: '' })); }} className="text-xs text-primary-600 hover:text-primary-800 underline">
                   {t('donate.switch_to_sale')}
                 </button>
               </div>
