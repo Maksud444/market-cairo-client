@@ -6,7 +6,7 @@ import { getI18nProps } from '../../lib/i18n';
 import { withAdmin } from '../../hoc/withAdmin';
 import { useAuthStore } from '../../lib/store';
 import { adminAPI } from '../../lib/api';
-import { FiSearch, FiCheck, FiX, FiEye, FiTrash2, FiLogOut, FiClock, FiAlertCircle } from 'react-icons/fi';
+import { FiSearch, FiCheck, FiX, FiEye, FiTrash2, FiLogOut, FiClock, FiAlertCircle, FiGift } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 function AdminListings() {
@@ -16,6 +16,8 @@ function AdminListings() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [moderationFilter, setModerationFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all'); // 'all' | 'regular' | 'donations'
+  const [donationPendingCount, setDonationPendingCount] = useState(0);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -24,7 +26,7 @@ function AdminListings() {
 
   useEffect(() => {
     fetchListings();
-  }, [search, statusFilter, moderationFilter, pagination.currentPage]);
+  }, [search, statusFilter, moderationFilter, typeFilter, pagination.currentPage]);
 
   const fetchListings = async () => {
     setIsLoading(true);
@@ -34,10 +36,14 @@ function AdminListings() {
         limit: 20,
         search,
         status: statusFilter !== 'all' ? statusFilter : undefined,
-        moderationStatus: moderationFilter !== 'all' ? moderationFilter : undefined
+        moderationStatus: moderationFilter !== 'all' ? moderationFilter : undefined,
+        isDonation: typeFilter === 'donations' ? 'true' : typeFilter === 'regular' ? 'false' : undefined,
       };
 
-      const response = await adminAPI.getListings(params);
+      const [response, statsRes] = await Promise.all([
+        adminAPI.getListings(params),
+        adminAPI.getDashboardStats(),
+      ]);
       if (response.data.success) {
         setListings(response.data.listings);
         setPagination({
@@ -45,6 +51,9 @@ function AdminListings() {
           totalPages: response.data.totalPages,
           totalListings: response.data.totalListings
         });
+      }
+      if (statsRes.data.success) {
+        setDonationPendingCount(statsRes.data.stats.donations?.pendingApproval || 0);
       }
     } catch (error) {
       toast.error('Failed to load listings');
@@ -209,6 +218,42 @@ function AdminListings() {
 
       {/* Main Content */}
       <div className="container-app py-8">
+
+        {/* Type Tabs */}
+        <div className="flex gap-2 mb-5">
+          {[
+            { key: 'all', label: 'All Listings' },
+            { key: 'regular', label: 'Regular Listings' },
+            {
+              key: 'donations',
+              label: (
+                <span className="flex items-center gap-1.5">
+                  <FiGift size={14} /> Donations
+                  {donationPendingCount > 0 && (
+                    <span className="ml-1 px-1.5 py-0.5 bg-green-600 text-white text-xs rounded-full font-bold">
+                      {donationPendingCount}
+                    </span>
+                  )}
+                </span>
+              )
+            },
+          ].map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => { setTypeFilter(key); setPagination(p => ({ ...p, currentPage: 1 })); }}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                typeFilter === key
+                  ? key === 'donations'
+                    ? 'bg-green-600 text-white shadow'
+                    : 'bg-primary-600 text-white shadow'
+                  : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-300'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
         {/* Filters */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -249,7 +294,7 @@ function AdminListings() {
           </div>
 
           <div className="mt-4 text-sm text-gray-600">
-            Showing {listings.length} of {pagination.totalListings} listings
+            Showing {listings.length} of {pagination.totalListings} {typeFilter === 'donations' ? 'donations' : 'listings'}
           </div>
         </div>
 
@@ -300,8 +345,18 @@ function AdminListings() {
                             )}
                           </div>
                           <div>
-                            <p className="font-medium text-gray-900 line-clamp-1">{listing.title}</p>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="font-medium text-gray-900 line-clamp-1">{listing.title}</p>
+                              {listing.isDonation && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-full flex-shrink-0">
+                                  <FiGift size={10} /> FREE
+                                </span>
+                              )}
+                            </div>
                             <p className="text-sm text-gray-500">{listing.category}</p>
+                            {listing.isDonation && listing.donationNote && (
+                              <p className="text-xs text-gray-400 italic mt-0.5 line-clamp-1">{listing.donationNote}</p>
+                            )}
                           </div>
                         </div>
                       </td>
@@ -310,7 +365,13 @@ function AdminListings() {
                         <p className="text-xs text-gray-500">{listing.seller?.email}</p>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-semibold text-gray-900">{listing.price} EGP</p>
+                        {listing.isDonation ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">
+                            <FiGift size={11} /> FREE
+                          </span>
+                        ) : (
+                          <p className="font-semibold text-gray-900">{listing.price} EGP</p>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         {getStatusBadge(listing.status)}

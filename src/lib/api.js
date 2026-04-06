@@ -57,6 +57,7 @@ export const listingsAPI = {
   getAll: (params) => api.get('/listings', { params }),
   getFeatured: () => api.get('/listings/featured'),
   getRecent: (limit = 8) => api.get('/listings/recent', { params: { limit } }),
+  getDonations: (limit = 8) => api.get('/listings/donations', { params: { limit } }),
   getStats: () => api.get('/listings/stats'),
   getById: (id) => api.get(`/listings/${id}`),
   getSimilar: (id) => api.get(`/listings/${id}/similar`),

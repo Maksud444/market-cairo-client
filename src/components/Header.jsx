@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FiSearch, FiHeart, FiMessageSquare, FiUser, FiPlus, FiMenu, FiMapPin, FiX, FiShield, FiBell, FiChevronDown, FiNavigation, FiMonitor, FiPackage, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal, FiImage } from 'react-icons/fi';
+import { FiSearch, FiHeart, FiMessageSquare, FiUser, FiPlus, FiMenu, FiMapPin, FiX, FiShield, FiBell, FiChevronDown, FiNavigation, FiMonitor, FiPackage, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal, FiImage, FiGift } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 import { useAuthStore, useMessagesStore, useUIStore } from '../lib/store';
 import { authAPI, categoriesAPI } from '../lib/api';
@@ -273,6 +273,9 @@ export default function Header() {
         <div className="border-t border-gray-100">
           <div className="container-app">
             <div className="flex items-center gap-6 py-2.5">
+              <Link href="/donate" className="flex items-center gap-1.5 text-sm font-semibold text-green-600 hover:text-green-700 whitespace-nowrap py-1 border border-green-200 bg-green-50 hover:bg-green-100 px-3 rounded-full transition-colors">
+                <FiGift size={13} /> {t('nav.donate')}
+              </Link>
               {cats.map((cat) => (
                 <div key={cat.name} className="relative" onMouseEnter={() => setHoveredCategory(cat.name)} onMouseLeave={() => setHoveredCategory(null)}>
                   <button onClick={() => handleCategoryClick(cat.name)}
@@ -374,6 +377,12 @@ export default function Header() {
           {showMobileSearchBar && (
             <div className="pb-3 -mx-4 px-4 overflow-x-auto no-scrollbar">
               <div className="flex gap-4 min-w-max">
+                <Link href="/donate" className="flex flex-col items-center gap-1.5 min-w-[58px]">
+                  <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center border border-green-200">
+                    <FiGift className="text-green-600" size={20} />
+                  </div>
+                  <span className="text-[10px] text-green-700 text-center leading-tight font-semibold">{t('nav.donate')}</span>
+                </Link>
                 {cats.map((cat) => {
                   const Icon = categoryIcons[cat.name] || FiShoppingBag;
                   return (
@@ -431,6 +440,10 @@ export default function Header() {
                   <FiUser size={20} /><span>{t('nav.login')}</span>
                 </button>
               )}
+              <hr className="my-3" />
+              <Link href="/donate" className="flex items-center gap-3 px-3 py-2.5 text-green-700 bg-green-50 hover:bg-green-100 rounded-lg font-semibold" onClick={() => setMobileMenuOpen(false)}>
+                <FiGift size={20} className="text-green-600" /><span>{t('nav.donate')}</span>
+              </Link>
               <hr className="my-3" />
               <p className="px-3 py-2 text-xs font-medium text-gray-400 uppercase">{t('header.categories_label')}</p>
               {cats.map((cat) => (

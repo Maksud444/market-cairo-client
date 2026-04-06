@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
-import { FiUpload, FiX, FiCamera, FiAlertCircle, FiCheck, FiChevronDown, FiMapPin, FiShield, FiChevronRight, FiNavigation } from 'react-icons/fi';
+import { FiUpload, FiX, FiCamera, FiAlertCircle, FiCheck, FiChevronDown, FiMapPin, FiShield, FiChevronRight, FiNavigation, FiGift } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import imageCompression from 'browser-image-compression';
 import Cookies from 'js-cookie';
@@ -61,6 +61,8 @@ export default function PostListingPage() {
   const [submitStep, setSubmitStep] = useState(''); // 'compressing' | 'uploading' | ''
   const [isLoading, setIsLoading] = useState(!!editId);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [isDonation, setIsDonation] = useState(false);
+  const [donationNote, setDonationNote] = useState('');
 
   // Redirect if not authenticated — check Zustand state + token cookie as backup
   useEffect(() => {
@@ -70,6 +72,14 @@ export default function PostListingPage() {
       router.push('/?login=true');
     }
   }, [_hasHydrated, isAuthenticated, router]);
+
+  // Auto-enable donation mode from URL param
+  useEffect(() => {
+    if (router.query.donate === 'true') {
+      setIsDonation(true);
+      setStep(3);
+    }
+  }, [router.query.donate]);
 
   // Fetch categories
   useEffect(() => {
@@ -112,6 +122,10 @@ export default function PostListingPage() {
               condition: listing.condition,
             });
             setExistingImages(listing.images || []);
+            if (listing.isDonation) {
+              setIsDonation(true);
+              setDonationNote(listing.donationNote || '');
+            }
 
             // Restore category/subcategory selection
             setSelectedCategory(listing.category || '');
@@ -320,13 +334,15 @@ export default function PostListingPage() {
       newErrors.description = t('post.validation_description_min');
     }
 
-    if (!formData.price) {
-      newErrors.price = t('post.validation_price_required');
-    } else if (isNaN(formData.price) || Number(formData.price) <= 0) {
-      newErrors.price = t('post.validation_price_invalid');
+    if (!isDonation) {
+      if (!formData.price) {
+        newErrors.price = t('post.validation_price_required');
+      } else if (isNaN(formData.price) || Number(formData.price) <= 0) {
+        newErrors.price = t('post.validation_price_invalid');
+      }
     }
 
-    if (!formData.category) {
+    if (!isDonation && !formData.category) {
       newErrors.category = t('post.validation_category_required');
     }
 
@@ -386,10 +402,12 @@ export default function PostListingPage() {
       const data = new FormData();
       data.append('title', formData.title.trim());
       data.append('description', formData.description.trim());
-      data.append('price', formData.price);
-      data.append('category', formData.category);
+      data.append('price', isDonation ? '0' : formData.price);
+      data.append('category', isDonation ? 'Donate' : formData.category);
       data.append('subcategory', formData.subcategory || '');
       data.append('condition', formData.condition);
+      data.append('isDonation', isDonation ? 'true' : 'false');
+      data.append('donationNote', donationNote);
       data.append('location', JSON.stringify({
         area: locationCompound || locationCity || 'Other',
         city: locationRegion || 'Cairo'
@@ -499,6 +517,23 @@ export default function PostListingPage() {
           <div className="max-w-4xl mx-auto py-8">
             <h1 className="text-2xl font-bold mb-2">{t('post.title')}</h1>
             <p className="text-gray-500 mb-6">{t('post.select_category')}</p>
+
+            {/* Donate banner */}
+            <button
+              type="button"
+              onClick={() => { setIsDonation(true); setStep(3); }}
+              className="w-full flex items-center gap-4 p-4 mb-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl hover:border-green-500 hover:shadow-md transition-all text-left group"
+            >
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <FiGift size={24} className="text-green-600" />
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-green-800">{t('donate.post_donation')}</p>
+                <p className="text-sm text-green-600">{t('donate.post_donation_desc')}</p>
+              </div>
+              <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">{t('donate.free_badge')}</span>
+            </button>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {(categories.length > 0 ? categories : Object.keys(categoryConfig).map(name => ({ name, subcategories: [] }))).map(cat => (
                 <button
@@ -569,9 +604,25 @@ export default function PostListingPage() {
               </div>
             )}
 
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">
-              {editId ? t('post.edit_title') : t('post.title')}
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+              {editId ? t('post.edit_title') : isDonation ? t('donate.post_donation') : t('post.title')}
             </h1>
+
+            {/* Donation mode banner */}
+            {isDonation && (
+              <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 mb-6">
+                <div className="flex items-center gap-3">
+                  <FiGift size={20} className="text-green-600 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-green-800">{t('donate.mode_active')}</p>
+                    <p className="text-xs text-green-600">{t('donate.mode_desc')}</p>
+                  </div>
+                </div>
+                <button type="button" onClick={() => setIsDonation(false)} className="text-xs text-green-600 hover:text-green-800 underline">
+                  {t('donate.switch_to_sale')}
+                </button>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
 
@@ -750,33 +801,55 @@ export default function PostListingPage() {
                 )}
               </div>
 
-              {/* Price */}
-              <div>
-                <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('post.price_label')} <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
+              {/* Price / Donation note */}
+              {isDonation ? (
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">{t('donate.free_badge')}</div>
+                    <span className="text-sm text-gray-500">{t('donate.price_zero_note')}</span>
+                  </div>
+                  <label htmlFor="donationNote" className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('donate.donation_note_label')}
+                  </label>
                   <input
-                    type="number"
-                    id="price"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleChange}
-                    placeholder={t('post.price_placeholder')}
-                    className={`input w-full pr-16 ${errors.price ? 'border-red-300' : ''}`}
-                    min="1"
+                    type="text"
+                    id="donationNote"
+                    value={donationNote}
+                    onChange={(e) => setDonationNote(e.target.value)}
+                    placeholder={t('donate.donation_note_placeholder')}
+                    className="input w-full"
+                    maxLength={300}
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">
-                    EGP
-                  </span>
+                  <p className="text-xs text-gray-400 mt-1">{t('donate.donation_note_hint')}</p>
                 </div>
-                {errors.price && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                    <FiAlertCircle size={14} />
-                    {errors.price}
-                  </p>
-                )}
-              </div>
+              ) : (
+                <div>
+                  <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('post.price_label')} <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      id="price"
+                      name="price"
+                      value={formData.price}
+                      onChange={handleChange}
+                      placeholder={t('post.price_placeholder')}
+                      className={`input w-full pr-16 ${errors.price ? 'border-red-300' : ''}`}
+                      min="1"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">
+                      EGP
+                    </span>
+                  </div>
+                  {errors.price && (
+                    <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                      <FiAlertCircle size={14} />
+                      {errors.price}
+                    </p>
+                  )}
+                </div>
+              )}
 
               {/* Condition */}
               <div>

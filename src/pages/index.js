@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { FiShield, FiArrowRight, FiPackage, FiMonitor, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal } from 'react-icons/fi';
+import { FiShield, FiArrowRight, FiPackage, FiMonitor, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal, FiGift, FiHeart } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
 import ListingCard from '../components/ListingCard';
+import DonateCard from '../components/DonateCard';
 import BannerSlider from '../components/BannerSlider';
 import PromoBanner from '../components/PromoBanner';
 import { listingsAPI, categoriesAPI } from '../lib/api';
@@ -34,6 +35,7 @@ export default function Home() {
   const { t } = useTranslation('common');
   const [featuredListings, setFeaturedListings] = useState([]);
   const [recentListings, setRecentListings] = useState([]);
+  const [donationListings, setDonationListings] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,10 +43,11 @@ export default function Home() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [featuredRes, recentRes, categoriesRes] = await Promise.all([
+        const [featuredRes, recentRes, categoriesRes, donationsRes] = await Promise.all([
           listingsAPI.getFeatured(),
           listingsAPI.getRecent(8),
           categoriesAPI.getAll(),
+          listingsAPI.getDonations(4),
         ]);
 
         const featured = featuredRes.data.success ? featuredRes.data.listings : [];
@@ -55,6 +58,7 @@ export default function Home() {
           setRecentListings(recentRes.data.listings.filter(l => !featuredIds.has(l._id)));
         }
         if (categoriesRes.data.success) setCategories(categoriesRes.data.categories);
+        if (donationsRes.data.success) setDonationListings(donationsRes.data.listings);
       } catch (error) {
         console.error('Failed to fetch homepage data:', error);
       } finally {
@@ -239,6 +243,70 @@ export default function Home() {
                   <ListingCard key={listing._id} listing={listing} viewMode="grid" />
                 ))
             }
+          </div>
+        </div>
+      </section>
+
+      {/* Community Donations Section */}
+      <section className="py-10 lg:py-16 bg-gradient-to-b from-white to-green-50">
+        <div className="container-app">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold mb-2">
+                <FiGift size={13} />
+                {t('donate.section_badge')}
+              </div>
+              <h2 className="text-xl lg:text-2xl font-bold text-gray-900">{t('donate.section_title')}</h2>
+              <p className="text-sm text-gray-500 mt-1 max-w-lg">{t('donate.section_subtitle')}</p>
+            </div>
+            <Link href="/donate" className="inline-flex items-center gap-1 text-sm font-semibold text-green-600 hover:underline flex-shrink-0">
+              {t('home.view_all')} <FiArrowRight size={14} />
+            </Link>
+          </div>
+
+          {/* Cards */}
+          {isLoading ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                  <div className="skeleton" style={{ aspectRatio: '4/3' }} />
+                  <div className="p-3 space-y-2">
+                    <div className="h-4 skeleton w-3/4" />
+                    <div className="h-3 skeleton w-1/2" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : donationListings.length > 0 ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {donationListings.map((listing) => (
+                <DonateCard key={listing._id} listing={listing} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-green-200">
+              <FiHeart size={32} className="text-green-300 mx-auto mb-3" />
+              <p className="text-gray-500 text-sm mb-4">{t('donate.no_items_yet')}</p>
+              <Link href="/post?donate=true" className="inline-flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-green-700 transition-colors">
+                <FiGift size={15} />
+                {t('donate.post_donation')}
+              </Link>
+            </div>
+          )}
+
+          {/* Impact strip */}
+          <div className="mt-8 bg-green-600 rounded-2xl p-5 lg:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-white">
+            <div className="text-center sm:text-left">
+              <p className="font-bold text-lg">{t('donate.impact_title')}</p>
+              <p className="text-green-100 text-sm">{t('donate.impact_desc')}</p>
+            </div>
+            <Link
+              href="/post?donate=true"
+              className="flex-shrink-0 bg-white text-green-700 font-bold px-6 py-2.5 rounded-xl hover:bg-green-50 transition-colors text-sm"
+            >
+              {t('donate.post_donation')}
+            </Link>
           </div>
         </div>
       </section>
