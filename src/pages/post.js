@@ -18,14 +18,8 @@ import { categoryConfig, locationHierarchy } from '../lib/categoryConfig';
 const MAX_IMAGES = 10;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-export default function PostListingPage() {
-  const router = useRouter();
-  const { t, i18n } = useTranslation('common');
-  const { isAuthenticated, user, _hasHydrated } = useAuthStore();
-  const { edit: editId } = router.query;
-  const isArabic = i18n.language === 'ar';
-
-  const countryCodes = [
+// Module-level constant — defined once, never re-created on render
+const ALL_COUNTRY_CODES = [
     { code: '+20', flag: '🇪🇬', name: 'Egypt' },
     { code: '+971', flag: '🇦🇪', name: 'UAE' },
     { code: '+966', flag: '🇸🇦', name: 'Saudi Arabia' },
@@ -227,16 +221,14 @@ export default function PostListingPage() {
     { code: '+686', flag: '🇰🇮', name: 'Kiribati' },
     { code: '+691', flag: '🇫🇲', name: 'Micronesia' },
     { code: '+692', flag: '🇲🇭', name: 'Marshall Islands' },
-  ].sort((a, b) => a.name.localeCompare(b.name));
+].sort((a, b) => a.name.localeCompare(b.name));
 
-  const filteredCountryCodes = countrySearch.trim()
-    ? countryCodes.filter(c =>
-        c.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
-        c.code.includes(countrySearch)
-      )
-    : countryCodes;
-
-  const selectedCountry = countryCodes.find(c => c.code === whatsappCountryCode) || countryCodes[0];
+export default function PostListingPage() {
+  const router = useRouter();
+  const { t, i18n } = useTranslation('common');
+  const { isAuthenticated, user, _hasHydrated } = useAuthStore();
+  const { edit: editId } = router.query;
+  const isArabic = i18n.language === 'ar';
 
   const conditions = [
     { value: 'New', label: t('post.condition_new'), description: t('post.condition_new_desc') },
@@ -281,6 +273,16 @@ export default function PostListingPage() {
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
   const countryDropdownRef = useRef(null);
+
+  // Derived from state — safe to compute here after all useState declarations
+  const filteredCountryCodes = countrySearch.trim()
+    ? ALL_COUNTRY_CODES.filter(c =>
+        c.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
+        c.code.includes(countrySearch)
+      )
+    : ALL_COUNTRY_CODES;
+
+  const selectedCountry = ALL_COUNTRY_CODES.find(c => c.code === whatsappCountryCode) || ALL_COUNTRY_CODES[0];
 
   // Redirect if not authenticated — open login modal and return here after login
   useEffect(() => {
