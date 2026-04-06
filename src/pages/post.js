@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -227,7 +227,16 @@ export default function PostListingPage() {
     { code: '+686', flag: '🇰🇮', name: 'Kiribati' },
     { code: '+691', flag: '🇫🇲', name: 'Micronesia' },
     { code: '+692', flag: '🇲🇭', name: 'Marshall Islands' },
-  ];
+  ].sort((a, b) => a.name.localeCompare(b.name));
+
+  const filteredCountryCodes = countrySearch.trim()
+    ? countryCodes.filter(c =>
+        c.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
+        c.code.includes(countrySearch)
+      )
+    : countryCodes;
+
+  const selectedCountry = countryCodes.find(c => c.code === whatsappCountryCode) || countryCodes[0];
 
   const conditions = [
     { value: 'New', label: t('post.condition_new'), description: t('post.condition_new_desc') },
@@ -269,6 +278,9 @@ export default function PostListingPage() {
   const [donationNote, setDonationNote] = useState('');
   const [whatsappCountryCode, setWhatsappCountryCode] = useState('+20');
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState('');
+  const countryDropdownRef = useRef(null);
 
   // Redirect if not authenticated — open login modal and return here after login
   useEffect(() => {
@@ -279,6 +291,18 @@ export default function PostListingPage() {
       router.push(`/?login=true&redirect=${redirect}`);
     }
   }, [_hasHydrated, isAuthenticated, router]);
+
+  // Close country dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(e.target)) {
+        setCountryDropdownOpen(false);
+        setCountrySearch('');
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   // Auto-enable donation mode from URL param
   useEffect(() => {
@@ -1229,22 +1253,59 @@ export default function PostListingPage() {
                   </span>
                 </label>
                 <div className="flex gap-2">
-                  {/* Country code selector */}
-                  <div className="relative shrink-0">
-                    <select
-                      value={whatsappCountryCode}
-                      onChange={(e) => setWhatsappCountryCode(e.target.value)}
-                      className="input appearance-none pl-3 pr-8 text-sm h-full"
-                      style={{ backgroundImage: 'none', minWidth: '140px' }}
+                  {/* Country code — searchable custom dropdown */}
+                  <div className="relative shrink-0" ref={countryDropdownRef} style={{ minWidth: '150px' }}>
+                    {/* Trigger button */}
+                    <button
+                      type="button"
+                      onClick={() => { setCountryDropdownOpen(v => !v); setCountrySearch(''); }}
+                      className="input w-full flex items-center gap-2 text-sm pr-8 text-left"
                     >
-                      {countryCodes.map(c => (
-                        <option key={c.code + c.name} value={c.code}>
-                          {c.flag} {c.code} {c.name}
-                        </option>
-                      ))}
-                    </select>
-                    <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={15} />
+                      <span>{selectedCountry.flag}</span>
+                      <span className="font-medium">{selectedCountry.code}</span>
+                      <span className="text-gray-400 truncate">{selectedCountry.name}</span>
+                    </button>
+                    <FiChevronDown className={`absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none transition-transform ${countryDropdownOpen ? 'rotate-180' : ''}`} size={15} />
+
+                    {/* Dropdown */}
+                    {countryDropdownOpen && (
+                      <div className="absolute z-50 top-full left-0 mt-1 w-72 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
+                        {/* Search input */}
+                        <div className="p-2 border-b border-gray-100">
+                          <input
+                            type="text"
+                            value={countrySearch}
+                            onChange={(e) => setCountrySearch(e.target.value)}
+                            placeholder="Search country or code..."
+                            className="input w-full text-sm py-1.5"
+                            autoFocus
+                          />
+                        </div>
+                        {/* List */}
+                        <div className="overflow-y-auto" style={{ maxHeight: '220px' }}>
+                          {filteredCountryCodes.length === 0 ? (
+                            <p className="px-4 py-3 text-sm text-gray-400 text-center">No results</p>
+                          ) : filteredCountryCodes.map(c => (
+                            <button
+                              key={c.code + c.name}
+                              type="button"
+                              onClick={() => {
+                                setWhatsappCountryCode(c.code);
+                                setCountryDropdownOpen(false);
+                                setCountrySearch('');
+                              }}
+                              className={`w-full flex items-center gap-3 px-4 py-2 text-sm text-left hover:bg-gray-50 transition-colors ${c.code === whatsappCountryCode && c.name === selectedCountry.name ? 'bg-primary-50 text-primary-700 font-medium' : 'text-gray-700'}`}
+                            >
+                              <span className="text-base">{c.flag}</span>
+                              <span className="w-12 shrink-0 font-mono text-xs text-gray-500">{c.code}</span>
+                              <span className="truncate">{c.name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
+
                   {/* Phone number */}
                   <input
                     type="tel"
