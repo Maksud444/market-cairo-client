@@ -64,12 +64,13 @@ export default function PostListingPage() {
   const [isDonation, setIsDonation] = useState(false);
   const [donationNote, setDonationNote] = useState('');
 
-  // Redirect if not authenticated — check Zustand state + token cookie as backup
+  // Redirect if not authenticated — open login modal and return here after login
   useEffect(() => {
     if (!_hasHydrated) return;
     const hasToken = !!Cookies.get('token');
     if (!isAuthenticated && !hasToken) {
-      router.push('/?login=true');
+      const redirect = encodeURIComponent(router.asPath);
+      router.push(`/?login=true&redirect=${redirect}`);
     }
   }, [_hasHydrated, isAuthenticated, router]);
 

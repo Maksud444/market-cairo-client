@@ -5,9 +5,10 @@ import { Toaster } from 'react-hot-toast';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { appWithTranslation } from 'next-i18next';
 import nextI18NextConfig from '../../next-i18next.config';
+import { useRouter } from 'next/router';
 import AuthModal from '../components/AuthModal';
 import SplashScreen from '../components/SplashScreen';
-import { useAuthStore } from '../lib/store';
+import { useAuthStore, useUIStore } from '../lib/store';
 import { useSocketStore } from '../lib/socket';
 import Cookies from 'js-cookie';
 
@@ -16,6 +17,8 @@ function MyApp({ Component, pageProps }) {
   const fetchUser = useAuthStore((state) => state.fetchUser);
   const user = useAuthStore((state) => state.user);
   const { connect, disconnect } = useSocketStore();
+  const { openLoginModal } = useUIStore();
+  const router = useRouter();
   const [showSplash, setShowSplash] = useState(false);
 
   // Show splash screen once per session
@@ -25,6 +28,17 @@ function MyApp({ Component, pageProps }) {
       sessionStorage.setItem('splash_shown', '1');
     }
   }, []);
+
+  // Auto-open login modal when ?login=true is in the URL
+  useEffect(() => {
+    if (router.query.login === 'true') {
+      const redirect = router.query.redirect || null;
+      openLoginModal(redirect);
+      // Clean the query params without reloading
+      const { login, redirect: _r, ...rest } = router.query;
+      router.replace({ pathname: router.pathname, query: rest }, undefined, { shallow: true });
+    }
+  }, [router.query.login]);
 
   // Fetch user data on mount
   useEffect(() => {

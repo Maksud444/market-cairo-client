@@ -313,12 +313,14 @@ export const useUIStore = create((set) => ({
   isFilterDrawerOpen: false,
   isLoginModalOpen: false,
   isRegisterModalOpen: false,
+  loginRedirectUrl: null,
 
   toggleMobileMenu: () => set((state) => ({ isMobileMenuOpen: !state.isMobileMenuOpen })),
   setMobileMenuOpen: (isOpen) => set({ isMobileMenuOpen: isOpen }),
   toggleFilterDrawer: () => set((state) => ({ isFilterDrawerOpen: !state.isFilterDrawerOpen })),
   setFilterDrawerOpen: (isOpen) => set({ isFilterDrawerOpen: isOpen }),
-  openLoginModal: () => set({ isLoginModalOpen: true, isRegisterModalOpen: false }),
+  openLoginModal: (redirectUrl = null) => set({ isLoginModalOpen: true, isRegisterModalOpen: false, loginRedirectUrl: redirectUrl }),
   openRegisterModal: () => set({ isRegisterModalOpen: true, isLoginModalOpen: false }),
   closeAuthModals: () => set({ isLoginModalOpen: false, isRegisterModalOpen: false }),
+  clearLoginRedirect: () => set({ loginRedirectUrl: null }),
 }));

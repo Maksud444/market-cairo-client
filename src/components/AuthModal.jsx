@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 export default function AuthModal() {
   const router = useRouter();
   const { login, register, googleLogin, isLoading, user } = useAuthStore();
-  const { isLoginModalOpen, isRegisterModalOpen, closeAuthModals, openLoginModal, openRegisterModal } = useUIStore();
+  const { isLoginModalOpen, isRegisterModalOpen, closeAuthModals, openLoginModal, openRegisterModal, loginRedirectUrl, clearLoginRedirect } = useUIStore();
 
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -51,10 +51,13 @@ export default function AuthModal() {
         if (result.success) {
           closeAuthModals();
           setFormData({ name: '', email: '', password: '', phone: '' });
-
-          // Redirect based on user role
           const currentUser = useAuthStore.getState().user;
-          if (currentUser?.isAdmin) {
+          const redirect = loginRedirectUrl;
+          clearLoginRedirect();
+          if (redirect) {
+            toast.success('Welcome!');
+            router.push(redirect);
+          } else if (currentUser?.isAdmin) {
             toast.success('Welcome back, Admin!');
             router.push('/cp-x4m9k2');
           } else {
@@ -83,10 +86,13 @@ export default function AuthModal() {
       if (result.success) {
         closeAuthModals();
         setFormData({ name: '', email: '', password: '', phone: '' });
-
-        // Redirect based on user role
         const currentUser = useAuthStore.getState().user;
-        if (currentUser?.isAdmin) {
+        const redirect = loginRedirectUrl;
+        clearLoginRedirect();
+        if (redirect) {
+          toast.success('Welcome back!');
+          router.push(redirect);
+        } else if (currentUser?.isAdmin) {
           toast.success('Welcome back, Admin!');
           router.push('/cp-x4m9k2');
         } else {
@@ -102,7 +108,9 @@ export default function AuthModal() {
         toast.success('Account created successfully!');
         closeAuthModals();
         setFormData({ name: '', email: '', password: '', phone: '' });
-        router.push('/dashboard');
+        const redirect = loginRedirectUrl;
+        clearLoginRedirect();
+        router.push(redirect || '/dashboard');
       } else {
         toast.error(result.message || 'Registration failed');
       }
