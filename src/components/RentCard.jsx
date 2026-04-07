@@ -40,7 +40,7 @@ export default function RentCard({ listing, compact = false }) {
             />
             {/* Category badge */}
             <div className="absolute top-1.5 left-1.5">
-              <span className="bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">
+              <span className="bg-primary-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">
                 For Rent
               </span>
             </div>
@@ -57,7 +57,7 @@ export default function RentCard({ listing, compact = false }) {
           {/* Info */}
           <div className="p-2">
             <p className="text-[11px] text-gray-700 font-semibold line-clamp-1 leading-tight">{listing.title}</p>
-            <p className="text-[12px] font-bold text-blue-600 mt-0.5">{priceLabel}</p>
+            <p className="text-[12px] font-bold text-primary-600 mt-0.5">{priceLabel}</p>
           </div>
         </div>
       </Link>
@@ -80,7 +80,7 @@ export default function RentCard({ listing, compact = false }) {
           />
           {/* For Rent badge */}
           <div className="absolute top-2.5 left-2.5">
-            <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-lg">
+            <span className="bg-primary-600 text-white text-xs font-bold px-2 py-0.5 rounded-lg">
               For Rent
             </span>
           </div>
@@ -97,10 +97,10 @@ export default function RentCard({ listing, compact = false }) {
         {/* Info */}
         <div className="p-3">
           {storeName && (
-            <p className="text-xs text-blue-600 font-semibold mb-0.5 truncate">{storeName}</p>
+            <p className="text-xs text-primary-600 font-semibold mb-0.5 truncate">{storeName}</p>
           )}
           <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 leading-snug mb-1">{listing.title}</h3>
-          <p className="text-base font-bold text-blue-600">{priceLabel}</p>
+          <p className="text-base font-bold text-primary-600">{priceLabel}</p>
           <div className="flex items-center gap-1 mt-1.5 text-gray-400">
             <FiMapPin size={11} />
             <span className="text-[11px] truncate">{locationText}</span>

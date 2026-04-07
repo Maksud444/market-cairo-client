@@ -197,7 +197,7 @@ export default function PostRentPage() {
             <h2 className="text-xl font-bold text-gray-900 mb-2">Listing Submitted!</h2>
             <p className="text-gray-600 text-sm mb-6">Your rent listing is pending admin approval. It will appear on the site once approved.</p>
             <div className="flex gap-3 justify-center">
-              <Link href="/rent" className="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-semibold text-sm hover:bg-blue-700 transition-colors">
+              <Link href="/rent" className="px-5 py-2.5 bg-primary-600 text-white rounded-xl font-semibold text-sm hover:bg-primary-700 transition-colors">
                 Browse Rentals
               </Link>
               <button onClick={() => setSubmitted(false)} className="px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-semibold text-sm hover:bg-gray-200 transition-colors">
@@ -236,15 +236,15 @@ export default function PostRentPage() {
           {/* Rent Category */}
           <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
             <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <FiCamera size={18} className="text-blue-600" />
+              <FiCamera size={18} className="text-primary-600" />
               {t('rent.select_category')}
             </h2>
             <div className="grid grid-cols-1 gap-3">
               {RENT_CATEGORIES.map((cat) => (
                 <label key={cat.key} className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${
                   formData.rentCategory === cat.key
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
+                    ? 'border-primary-500 bg-primary-50'
+                    : 'border-gray-200 hover:border-primary-300 hover:bg-gray-50'
                 }`}>
                   <input
                     type="radio"
@@ -260,7 +260,7 @@ export default function PostRentPage() {
                     <p className="text-xs text-gray-500 mt-0.5">{cat.description}</p>
                   </div>
                   {formData.rentCategory === cat.key && (
-                    <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center flex-shrink-0">
                       <FiCheck size={12} className="text-white" />
                     </div>
                   )}
@@ -370,7 +370,7 @@ export default function PostRentPage() {
                   onClick={() => handleChange('condition', cond)}
                   className={`py-2.5 px-2 rounded-xl text-xs font-semibold border-2 transition-all ${
                     formData.condition === cond
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
+                      ? 'border-primary-500 bg-primary-50 text-primary-700'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300'
                   }`}
                 >
@@ -392,8 +392,8 @@ export default function PostRentPage() {
                   onClick={() => toggleSize(size)}
                   className={`px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all ${
                     formData.rentSizes.includes(size)
-                      ? 'border-blue-600 bg-blue-600 text-white'
-                      : 'border-gray-200 text-gray-600 hover:border-blue-300'
+                      ? 'border-primary-600 bg-primary-600 text-white'
+                      : 'border-gray-200 text-gray-600 hover:border-primary-300'
                   }`}
                 >
                   {size}
@@ -418,7 +418,7 @@ export default function PostRentPage() {
                   <div
                     className={`w-10 h-10 rounded-full border-4 transition-all ${
                       formData.rentColors.includes(color.name)
-                        ? 'border-blue-500 scale-110'
+                        ? 'border-primary-500 scale-110'
                         : 'border-gray-200 hover:border-gray-400'
                     }`}
                     style={{ backgroundColor: color.hex, boxShadow: color.hex === '#ffffff' ? 'inset 0 0 0 1px #e5e7eb' : undefined }}
@@ -432,14 +432,14 @@ export default function PostRentPage() {
           {/* Location */}
           <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
             <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <FiMapPin size={16} className="text-blue-600" />
+              <FiMapPin size={16} className="text-primary-600" />
               {t('rent.location')} <span className="text-red-500">*</span>
             </h2>
 
             <button
               type="button"
               onClick={() => setShowLocationPicker(!showLocationPicker)}
-              className="w-full flex items-center justify-between p-3 border-2 border-gray-200 rounded-xl hover:border-blue-400 transition-colors"
+              className="w-full flex items-center justify-between p-3 border-2 border-gray-200 rounded-xl hover:border-primary-400 transition-colors"
             >
               <span className={formData.location.area ? 'text-gray-900 font-medium' : 'text-gray-400'}>
                 {formData.location.area
@@ -456,7 +456,7 @@ export default function PostRentPage() {
                     type="button"
                     key={region.en}
                     onClick={() => { setSelectedRegion(region); setLocationStep(1); }}
-                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0 font-medium"
+                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 border-b border-gray-50 last:border-0 font-medium"
                   >
                     {region.en}
                   </button>
@@ -469,7 +469,7 @@ export default function PostRentPage() {
                       if (city.compounds?.length > 0) { setSelectedCity(city); setLocationStep(2); }
                       else { handleLocationSelect(city.en, selectedRegion.en); }
                     }}
-                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0"
+                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 border-b border-gray-50 last:border-0"
                   >
                     {city.en}
                     {city.compounds?.length > 0 && <span className="text-gray-400 text-xs ml-1">›</span>}
@@ -480,7 +480,7 @@ export default function PostRentPage() {
                     type="button"
                     key={compound}
                     onClick={() => handleLocationSelect(compound, selectedCity.en)}
-                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0"
+                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 border-b border-gray-50 last:border-0"
                   >
                     {compound}
                   </button>
@@ -524,7 +524,7 @@ export default function PostRentPage() {
               <div
                 {...getRootProps()}
                 className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
-                  isDragActive ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+                  isDragActive ? 'border-primary-400 bg-primary-50' : 'border-gray-300 hover:border-primary-400 hover:bg-gray-50'
                 }`}
               >
                 <input {...getInputProps()} />
@@ -543,7 +543,7 @@ export default function PostRentPage() {
                   <div key={index} className="relative rounded-lg overflow-hidden bg-gray-100" style={{ aspectRatio: '1' }}>
                     <img src={img.preview} alt="" className="w-full h-full object-cover" />
                     {index === 0 && (
-                      <span className="absolute bottom-1 left-1 bg-blue-600 text-white text-[9px] px-1.5 py-0.5 rounded font-semibold">Cover</span>
+                      <span className="absolute bottom-1 left-1 bg-primary-600 text-white text-[9px] px-1.5 py-0.5 rounded font-semibold">Cover</span>
                     )}
                     <button
                       type="button"
@@ -570,7 +570,7 @@ export default function PostRentPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-base"
+            className="w-full py-4 bg-primary-600 text-white font-bold rounded-2xl hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-base"
           >
             {isSubmitting ? 'Submitting...' : t('rent.submit_listing')}
           </button>

@@ -255,12 +255,12 @@ export default function Home() {
       <section className="pb-8 lg:pb-16">
         <div className="flex items-center justify-between mb-3 lg:mb-6 px-3 lg:container-app">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center">
-              <FiCamera className="text-blue-600" size={16} />
+            <div className="w-8 h-8 bg-primary-50 rounded-xl flex items-center justify-center">
+              <FiCamera className="text-primary-600" size={16} />
             </div>
             <h2 className="text-base font-bold text-gray-900 lg:text-2xl">{t('rent.section_title')}</h2>
           </div>
-          <Link href="/rent" className="text-sm font-semibold text-blue-600 hover:underline flex items-center gap-0.5">
+          <Link href="/rent" className="text-sm font-semibold text-primary-600 hover:underline flex items-center gap-0.5">
             {t('home.view_all')} <FiArrowRight size={14} />
           </Link>
         </div>
@@ -308,10 +308,10 @@ export default function Home() {
                   <RentCard key={listing._id} listing={listing} />
                 ))
               : (
-                <div className="col-span-3 text-center py-10 bg-white rounded-2xl border border-dashed border-blue-200">
-                  <FiCamera size={32} className="text-blue-300 mx-auto mb-3" />
+                <div className="col-span-3 text-center py-10 bg-white rounded-2xl border border-dashed border-primary-200">
+                  <FiCamera size={32} className="text-primary-300 mx-auto mb-3" />
                   <p className="text-gray-500 text-sm">{t('rent.no_items_yet')}</p>
-                  <Link href="/rent/post" className="mt-3 inline-block text-sm font-semibold text-blue-600 hover:underline">{t('rent.post_rent_cta')}</Link>
+                  <Link href="/rent/post" className="mt-3 inline-block text-sm font-semibold text-primary-600 hover:underline">{t('rent.post_rent_cta')}</Link>
                 </div>
               )
           }

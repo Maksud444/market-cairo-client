@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FiCamera, FiPlus, FiMapPin, FiFilter, FiArrowRight, FiSearch } from 'react-icons/fi';
+import { FiCamera, FiPlus, FiMapPin, FiFilter, FiSearch } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
@@ -37,12 +37,12 @@ function StoreCard({ store }) {
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
           <div className="absolute top-2 left-2">
-            <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-lg">Store</span>
+            <span className="bg-primary-600 text-white text-xs font-bold px-2 py-0.5 rounded-lg">Store</span>
           </div>
         </div>
         <div className="p-3">
           <h3 className="font-bold text-sm text-gray-900 line-clamp-1">{store.storeName || store.title}</h3>
-          <p className="text-blue-600 font-semibold text-sm mt-0.5">{priceLabel}</p>
+          <p className="text-primary-600 font-semibold text-sm mt-0.5">{priceLabel}</p>
           {store.location?.area && (
             <div className="flex items-center gap-1 mt-1 text-gray-400">
               <FiMapPin size={11} />
@@ -75,7 +75,7 @@ function RentItemCard({ listing }) {
             sizes="(max-width: 640px) 50vw, 25vw"
           />
           <div className="absolute top-2 left-2">
-            <span className="bg-blue-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">For Rent</span>
+            <span className="bg-primary-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">For Rent</span>
           </div>
           {listing.storeName && (
             <div className="absolute top-2 right-2">
@@ -85,7 +85,7 @@ function RentItemCard({ listing }) {
         </div>
         <div className="p-2.5">
           <p className="text-xs font-semibold text-gray-900 line-clamp-2 leading-snug">{listing.title}</p>
-          <p className="text-sm font-bold text-blue-600 mt-1">{priceLabel}</p>
+          <p className="text-sm font-bold text-primary-600 mt-1">{priceLabel}</p>
         </div>
       </div>
     </Link>
@@ -148,32 +148,32 @@ export default function RentPage() {
       </Head>
 
       {/* Hero Banner */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="container-app py-8 lg:py-12">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <FiCamera size={20} className="text-blue-200" />
-                <span className="text-blue-200 text-sm font-medium">Rental Marketplace</span>
+                <FiCamera size={20} className="text-primary-200" />
+                <span className="text-primary-100 text-sm font-medium">Rental Marketplace</span>
               </div>
               <h1 className="text-2xl lg:text-4xl font-bold">{t('rent.page_title')}</h1>
-              <p className="text-blue-100 mt-1 text-sm lg:text-base">{t('rent.page_subtitle')}</p>
+              <p className="text-primary-100 mt-1 text-sm lg:text-base">{t('rent.page_subtitle')}</p>
             </div>
-            <button
-              onClick={handlePostRent}
-              className="flex items-center gap-2 bg-white text-blue-700 font-bold px-5 py-2.5 rounded-xl hover:bg-blue-50 transition-colors self-start lg:self-auto text-sm"
+            <Link
+              href="/rent/post"
+              className="flex items-center gap-2 bg-white text-primary-700 font-bold px-5 py-2.5 rounded-xl hover:bg-primary-50 transition-colors self-start lg:self-auto text-sm"
             >
               <FiPlus size={16} /> {t('rent.post_item_cta')}
-            </button>
+            </Link>
           </div>
         </div>
       </div>
 
       <div className="container-app py-6 lg:py-10">
-        {/* Location + Search + Filter bar */}
+        {/* Search + Filter bar */}
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
           <div className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 flex-shrink-0">
-            <FiMapPin size={14} className="text-blue-600" />
+            <FiMapPin size={14} className="text-primary-600" />
             <span className="font-medium">Rental Stores in Cairo</span>
           </div>
           <div className="flex-1 relative">
@@ -183,15 +183,12 @@ export default function RentPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for stores..."
-              className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary-500 transition-colors"
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-600 hover:border-blue-500 hover:text-blue-600 transition-colors flex-shrink-0">
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-600 hover:border-primary-500 hover:text-primary-600 transition-colors flex-shrink-0">
             <FiFilter size={14} /> Filter
           </button>
-          <Link href="/rent/post" className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors flex-shrink-0">
-            <FiPlus size={14} /> Create Store
-          </Link>
         </div>
 
         {/* Category Filter Pills */}
@@ -202,8 +199,8 @@ export default function RentPage() {
               onClick={() => setActiveCategory(cat.key)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all flex-shrink-0 ${
                 activeCategory === cat.key
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-white border border-gray-200 text-gray-600 hover:border-blue-500 hover:text-blue-600'
+                  ? 'bg-primary-600 text-white shadow-sm'
+                  : 'bg-white border border-gray-200 text-gray-600 hover:border-primary-500 hover:text-primary-600'
               }`}
             >
               <span>{cat.icon}</span>
@@ -237,12 +234,9 @@ export default function RentPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-blue-200">
-                <FiCamera size={36} className="text-blue-300 mx-auto mb-3" />
-                <p className="text-gray-500 text-sm mb-3">{t('rent.no_stores_yet')}</p>
-                <Link href="/rent/post" className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors">
-                  <FiPlus size={15} /> {t('rent.post_item_cta')}
-                </Link>
+              <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-primary-200">
+                <FiCamera size={36} className="text-primary-300 mx-auto mb-3" />
+                <p className="text-gray-500 text-sm">{t('rent.no_stores_yet')}</p>
               </div>
             )}
           </section>
@@ -282,7 +276,7 @@ export default function RentPage() {
               <FiCamera size={40} className="text-gray-300 mx-auto mb-3" />
               <p className="text-gray-500 mb-2">{t('rent.no_items_category')}</p>
               <p className="text-gray-400 text-sm mb-4">{t('rent.be_first')}</p>
-              <Link href="/rent/post" className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors">
+              <Link href="/rent/post" className="inline-flex items-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary-700 transition-colors">
                 <FiPlus size={15} /> {t('rent.post_item_cta')}
               </Link>
             </div>
