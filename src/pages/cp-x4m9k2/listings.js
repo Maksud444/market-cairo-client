@@ -25,6 +25,19 @@ function AdminListings() {
     totalListings: 0
   });
 
+  // Reject modal state
+  const [rejectModal, setRejectModal] = useState({ open: false, listingId: null, reason: '' });
+  const REJECT_PRESETS = [
+    'Does not meet community guidelines',
+    'Prohibited item or content',
+    'Misleading or inaccurate description',
+    'Inappropriate or offensive content',
+    'Duplicate listing',
+    'Poor quality / unclear photos',
+    'Price is unrealistic',
+    'Other',
+  ];
+
   useEffect(() => {
     fetchListings();
   }, [search, statusFilter, moderationFilter, typeFilter, pagination.currentPage]);
@@ -76,6 +89,19 @@ function AdminListings() {
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to moderate listing');
     }
+  };
+
+  const openRejectModal = (listingId) => {
+    setRejectModal({ open: true, listingId, reason: '' });
+  };
+
+  const submitReject = async () => {
+    if (!rejectModal.reason.trim()) {
+      toast.error('Please enter a reason for rejection');
+      return;
+    }
+    await handleModerate(rejectModal.listingId, 'reject', rejectModal.reason.trim());
+    setRejectModal({ open: false, listingId: null, reason: '' });
   };
 
   const handleDelete = async (listingId) => {
@@ -419,9 +445,9 @@ function AdminListings() {
                                 <FiCheck size={18} />
                               </button>
                               <button
-                                onClick={() => handleModerate(listing._id, 'reject', 'Does not meet guidelines')}
+                                onClick={() => openRejectModal(listing._id)}
                                 className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                                title="Reject"
+                                title="Reject with reason"
                               >
                                 <FiX size={18} />
                               </button>
@@ -468,6 +494,68 @@ function AdminListings() {
           </div>
         )}
       </div>
+
+      {/* ── Reject Reason Modal ── */}
+      {rejectModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <FiAlertCircle className="text-red-500" size={20} />
+                Reject Listing
+              </h3>
+              <button onClick={() => setRejectModal({ open: false, listingId: null, reason: '' })} className="p-1 text-gray-400 hover:text-gray-600">
+                <FiX size={20} />
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-500 mb-4">Select a preset reason or write a custom one. This will be sent to the seller by email and in-app notification.</p>
+
+            {/* Preset reasons */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {REJECT_PRESETS.map((preset) => (
+                <button
+                  key={preset}
+                  onClick={() => setRejectModal(m => ({ ...m, reason: preset }))}
+                  className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
+                    rejectModal.reason === preset
+                      ? 'bg-red-600 text-white border-red-600'
+                      : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-red-300 hover:text-red-600'
+                  }`}
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
+
+            {/* Custom reason textarea */}
+            <textarea
+              value={rejectModal.reason}
+              onChange={(e) => setRejectModal(m => ({ ...m, reason: e.target.value }))}
+              placeholder="Or type a custom reason..."
+              className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:border-red-400 resize-none"
+              rows={3}
+              maxLength={500}
+            />
+            <p className="text-xs text-gray-400 mt-1 text-right">{rejectModal.reason.length}/500</p>
+
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => setRejectModal({ open: false, listingId: null, reason: '' })}
+                className="flex-1 py-2.5 border border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitReject}
+                className="flex-1 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+              >
+                <FiX size={15} /> Reject Listing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
