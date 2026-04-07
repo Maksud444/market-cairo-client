@@ -348,12 +348,9 @@ export default function Header() {
                 <span className="text-[9px] font-bold whitespace-nowrap">{t('nav.donate')}</span>
               </Link>
               <div className="flex-1" />
+              <LanguageSwitcher />
               {isAuthenticated ? (
                 <div className="flex items-center">
-                  <Link href="/messages" className="relative p-2 text-gray-600">
-                    <FiMessageSquare size={20} />
-                    {unreadCount > 0 && <span className="absolute top-1 right-1 w-4 h-4 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center">{unreadCount > 9 ? '9+' : unreadCount}</span>}
-                  </Link>
                   <Link href="/notifications" className="relative p-2 text-gray-600">
                     <FiBell size={20} />
                     {notifUnread > 0 && <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">{notifUnread > 9 ? '9+' : notifUnread}</span>}
