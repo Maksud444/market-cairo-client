@@ -7,6 +7,7 @@ import { useDropzone } from 'react-dropzone';
 import { useTranslation } from 'next-i18next';
 import { FiUpload, FiX, FiCheck, FiClock, FiAlertCircle, FiShield, FiFileText } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import imageCompression from 'browser-image-compression';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
 import { verificationAPI } from '../lib/api';
@@ -63,7 +64,7 @@ function VerifyPage() {
     setDocuments([]);
   }, [documentType]);
 
-  const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
+  const onDrop = useCallback(async (acceptedFiles, rejectedFiles) => {
     rejectedFiles.forEach(({ file, errors }) => {
       errors.forEach(error => {
         if (error.code === 'file-too-large') {
@@ -82,9 +83,18 @@ function VerifyPage() {
       return;
     }
 
-    const newDocs = acceptedFiles.map(file => ({
-      file,
-      preview: URL.createObjectURL(file),
+    const newDocs = await Promise.all(acceptedFiles.map(async (file) => {
+      try {
+        const compressed = await imageCompression(file, {
+          maxSizeMB: 0.15,
+          maxWidthOrHeight: 1200,
+          useWebWorker: true,
+          initialQuality: 0.8,
+        });
+        return { file: compressed, preview: URL.createObjectURL(compressed) };
+      } catch {
+        return { file, preview: URL.createObjectURL(file) };
+      }
     }));
     setDocuments(prev => [...prev, ...newDocs]);
   }, [documents.length, maxImages, documentType, t]);

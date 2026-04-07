@@ -432,7 +432,7 @@ export default function PostListingPage() {
     }
   }, [editId, isAuthenticated, user, router, t]);
 
-  const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
+  const onDrop = useCallback(async (acceptedFiles, rejectedFiles) => {
     rejectedFiles.forEach(({ file, errors: fileErrors }) => {
       fileErrors.forEach(error => {
         if (error.code === 'file-too-large') {
@@ -449,9 +449,18 @@ export default function PostListingPage() {
       return;
     }
 
-    const newImages = acceptedFiles.map(file => ({
-      file,
-      preview: URL.createObjectURL(file),
+    const newImages = await Promise.all(acceptedFiles.map(async (file) => {
+      try {
+        const compressed = await imageCompression(file, {
+          maxSizeMB: 0.15,
+          maxWidthOrHeight: 1200,
+          useWebWorker: true,
+          initialQuality: 0.8,
+        });
+        return { file: compressed, preview: URL.createObjectURL(compressed) };
+      } catch {
+        return { file, preview: URL.createObjectURL(file) };
+      }
     }));
     setImages(prev => [...prev, ...newImages]);
   }, [images.length, existingImages.length, t]);
@@ -629,9 +638,10 @@ export default function PostListingPage() {
     try {
       setSubmitStep('compressing');
       const compressionOptions = {
-        maxSizeMB: 0.5,
+        maxSizeMB: 0.15,
         maxWidthOrHeight: 1200,
         useWebWorker: true,
+        initialQuality: 0.8,
         fileType: 'image/jpeg',
       };
       const compressedImages = await Promise.all(

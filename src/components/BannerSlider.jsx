@@ -147,17 +147,17 @@ export default function BannerSlider() {
       <div className="hidden lg:block container-app mt-4 mb-2">
         <div
           className="relative overflow-hidden rounded-2xl"
-          style={{ height: '200px' }}
+          style={{ height: '360px' }}
         >
-          {/* Background image */}
+          {/* Background image — full visibility, centered */}
           <img
             src={banner.image}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+            className="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-300"
             style={{ opacity: isAnimating ? 0 : 1 }}
           />
           {/* Left-to-right dark overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-transparent" />
           {content(false)}
           {arrows('md')}
           {dots}

@@ -332,36 +332,35 @@ export default function Header() {
         {/* ── Mobile Row 1: Logo + Rent + Donate (top bar) ── */}
         <div className="border-b border-gray-100">
           <div className="container-app">
-            <div className="flex items-center h-14 gap-1">
-              <button onClick={toggleMobileMenu} className="p-2 -ml-2 text-gray-600 flex-shrink-0">
-                {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+            <div className="flex items-center h-14 gap-0">
+              <button onClick={toggleMobileMenu} className="p-2 -ml-1 text-gray-600 flex-shrink-0">
+                {isMobileMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
               </button>
               <Link href="/" className="flex items-center flex-shrink-0">
-                <img src="/logo.png" alt="MySouqify" className="h-28 w-auto object-contain" />
+                <img src="/logo.png" alt="MySouqify" className="h-24 w-auto object-contain" />
               </Link>
-              <Link href="/rent" className="flex flex-col items-center gap-0 px-3 py-1 text-gray-700 hover:text-primary-600 transition-colors flex-shrink-0 border-b-2 border-transparent hover:border-primary-500">
-                <FiCamera size={20} />
-                <span className="text-[10px] font-bold whitespace-nowrap">{t('nav.rent')}</span>
+              <Link href="/rent" className="flex flex-col items-center gap-0 px-2 py-1 text-gray-700 hover:text-primary-600 transition-colors flex-shrink-0">
+                <FiCamera size={18} />
+                <span className="text-[9px] font-bold whitespace-nowrap">{t('nav.rent')}</span>
               </Link>
-              <Link href="/donate" className="flex flex-col items-center gap-0 px-3 py-1 text-gray-700 hover:text-primary-600 transition-colors flex-shrink-0 border-b-2 border-transparent hover:border-primary-500">
-                <FiGift size={20} />
-                <span className="text-[10px] font-bold whitespace-nowrap">{t('nav.donate')}</span>
+              <Link href="/donate" className="flex flex-col items-center gap-0 px-2 py-1 text-gray-700 hover:text-primary-600 transition-colors flex-shrink-0">
+                <FiGift size={18} />
+                <span className="text-[9px] font-bold whitespace-nowrap">{t('nav.donate')}</span>
               </Link>
               <div className="flex-1" />
-              <LanguageSwitcher />
               {isAuthenticated ? (
                 <div className="flex items-center">
                   <Link href="/messages" className="relative p-2 text-gray-600">
-                    <FiMessageSquare size={22} />
+                    <FiMessageSquare size={20} />
                     {unreadCount > 0 && <span className="absolute top-1 right-1 w-4 h-4 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center">{unreadCount > 9 ? '9+' : unreadCount}</span>}
                   </Link>
                   <Link href="/notifications" className="relative p-2 text-gray-600">
-                    <FiBell size={22} />
+                    <FiBell size={20} />
                     {notifUnread > 0 && <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">{notifUnread > 9 ? '9+' : notifUnread}</span>}
                   </Link>
                 </div>
               ) : (
-                <button onClick={openLoginModal} className="px-3 py-1.5 text-sm font-semibold text-primary-600 border border-primary-200 rounded-lg flex-shrink-0">
+                <button onClick={openLoginModal} className="px-3 py-1.5 text-xs font-semibold text-primary-600 border border-primary-200 rounded-lg flex-shrink-0">
                   {t('nav.login')}
                 </button>
               )}
@@ -462,9 +461,17 @@ export default function Header() {
                 </button>
               )}
               <hr className="my-3" />
+              <Link href="/rent" className="flex items-center gap-3 px-3 py-2.5 text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-lg font-semibold" onClick={() => setMobileMenuOpen(false)}>
+                <FiCamera size={20} className="text-primary-600" /><span>{t('nav.rent')}</span>
+              </Link>
               <Link href="/donate" className="flex items-center gap-3 px-3 py-2.5 text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-lg font-semibold" onClick={() => setMobileMenuOpen(false)}>
                 <FiGift size={20} className="text-primary-600" /><span>{t('nav.donate')}</span>
               </Link>
+              <hr className="my-3" />
+              <div className="px-3 py-2">
+                <p className="text-xs font-medium text-gray-400 uppercase mb-2">{t('header.language') || 'Language'}</p>
+                <LanguageSwitcher />
+              </div>
               <hr className="my-3" />
               <p className="px-3 py-2 text-xs font-medium text-gray-400 uppercase">{t('header.categories_label')}</p>
               {cats.map((cat) => (

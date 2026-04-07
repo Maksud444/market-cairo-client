@@ -113,7 +113,7 @@ export default function PostRentPage() {
     for (const file of filesToProcess) {
       if (file.size > MAX_FILE_SIZE) { toast.error(`${file.name} is too large (max 5MB)`); continue; }
       try {
-        const comp = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1200, useWebWorker: true });
+        const comp = await imageCompression(file, { maxSizeMB: 0.15, maxWidthOrHeight: 1200, useWebWorker: true, initialQuality: 0.8 });
         compressed.push({ file: comp, preview: URL.createObjectURL(comp) });
       } catch {
         compressed.push({ file, preview: URL.createObjectURL(file) });
