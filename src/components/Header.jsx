@@ -169,6 +169,18 @@ export default function Header() {
               <img src="/logo.png" alt="MySouqify" className="h-36 w-auto object-contain" />
             </Link>
 
+            {/* Rent & Donate — Dubizzle-style top nav items */}
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <Link href="/rent" className="flex flex-col items-center gap-0.5 px-4 py-1.5 text-gray-700 hover:text-primary-600 transition-colors group">
+                <FiCamera size={24} className="group-hover:text-primary-600" />
+                <span className="text-xs font-bold whitespace-nowrap">{t('nav.rent')}</span>
+              </Link>
+              <Link href="/donate" className="flex flex-col items-center gap-0.5 px-4 py-1.5 text-gray-700 hover:text-primary-600 transition-colors group">
+                <FiGift size={24} className="group-hover:text-primary-600" />
+                <span className="text-xs font-bold whitespace-nowrap">{t('nav.donate')}</span>
+              </Link>
+            </div>
+
             {/* Location + Search (Dubizzle style combined box) */}
             <div className="flex flex-1 max-w-2xl mx-4 rounded-lg border-2 border-gray-200 focus-within:border-primary-500 transition-colors relative" ref={locationRef}>
               <div className="relative flex-shrink-0">
@@ -273,12 +285,6 @@ export default function Header() {
         <div className="border-t border-gray-100">
           <div className="container-app">
             <div className="flex items-center gap-6 py-2.5">
-              <Link href="/rent" className="flex items-center gap-1.5 text-sm font-semibold text-primary-600 hover:text-primary-700 whitespace-nowrap py-1 border border-primary-200 bg-primary-50 hover:bg-primary-100 px-3 rounded-full transition-colors">
-                <FiCamera size={13} /> {t('nav.rent')}
-              </Link>
-              <Link href="/donate" className="flex items-center gap-1.5 text-sm font-semibold text-primary-600 hover:text-primary-700 whitespace-nowrap py-1 border border-primary-200 bg-primary-50 hover:bg-primary-100 px-3 rounded-full transition-colors">
-                <FiGift size={13} /> {t('nav.donate')}
-              </Link>
               {cats.map((cat) => (
                 <div key={cat.name} className="relative" onMouseEnter={() => setHoveredCategory(cat.name)} onMouseLeave={() => setHoveredCategory(null)}>
                   <button onClick={() => handleCategoryClick(cat.name)}
@@ -320,13 +326,22 @@ export default function Header() {
       {/* ───── MOBILE HEADER ───── */}
       <div className="lg:hidden">
         <div className="container-app">
-          {/* Top row: hamburger + logo + icons */}
-          <div className="flex items-center h-14 gap-2">
-            <button onClick={toggleMobileMenu} className="p-2 -ml-2 text-gray-600">
+          {/* Top row: hamburger + logo + rent + donate + icons */}
+          <div className="flex items-center h-16 gap-1">
+            <button onClick={toggleMobileMenu} className="p-2 -ml-2 text-gray-600 flex-shrink-0">
               {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
             <Link href="/" className="flex items-center flex-shrink-0">
-              <img src="/logo.png" alt="MySouqify" className="h-20 w-auto object-contain" />
+              <img src="/logo.png" alt="MySouqify" className="h-28 w-auto object-contain" />
+            </Link>
+            {/* Rent & Donate — Dubizzle-style */}
+            <Link href="/rent" className="flex flex-col items-center gap-0 px-2.5 py-1 text-gray-700 hover:text-primary-600 transition-colors flex-shrink-0">
+              <FiCamera size={20} />
+              <span className="text-[10px] font-bold whitespace-nowrap">{t('nav.rent')}</span>
+            </Link>
+            <Link href="/donate" className="flex flex-col items-center gap-0 px-2.5 py-1 text-gray-700 hover:text-primary-600 transition-colors flex-shrink-0">
+              <FiGift size={20} />
+              <span className="text-[10px] font-bold whitespace-nowrap">{t('nav.donate')}</span>
             </Link>
             <div className="flex-1" />
             <LanguageSwitcher />
@@ -342,7 +357,7 @@ export default function Header() {
                 </Link>
               </div>
             ) : (
-              <button onClick={openLoginModal} className="px-3 py-1.5 text-sm font-semibold text-primary-600 border border-primary-200 rounded-lg">
+              <button onClick={openLoginModal} className="px-3 py-1.5 text-sm font-semibold text-primary-600 border border-primary-200 rounded-lg flex-shrink-0">
                 {t('nav.login')}
               </button>
             )}
@@ -380,19 +395,6 @@ export default function Header() {
           {showMobileSearchBar && (
             <div className="pb-3 -mx-4 px-4 overflow-x-auto no-scrollbar">
               <div className="flex gap-4 min-w-max">
-                {/* Rent — shown first, above Donate */}
-                <Link href="/rent" className="flex flex-col items-center gap-1.5 min-w-[58px]">
-                  <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center border border-primary-100">
-                    <FiCamera className="text-primary-600" size={20} />
-                  </div>
-                  <span className="text-[10px] text-primary-700 text-center leading-tight font-semibold">{t('nav.rent')}</span>
-                </Link>
-                <Link href="/donate" className="flex flex-col items-center gap-1.5 min-w-[58px]">
-                  <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center border border-primary-100">
-                    <FiGift className="text-primary-600" size={20} />
-                  </div>
-                  <span className="text-[10px] text-primary-700 text-center leading-tight font-semibold">{t('nav.donate')}</span>
-                </Link>
                 {cats.map((cat) => {
                   const Icon = categoryIcons[cat.name] || FiShoppingBag;
                   return (
