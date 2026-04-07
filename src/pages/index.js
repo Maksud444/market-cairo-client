@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { FiShield, FiArrowRight, FiPackage, FiMonitor, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal, FiGift, FiHeart } from 'react-icons/fi';
+import { FiShield, FiArrowRight, FiPackage, FiMonitor, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal, FiGift, FiHeart, FiCamera } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
@@ -10,6 +10,7 @@ import DonateCard from '../components/DonateCard';
 import BannerSlider from '../components/BannerSlider';
 import PromoBanner from '../components/PromoBanner';
 import { listingsAPI, categoriesAPI } from '../lib/api';
+import RentCard from '../components/RentCard';
 
 const categoryIcons = {
   'Mobile & Tablets': FiShoppingBag,
@@ -36,6 +37,7 @@ export default function Home() {
   const [featuredListings, setFeaturedListings] = useState([]);
   const [recentListings, setRecentListings] = useState([]);
   const [donationListings, setDonationListings] = useState([]);
+  const [rentListings, setRentListings] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -43,11 +45,12 @@ export default function Home() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [featuredRes, recentRes, categoriesRes, donationsRes] = await Promise.all([
+        const [featuredRes, recentRes, categoriesRes, donationsRes, rentRes] = await Promise.all([
           listingsAPI.getFeatured(),
           listingsAPI.getRecent(8),
           categoriesAPI.getAll(),
           listingsAPI.getDonations(4),
+          listingsAPI.getRentListings({ limit: 6 }),
         ]);
 
         const featured = featuredRes.data.success ? featuredRes.data.listings : [];
@@ -59,6 +62,7 @@ export default function Home() {
         }
         if (categoriesRes.data.success) setCategories(categoriesRes.data.categories);
         if (donationsRes.data.success) setDonationListings(donationsRes.data.listings);
+        if (rentRes.data.success) setRentListings(rentRes.data.listings);
       } catch (error) {
         console.error('Failed to fetch homepage data:', error);
       } finally {
@@ -244,6 +248,73 @@ export default function Home() {
                 ))
             }
           </div>
+        </div>
+      </section>
+
+      {/* Items for Rent Section */}
+      <section className="pb-8 lg:pb-16">
+        <div className="flex items-center justify-between mb-3 lg:mb-6 px-3 lg:container-app">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center">
+              <FiCamera className="text-blue-600" size={16} />
+            </div>
+            <h2 className="text-base font-bold text-gray-900 lg:text-2xl">{t('rent.section_title')}</h2>
+          </div>
+          <Link href="/rent" className="text-sm font-semibold text-blue-600 hover:underline flex items-center gap-0.5">
+            {t('home.view_all')} <FiArrowRight size={14} />
+          </Link>
+        </div>
+
+        {/* Mobile: horizontal slider */}
+        <div className="lg:hidden overflow-x-auto no-scrollbar pl-3">
+          <div className="flex gap-2.5 pr-3" style={{ width: 'max-content' }}>
+            {isLoading
+              ? [...Array(4)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-xl border border-gray-100 overflow-hidden flex-shrink-0" style={{ width: '160px' }}>
+                    <div className="skeleton" style={{ aspectRatio: '4/3' }} />
+                    <div className="p-2.5 space-y-1.5">
+                      <div className="h-3 skeleton w-2/3" />
+                      <div className="h-4 skeleton w-1/2" />
+                      <div className="h-3 skeleton w-3/4" />
+                    </div>
+                  </div>
+                ))
+              : rentListings.length > 0
+                ? rentListings.map((listing) => (
+                    <div key={listing._id} className="flex-shrink-0" style={{ width: '160px' }}>
+                      <RentCard listing={listing} compact />
+                    </div>
+                  ))
+                : null
+            }
+          </div>
+        </div>
+
+        {/* Desktop: grid */}
+        <div className="hidden lg:grid lg:grid-cols-3 gap-4 container-app">
+          {isLoading
+            ? [...Array(3)].map((_, i) => (
+                <div key={i} className="card">
+                  <div className="aspect-card skeleton" />
+                  <div className="p-3 space-y-2">
+                    <div className="h-4 skeleton w-3/4" />
+                    <div className="h-5 skeleton w-1/2" />
+                    <div className="h-3 skeleton w-full" />
+                  </div>
+                </div>
+              ))
+            : rentListings.length > 0
+              ? rentListings.slice(0, 3).map((listing) => (
+                  <RentCard key={listing._id} listing={listing} />
+                ))
+              : (
+                <div className="col-span-3 text-center py-10 bg-white rounded-2xl border border-dashed border-blue-200">
+                  <FiCamera size={32} className="text-blue-300 mx-auto mb-3" />
+                  <p className="text-gray-500 text-sm">{t('rent.no_items_yet')}</p>
+                  <Link href="/rent/post" className="mt-3 inline-block text-sm font-semibold text-blue-600 hover:underline">{t('rent.post_rent_cta')}</Link>
+                </div>
+              )
+          }
         </div>
       </section>
 

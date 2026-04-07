@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FiSearch, FiHeart, FiMessageSquare, FiUser, FiPlus, FiMenu, FiMapPin, FiX, FiShield, FiBell, FiChevronDown, FiNavigation, FiMonitor, FiPackage, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal, FiImage, FiGift } from 'react-icons/fi';
+import { FiSearch, FiHeart, FiMessageSquare, FiUser, FiPlus, FiMenu, FiMapPin, FiX, FiShield, FiBell, FiChevronDown, FiNavigation, FiMonitor, FiPackage, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal, FiImage, FiGift, FiCamera } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 import { useAuthStore, useMessagesStore, useUIStore } from '../lib/store';
 import { authAPI, categoriesAPI } from '../lib/api';
@@ -273,6 +273,9 @@ export default function Header() {
         <div className="border-t border-gray-100">
           <div className="container-app">
             <div className="flex items-center gap-6 py-2.5">
+              <Link href="/rent" className="flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 whitespace-nowrap py-1 border border-blue-200 bg-blue-50 hover:bg-blue-100 px-3 rounded-full transition-colors">
+                <FiCamera size={13} /> {t('nav.rent')}
+              </Link>
               <Link href="/donate" className="flex items-center gap-1.5 text-sm font-semibold text-primary-600 hover:text-primary-700 whitespace-nowrap py-1 border border-primary-200 bg-primary-50 hover:bg-primary-100 px-3 rounded-full transition-colors">
                 <FiGift size={13} /> {t('nav.donate')}
               </Link>
@@ -377,6 +380,13 @@ export default function Header() {
           {showMobileSearchBar && (
             <div className="pb-3 -mx-4 px-4 overflow-x-auto no-scrollbar">
               <div className="flex gap-4 min-w-max">
+                {/* Rent — shown first, above Donate */}
+                <Link href="/rent" className="flex flex-col items-center gap-1.5 min-w-[58px]">
+                  <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100">
+                    <FiCamera className="text-blue-600" size={20} />
+                  </div>
+                  <span className="text-[10px] text-blue-700 text-center leading-tight font-semibold">{t('nav.rent')}</span>
+                </Link>
                 <Link href="/donate" className="flex flex-col items-center gap-1.5 min-w-[58px]">
                   <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center border border-primary-100">
                     <FiGift className="text-primary-600" size={20} />

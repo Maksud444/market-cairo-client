@@ -6,7 +6,7 @@ import { getI18nProps } from '../../lib/i18n';
 import { withAdmin } from '../../hoc/withAdmin';
 import { useAuthStore } from '../../lib/store';
 import { adminAPI } from '../../lib/api';
-import { FiSearch, FiCheck, FiX, FiEye, FiTrash2, FiLogOut, FiClock, FiAlertCircle, FiGift } from 'react-icons/fi';
+import { FiSearch, FiCheck, FiX, FiEye, FiTrash2, FiLogOut, FiClock, FiAlertCircle, FiGift, FiCamera } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 function AdminListings() {
@@ -18,6 +18,7 @@ function AdminListings() {
   const [moderationFilter, setModerationFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all'); // 'all' | 'regular' | 'donations'
   const [donationPendingCount, setDonationPendingCount] = useState(0);
+  const [rentPendingCount, setRentPendingCount] = useState(0);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -37,7 +38,8 @@ function AdminListings() {
         search,
         status: statusFilter !== 'all' ? statusFilter : undefined,
         moderationStatus: moderationFilter !== 'all' ? moderationFilter : undefined,
-        isDonation: typeFilter === 'donations' ? 'true' : typeFilter === 'regular' ? 'false' : undefined,
+        isDonation: typeFilter === 'donations' ? 'true' : (typeFilter === 'regular' || typeFilter === 'rent') ? 'false' : undefined,
+        isRent: typeFilter === 'rent' ? 'true' : typeFilter === 'regular' ? 'false' : undefined,
       };
 
       const [response, statsRes] = await Promise.all([
@@ -54,6 +56,7 @@ function AdminListings() {
       }
       if (statsRes.data.success) {
         setDonationPendingCount(statsRes.data.stats.donations?.pendingApproval || 0);
+        setRentPendingCount(statsRes.data.stats.rent?.pendingApproval || 0);
       }
     } catch (error) {
       toast.error('Failed to load listings');
@@ -220,7 +223,7 @@ function AdminListings() {
       <div className="container-app py-8">
 
         {/* Type Tabs */}
-        <div className="flex gap-2 mb-5">
+        <div className="flex gap-2 mb-5 flex-wrap">
           {[
             { key: 'all', label: 'All Listings' },
             { key: 'regular', label: 'Regular Listings' },
@@ -232,6 +235,19 @@ function AdminListings() {
                   {donationPendingCount > 0 && (
                     <span className="ml-1 px-1.5 py-0.5 bg-primary-600 text-white text-xs rounded-full font-bold">
                       {donationPendingCount}
+                    </span>
+                  )}
+                </span>
+              )
+            },
+            {
+              key: 'rent',
+              label: (
+                <span className="flex items-center gap-1.5">
+                  <FiCamera size={14} /> Rent Listings
+                  {rentPendingCount > 0 && (
+                    <span className="ml-1 px-1.5 py-0.5 bg-blue-600 text-white text-xs rounded-full font-bold">
+                      {rentPendingCount}
                     </span>
                   )}
                 </span>
@@ -294,7 +310,7 @@ function AdminListings() {
           </div>
 
           <div className="mt-4 text-sm text-gray-600">
-            Showing {listings.length} of {pagination.totalListings} {typeFilter === 'donations' ? 'donations' : 'listings'}
+            Showing {listings.length} of {pagination.totalListings} {typeFilter === 'donations' ? 'donations' : typeFilter === 'rent' ? 'rent listings' : 'listings'}
           </div>
         </div>
 

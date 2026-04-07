@@ -58,6 +58,7 @@ export const listingsAPI = {
   getFeatured: () => api.get('/listings/featured'),
   getRecent: (limit = 8) => api.get('/listings/recent', { params: { limit } }),
   getDonations: (limit = 8) => api.get('/listings/donations', { params: { limit } }),
+  getRentListings: (params = {}) => api.get('/listings/rent', { params }),
   getStats: () => api.get('/listings/stats'),
   getById: (id) => api.get(`/listings/${id}`),
   getSimilar: (id) => api.get(`/listings/${id}/similar`),
@@ -154,6 +155,7 @@ export const adminAPI = {
 
   // Listings Management
   getListings: (params) => api.get('/admin/listings', { params }),
+  getRentStats: () => api.get('/admin/dashboard/stats'),
   moderateListing: (listingId, action, note) =>
     api.put(`/admin/listings/${listingId}/moderate`, { action, note }),
   deleteListing: (listingId) => api.delete(`/admin/listings/${listingId}`),
