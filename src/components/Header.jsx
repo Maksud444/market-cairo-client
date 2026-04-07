@@ -162,127 +162,130 @@ export default function Header() {
 
       {/* ───── DESKTOP HEADER ───── */}
       <div className="hidden lg:block">
-        <div className="container-app">
-          <div className="flex items-center h-24 gap-4">
-            {/* Logo */}
-            <Link href="/" className="flex items-center flex-shrink-0">
-              <img src="/logo.png" alt="MySouqify" className="h-36 w-auto object-contain" />
-            </Link>
 
-            {/* Rent & Donate — Dubizzle-style top nav items */}
-            <div className="flex items-center gap-1 flex-shrink-0">
-              <Link href="/rent" className="flex flex-col items-center gap-0.5 px-4 py-1.5 text-gray-700 hover:text-primary-600 transition-colors group">
-                <FiCamera size={24} className="group-hover:text-primary-600" />
+        {/* ── Row 1: Logo + Rent + Donate ── */}
+        <div className="border-b border-gray-100">
+          <div className="container-app">
+            <div className="flex items-center h-16 gap-6">
+              <Link href="/" className="flex items-center flex-shrink-0">
+                <img src="/logo.png" alt="MySouqify" className="h-32 w-auto object-contain" />
+              </Link>
+              <Link href="/rent" className="flex flex-col items-center gap-0.5 px-5 py-2 text-gray-700 hover:text-primary-600 transition-colors group border-b-2 border-transparent hover:border-primary-500">
+                <FiCamera size={22} />
                 <span className="text-xs font-bold whitespace-nowrap">{t('nav.rent')}</span>
               </Link>
-              <Link href="/donate" className="flex flex-col items-center gap-0.5 px-4 py-1.5 text-gray-700 hover:text-primary-600 transition-colors group">
-                <FiGift size={24} className="group-hover:text-primary-600" />
+              <Link href="/donate" className="flex flex-col items-center gap-0.5 px-5 py-2 text-gray-700 hover:text-primary-600 transition-colors group border-b-2 border-transparent hover:border-primary-500">
+                <FiGift size={22} />
                 <span className="text-xs font-bold whitespace-nowrap">{t('nav.donate')}</span>
               </Link>
-            </div>
-
-            {/* Location + Search (Dubizzle style combined box) */}
-            <div className="flex flex-1 max-w-2xl mx-4 rounded-lg border-2 border-gray-200 focus-within:border-primary-500 transition-colors relative" ref={locationRef}>
-              <div className="relative flex-shrink-0">
-                <button onClick={() => setShowLocationDropdown(!showLocationDropdown)}
-                  className="flex items-center gap-1.5 px-3 h-11 text-gray-700 hover:bg-gray-50 transition-colors border-r border-gray-200 text-sm font-medium whitespace-nowrap">
-                  <FiMapPin size={15} className="text-primary-600" />
-                  <span>{locationLabel}</span>
-                  <FiChevronDown size={12} className={`transition-transform ${showLocationDropdown ? 'rotate-180' : ''}`} />
-                </button>
-                {showLocationDropdown && (
-                  <div className="absolute top-full left-0 mt-1 min-w-[320px] w-auto bg-white rounded-xl shadow-xl border border-gray-100 z-50 max-h-96 overflow-y-auto overflow-x-hidden">
-                    <LocationDropdownContent />
-                  </div>
-                )}
-              </div>
-              <form onSubmit={handleSearch} className="flex flex-1">
-                <div className="relative flex-1">
-                  <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={17} />
-                  <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={t('common.search_placeholder')}
-                    className="w-full h-11 pl-9 pr-3 text-sm focus:outline-none bg-transparent" />
-                </div>
-                <button type="submit" className="px-5 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 transition-colors flex items-center gap-2">
-                  <FiSearch size={16} /> {t('header.search')}
-                </button>
-              </form>
-            </div>
-
-            {/* Right Actions */}
-            <div className="flex items-center gap-1 flex-shrink-0">
-              <LanguageSwitcher />
-              {!_hasHydrated ? (
-                <div className="w-8 h-8 bg-gray-100 rounded-full animate-pulse" />
-              ) : isAuthenticated ? (
-                <>
-                  <Link href="/messages" className="relative flex items-center px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <FiMessageSquare size={20} />
-                    {unreadCount > 0 && <span className="absolute top-1.5 right-1 w-4 h-4 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center">{unreadCount > 9 ? '9+' : unreadCount}</span>}
-                  </Link>
-                  <Link href="/notifications" className="relative flex items-center px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <FiBell size={20} />
-                    {notifUnread > 0 && <span className="absolute top-1.5 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">{notifUnread > 9 ? '9+' : notifUnread}</span>}
-                  </Link>
-                  {/* Profile Dropdown */}
-                  <div className="relative" ref={profileRef}>
-                    <button onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-                      className="flex items-center gap-2 px-2 py-2 text-gray-700 hover:text-gray-900 transition-colors rounded-lg hover:bg-gray-50">
-                      <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-primary-700 font-bold text-sm">
-                        {user?.name?.charAt(0).toUpperCase() || 'U'}
-                      </div>
-                      <FiChevronDown size={12} className={`text-gray-400 transition-transform ${showProfileDropdown ? 'rotate-180' : ''}`} />
-                    </button>
-
-                    {showProfileDropdown && (
-                      <div className="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 py-1 z-[200]" style={{ minWidth: '220px' }}>
-                        {/* User info */}
-                        <div className="px-4 py-3 border-b border-gray-100">
-                          <p className="font-semibold text-gray-900 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px]">{user?.name}</p>
-                          <p className="text-xs text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px]">{user?.email}</p>
-                        </div>
-                        <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap" onClick={() => setShowProfileDropdown(false)}>
-                          <FiUser size={16} className="flex-shrink-0" /> {t('nav.dashboard')}
-                        </Link>
-                        <Link href="/profile?tab=listings" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap" onClick={() => setShowProfileDropdown(false)}>
-                          <FiImage size={16} className="flex-shrink-0" /> {t('nav.my_ads')}
-                        </Link>
-                        <Link href="/favorites" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap" onClick={() => setShowProfileDropdown(false)}>
-                          <FiHeart size={16} className="flex-shrink-0" /> {t('nav.favorites')}
-                        </Link>
-                        {user?.isAdmin && (
-                          <Link href="/cp-x4m9k2" className="flex items-center gap-3 px-4 py-3 text-sm text-primary-600 hover:bg-primary-50 transition-colors whitespace-nowrap" onClick={() => setShowProfileDropdown(false)}>
-                            <FiShield size={16} className="flex-shrink-0" /> {t('nav.admin_panel')}
-                          </Link>
-                        )}
-                        <div className="border-t border-gray-100 mt-1" />
-                        <button onClick={() => { useAuthStore.getState().logout(); setShowProfileDropdown(false); router.push('/'); }}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors w-full whitespace-nowrap">
-                          <FiX size={16} className="flex-shrink-0" /> {t('nav.sign_out')}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  <Link href="/post" className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-lg hover:bg-primary-700 transition-colors ml-1">
-                    <FiPlus size={16} /> {t('nav.post_your_ad')}
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <button onClick={openLoginModal} className="px-4 py-2 text-gray-700 text-sm font-medium hover:text-gray-900 transition-colors">
-                    {t('nav.login')}
-                  </button>
-                  <button onClick={openLoginModal} className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-lg hover:bg-primary-700 transition-colors">
-                    <FiPlus size={16} /> {t('nav.post_your_ad')}
-                  </button>
-                </>
-              )}
             </div>
           </div>
         </div>
 
-        {/* Desktop Category Nav */}
-        <div className="border-t border-gray-100">
+        {/* ── Row 2: Search + Actions ── */}
+        <div className="border-b border-gray-100">
+          <div className="container-app">
+            <div className="flex items-center h-14 gap-4">
+              {/* Location + Search */}
+              <div className="flex flex-1 max-w-2xl rounded-lg border-2 border-gray-200 focus-within:border-primary-500 transition-colors relative" ref={locationRef}>
+                <div className="relative flex-shrink-0">
+                  <button onClick={() => setShowLocationDropdown(!showLocationDropdown)}
+                    className="flex items-center gap-1.5 px-3 h-11 text-gray-700 hover:bg-gray-50 transition-colors border-r border-gray-200 text-sm font-medium whitespace-nowrap">
+                    <FiMapPin size={15} className="text-primary-600" />
+                    <span>{locationLabel}</span>
+                    <FiChevronDown size={12} className={`transition-transform ${showLocationDropdown ? 'rotate-180' : ''}`} />
+                  </button>
+                  {showLocationDropdown && (
+                    <div className="absolute top-full left-0 mt-1 min-w-[320px] w-auto bg-white rounded-xl shadow-xl border border-gray-100 z-50 max-h-96 overflow-y-auto overflow-x-hidden">
+                      <LocationDropdownContent />
+                    </div>
+                  )}
+                </div>
+                <form onSubmit={handleSearch} className="flex flex-1">
+                  <div className="relative flex-1">
+                    <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={17} />
+                    <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder={t('common.search_placeholder')}
+                      className="w-full h-11 pl-9 pr-3 text-sm focus:outline-none bg-transparent" />
+                  </div>
+                  <button type="submit" className="px-5 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 transition-colors flex items-center gap-2">
+                    <FiSearch size={16} /> {t('header.search')}
+                  </button>
+                </form>
+              </div>
+
+              {/* Right Actions */}
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <LanguageSwitcher />
+                {!_hasHydrated ? (
+                  <div className="w-8 h-8 bg-gray-100 rounded-full animate-pulse" />
+                ) : isAuthenticated ? (
+                  <>
+                    <Link href="/messages" className="relative flex items-center px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors">
+                      <FiMessageSquare size={20} />
+                      {unreadCount > 0 && <span className="absolute top-1.5 right-1 w-4 h-4 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center">{unreadCount > 9 ? '9+' : unreadCount}</span>}
+                    </Link>
+                    <Link href="/notifications" className="relative flex items-center px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors">
+                      <FiBell size={20} />
+                      {notifUnread > 0 && <span className="absolute top-1.5 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">{notifUnread > 9 ? '9+' : notifUnread}</span>}
+                    </Link>
+                    <div className="relative" ref={profileRef}>
+                      <button onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                        className="flex items-center gap-2 px-2 py-2 text-gray-700 hover:text-gray-900 transition-colors rounded-lg hover:bg-gray-50">
+                        <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-primary-700 font-bold text-sm">
+                          {user?.name?.charAt(0).toUpperCase() || 'U'}
+                        </div>
+                        <FiChevronDown size={12} className={`text-gray-400 transition-transform ${showProfileDropdown ? 'rotate-180' : ''}`} />
+                      </button>
+                      {showProfileDropdown && (
+                        <div className="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 py-1 z-[200]" style={{ minWidth: '220px' }}>
+                          <div className="px-4 py-3 border-b border-gray-100">
+                            <p className="font-semibold text-gray-900 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px]">{user?.name}</p>
+                            <p className="text-xs text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px]">{user?.email}</p>
+                          </div>
+                          <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap" onClick={() => setShowProfileDropdown(false)}>
+                            <FiUser size={16} className="flex-shrink-0" /> {t('nav.dashboard')}
+                          </Link>
+                          <Link href="/profile?tab=listings" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap" onClick={() => setShowProfileDropdown(false)}>
+                            <FiImage size={16} className="flex-shrink-0" /> {t('nav.my_ads')}
+                          </Link>
+                          <Link href="/favorites" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap" onClick={() => setShowProfileDropdown(false)}>
+                            <FiHeart size={16} className="flex-shrink-0" /> {t('nav.favorites')}
+                          </Link>
+                          {user?.isAdmin && (
+                            <Link href="/cp-x4m9k2" className="flex items-center gap-3 px-4 py-3 text-sm text-primary-600 hover:bg-primary-50 transition-colors whitespace-nowrap" onClick={() => setShowProfileDropdown(false)}>
+                              <FiShield size={16} className="flex-shrink-0" /> {t('nav.admin_panel')}
+                            </Link>
+                          )}
+                          <div className="border-t border-gray-100 mt-1" />
+                          <button onClick={() => { useAuthStore.getState().logout(); setShowProfileDropdown(false); router.push('/'); }}
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors w-full whitespace-nowrap">
+                            <FiX size={16} className="flex-shrink-0" /> {t('nav.sign_out')}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    <Link href="/post" className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-lg hover:bg-primary-700 transition-colors ml-1">
+                      <FiPlus size={16} /> {t('nav.post_your_ad')}
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={openLoginModal} className="px-4 py-2 text-gray-700 text-sm font-medium hover:text-gray-900 transition-colors">
+                      {t('nav.login')}
+                    </button>
+                    <button onClick={openLoginModal} className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-lg hover:bg-primary-700 transition-colors">
+                      <FiPlus size={16} /> {t('nav.post_your_ad')}
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Row 3: Category Nav ── */}
+        <div className="border-b border-gray-100">
           <div className="container-app">
             <div className="flex items-center gap-6 py-2.5">
               {cats.map((cat) => (
@@ -325,43 +328,49 @@ export default function Header() {
 
       {/* ───── MOBILE HEADER ───── */}
       <div className="lg:hidden">
-        <div className="container-app">
-          {/* Top row: hamburger + logo + rent + donate + icons */}
-          <div className="flex items-center h-16 gap-1">
-            <button onClick={toggleMobileMenu} className="p-2 -ml-2 text-gray-600 flex-shrink-0">
-              {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-            </button>
-            <Link href="/" className="flex items-center flex-shrink-0">
-              <img src="/logo.png" alt="MySouqify" className="h-28 w-auto object-contain" />
-            </Link>
-            {/* Rent & Donate — Dubizzle-style */}
-            <Link href="/rent" className="flex flex-col items-center gap-0 px-2.5 py-1 text-gray-700 hover:text-primary-600 transition-colors flex-shrink-0">
-              <FiCamera size={20} />
-              <span className="text-[10px] font-bold whitespace-nowrap">{t('nav.rent')}</span>
-            </Link>
-            <Link href="/donate" className="flex flex-col items-center gap-0 px-2.5 py-1 text-gray-700 hover:text-primary-600 transition-colors flex-shrink-0">
-              <FiGift size={20} />
-              <span className="text-[10px] font-bold whitespace-nowrap">{t('nav.donate')}</span>
-            </Link>
-            <div className="flex-1" />
-            <LanguageSwitcher />
-            {isAuthenticated ? (
-              <div className="flex items-center">
-                <Link href="/messages" className="relative p-2 text-gray-600">
-                  <FiMessageSquare size={22} />
-                  {unreadCount > 0 && <span className="absolute top-1 right-1 w-4 h-4 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center">{unreadCount > 9 ? '9+' : unreadCount}</span>}
-                </Link>
-                <Link href="/notifications" className="relative p-2 text-gray-600">
-                  <FiBell size={22} />
-                  {notifUnread > 0 && <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">{notifUnread > 9 ? '9+' : notifUnread}</span>}
-                </Link>
-              </div>
-            ) : (
-              <button onClick={openLoginModal} className="px-3 py-1.5 text-sm font-semibold text-primary-600 border border-primary-200 rounded-lg flex-shrink-0">
-                {t('nav.login')}
+
+        {/* ── Mobile Row 1: Logo + Rent + Donate (top bar) ── */}
+        <div className="border-b border-gray-100">
+          <div className="container-app">
+            <div className="flex items-center h-14 gap-1">
+              <button onClick={toggleMobileMenu} className="p-2 -ml-2 text-gray-600 flex-shrink-0">
+                {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
               </button>
-            )}
+              <Link href="/" className="flex items-center flex-shrink-0">
+                <img src="/logo.png" alt="MySouqify" className="h-28 w-auto object-contain" />
+              </Link>
+              <Link href="/rent" className="flex flex-col items-center gap-0 px-3 py-1 text-gray-700 hover:text-primary-600 transition-colors flex-shrink-0 border-b-2 border-transparent hover:border-primary-500">
+                <FiCamera size={20} />
+                <span className="text-[10px] font-bold whitespace-nowrap">{t('nav.rent')}</span>
+              </Link>
+              <Link href="/donate" className="flex flex-col items-center gap-0 px-3 py-1 text-gray-700 hover:text-primary-600 transition-colors flex-shrink-0 border-b-2 border-transparent hover:border-primary-500">
+                <FiGift size={20} />
+                <span className="text-[10px] font-bold whitespace-nowrap">{t('nav.donate')}</span>
+              </Link>
+              <div className="flex-1" />
+              <LanguageSwitcher />
+              {isAuthenticated ? (
+                <div className="flex items-center">
+                  <Link href="/messages" className="relative p-2 text-gray-600">
+                    <FiMessageSquare size={22} />
+                    {unreadCount > 0 && <span className="absolute top-1 right-1 w-4 h-4 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center">{unreadCount > 9 ? '9+' : unreadCount}</span>}
+                  </Link>
+                  <Link href="/notifications" className="relative p-2 text-gray-600">
+                    <FiBell size={22} />
+                    {notifUnread > 0 && <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">{notifUnread > 9 ? '9+' : notifUnread}</span>}
+                  </Link>
+                </div>
+              ) : (
+                <button onClick={openLoginModal} className="px-3 py-1.5 text-sm font-semibold text-primary-600 border border-primary-200 rounded-lg flex-shrink-0">
+                  {t('nav.login')}
+                </button>
+              )}
+            </div>
           </div>
+        </div>
+
+        {/* ── Mobile Row 2: Search + Location + Categories ── */}
+        <div className="container-app">
 
           {/* Mobile Search - only on home and search pages */}
           {showMobileSearchBar && (

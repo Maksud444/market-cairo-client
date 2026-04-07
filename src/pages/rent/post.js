@@ -374,7 +374,14 @@ export default function PostRentPage() {
             </>
           )}
 
-          {/* ── 5. Store + Item Info ── */}
+          {/* ── 5-10. Rest of form — only after category selected ── */}
+          {!formData.rentCategory && (
+            <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm text-center text-gray-400 text-sm">
+              ← Select a rental category above to continue
+            </div>
+          )}
+
+          {formData.rentCategory && (<>
           <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-900">{t('rent.store_info')}</h2>
             <div>
@@ -541,6 +548,7 @@ export default function PostRentPage() {
             className="w-full py-4 bg-primary-600 text-white font-bold rounded-2xl hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-base">
             {isSubmitting ? 'Submitting...' : t('rent.submit_listing')}
           </button>
+          </>)} {/* end formData.rentCategory */}
         </form>
       </div>
     </Layout>
