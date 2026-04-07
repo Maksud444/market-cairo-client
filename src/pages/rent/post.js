@@ -40,8 +40,6 @@ const WEDDING_SUB_CATEGORIES = [
 const AZHAR_SUB_CATEGORIES = [
   { key: 'azhar_jubbah', label: 'Azhar Jubbah', icon: '🕌', labelAr: 'الجبة الأزهرية' },
   { key: 'azhar_cap', label: 'Azhar Cap', icon: '🧢', labelAr: 'طاقية الأزهر' },
-  { key: 'azhar_robe', label: 'Azhar Robe', icon: '👘', labelAr: 'روب الأزهر' },
-  { key: 'prayer_wear', label: 'Prayer Wear', icon: '🤲', labelAr: 'ملابس الصلاة' },
 ];
 
 const AVAILABLE_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
@@ -60,7 +58,7 @@ const AVAILABLE_COLORS = [
 
 export default function PostRentPage() {
   const { t } = useTranslation('common');
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, _hasHydrated } = useAuthStore();
   const { openLoginModal } = useUIStore();
 
   const [formData, setFormData] = useState({
@@ -97,8 +95,8 @@ export default function PostRentPage() {
   const showModel = formData.rentCategory === 'camera';
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && !isAuthenticated) openLoginModal();
-  }, [isAuthenticated, openLoginModal]);
+    if (_hasHydrated && !isAuthenticated) openLoginModal();
+  }, [_hasHydrated, isAuthenticated, openLoginModal]);
 
   // Reset sub-category when main category changes
   const handleCategoryChange = (key) => {
@@ -194,6 +192,29 @@ export default function PostRentPage() {
       setIsSubmitting(false);
     }
   };
+
+  // Hard block — show login wall if not authenticated after hydration
+  if (_hasHydrated && !isAuthenticated) {
+    return (
+      <Layout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+          <div className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-lg">
+            <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FiCamera size={28} className="text-primary-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Login Required</h2>
+            <p className="text-gray-500 text-sm mb-6">You need to be logged in to post a rent listing.</p>
+            <button onClick={openLoginModal} className="w-full py-3 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-colors">
+              Login / Register
+            </button>
+            <Link href="/rent" className="block mt-3 text-sm text-gray-400 hover:text-gray-600">
+              ← Back to Rentals
+            </Link>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   if (submitted) {
     return (
