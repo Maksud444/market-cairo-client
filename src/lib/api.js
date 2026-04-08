@@ -150,6 +150,7 @@ export const adminAPI = {
 
   // Users Management
   getUsers: (params) => api.get('/admin/users', { params }),
+  getUserDetail: (userId) => api.get(`/admin/users/${userId}`),
   toggleUserRole: (userId) => api.put(`/admin/users/${userId}/role`),
   toggleUserStatus: (userId) => api.put(`/admin/users/${userId}/status`),
 

@@ -32,8 +32,8 @@ export default function UserProfilePage() {
       setIsLoading(true);
       try {
         const [userRes, listingsRes] = await Promise.all([
-          usersAPI.getById(id),
-          usersAPI.getUserListings(id),
+          usersAPI.getProfileById(id),
+          usersAPI.getListings(id),
         ]);
 
         if (userRes.data.success) {

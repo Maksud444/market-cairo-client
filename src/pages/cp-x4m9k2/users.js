@@ -5,8 +5,9 @@ import { getI18nProps } from '../../lib/i18n';
 import { withAdmin } from '../../hoc/withAdmin';
 import { useAuthStore } from '../../lib/store';
 import { adminAPI } from '../../lib/api';
-import { FiSearch, FiShield, FiUser, FiCheck, FiX, FiLogOut } from 'react-icons/fi';
+import { FiSearch, FiShield, FiUser, FiCheck, FiX, FiLogOut, FiEye, FiMail, FiPhone, FiMapPin, FiCalendar, FiShoppingBag, FiExternalLink } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import { formatDistanceToNow } from 'date-fns';
 
 function AdminUsers() {
   const { user, logout } = useAuthStore();
@@ -15,11 +16,10 @@ function AdminUsers() {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-    totalUsers: 0
-  });
+  const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1, totalUsers: 0 });
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userDetail, setUserDetail] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -81,6 +81,20 @@ function AdminUsers() {
     logout();
     toast.success('Logged out successfully');
     window.location.href = '/';
+  };
+
+  const openUserDetail = async (u) => {
+    setSelectedUser(u);
+    setDetailLoading(true);
+    setUserDetail(null);
+    try {
+      const res = await adminAPI.getUserDetail(u._id);
+      if (res.data.success) setUserDetail(res.data);
+    } catch {
+      toast.error('Failed to load user details');
+    } finally {
+      setDetailLoading(false);
+    }
   };
 
   return (
@@ -284,6 +298,12 @@ function AdminUsers() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <button
+                            onClick={() => openUserDetail(u)}
+                            className="px-3 py-1 text-sm bg-primary-50 text-primary-600 hover:bg-primary-100 rounded-lg flex items-center gap-1"
+                          >
+                            <FiEye size={13} /> View
+                          </button>
+                          <button
                             onClick={() => toggleUserRole(u._id)}
                             disabled={u._id === user._id}
                             className="px-3 py-1 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
@@ -330,6 +350,106 @@ function AdminUsers() {
           </div>
         )}
       </div>
+
+      {/* User Detail Modal */}
+      {selectedUser && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setSelectedUser(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              <h2 className="text-xl font-bold text-gray-900">User Profile</h2>
+              <button onClick={() => setSelectedUser(null)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+                <FiX size={20} />
+              </button>
+            </div>
+
+            {detailLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : (
+              <div className="p-6 space-y-6">
+                {/* User Info */}
+                <div className="flex items-start gap-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
+                    {selectedUser.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-lg font-bold text-gray-900">{selectedUser.name}</h3>
+                      {selectedUser.isAdmin && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary-100 text-primary-700 text-xs font-medium rounded-full">
+                          <FiShield size={11} /> Admin
+                        </span>
+                      )}
+                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${selectedUser.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {selectedUser.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+                    <div className="mt-2 space-y-1 text-sm text-gray-600">
+                      <p className="flex items-center gap-2"><FiMail size={14} /> {selectedUser.email}</p>
+                      {selectedUser.phone && <p className="flex items-center gap-2"><FiPhone size={14} /> {selectedUser.phone}</p>}
+                      {selectedUser.location?.area && <p className="flex items-center gap-2"><FiMapPin size={14} /> {selectedUser.location.area}, {selectedUser.location.city}</p>}
+                      <p className="flex items-center gap-2"><FiCalendar size={14} /> Joined {formatDistanceToNow(new Date(selectedUser.createdAt), { addSuffix: true })}</p>
+                      {userDetail && <p className="flex items-center gap-2"><FiShoppingBag size={14} /> {userDetail.listingsCount} total listings</p>}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-3 flex-wrap border-t border-gray-100 pt-4">
+                  <button
+                    onClick={() => { toggleUserRole(selectedUser._id); setSelectedUser(prev => ({ ...prev, isAdmin: !prev.isAdmin })); }}
+                    disabled={selectedUser._id === user._id}
+                    className="px-4 py-2 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-medium disabled:opacity-50"
+                  >
+                    {selectedUser.isAdmin ? 'Remove Admin' : 'Make Admin'}
+                  </button>
+                  <button
+                    onClick={() => { toggleUserStatus(selectedUser._id); setSelectedUser(prev => ({ ...prev, isActive: !prev.isActive })); }}
+                    disabled={selectedUser._id === user._id}
+                    className={`px-4 py-2 text-sm rounded-lg font-medium disabled:opacity-50 ${selectedUser.isActive ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}
+                  >
+                    {selectedUser.isActive ? 'Deactivate Account' : 'Activate Account'}
+                  </button>
+                  <Link href={`/user/${selectedUser._id}`} target="_blank"
+                    className="px-4 py-2 text-sm bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg font-medium flex items-center gap-1">
+                    <FiExternalLink size={13} /> View Public Profile
+                  </Link>
+                </div>
+
+                {/* Recent Listings */}
+                {userDetail?.activeListings?.length > 0 && (
+                  <div className="border-t border-gray-100 pt-4">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Recent Listings</h4>
+                    <div className="space-y-2">
+                      {userDetail.activeListings.map(listing => (
+                        <div key={listing._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-3 min-w-0">
+                            {listing.images?.[0] && (
+                              <img src={listing.images[0]} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                            )}
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-gray-800 truncate">{listing.title}</p>
+                              <p className="text-xs text-gray-500">{listing.status} · {new Date(listing.createdAt).toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <span className="text-sm font-bold text-primary-600">{listing.price?.toLocaleString()} EGP</span>
+                            <Link href={`/listing/${listing._id}`} target="_blank" className="text-gray-400 hover:text-gray-600">
+                              <FiExternalLink size={14} />
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
