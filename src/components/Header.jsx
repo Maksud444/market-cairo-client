@@ -143,6 +143,14 @@ export default function Header() {
     return key ? t(`categories.${key}`) : name;
   };
 
+  const handleLocationSelect = (loc, locKey) => {
+    setSelectedLocation(loc);
+    setShowLocationDropdown(false);
+    if (router.pathname !== '/') {
+      router.push(`/search?location=${encodeURIComponent(locKey)}`);
+    }
+  };
+
   const LocationDropdownContent = () => (
     <>
       <button onClick={handleCurrentLocation} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-primary-600 hover:bg-primary-50 border-b border-gray-100 font-medium">
@@ -152,7 +160,7 @@ export default function Header() {
       <div className="p-3 border-b border-gray-100"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{t('header.areas')}</p></div>
       <div className="py-1">
         {cairoAreas.map((area) => (
-          <button key={area.en} onClick={() => { setSelectedLocation(area.en === 'All Cairo' ? null : area); setShowLocationDropdown(false); router.push(`/search?location=${encodeURIComponent(area.en === 'All Cairo' ? '' : area.en)}`); }}
+          <button key={area.en} onClick={() => handleLocationSelect(area.en === 'All Cairo' ? null : area, area.en === 'All Cairo' ? '' : area.en)}
             className={`w-full text-left px-4 py-2 text-sm transition-colors whitespace-nowrap ${selectedLocation?.en === area.en ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-700 hover:bg-primary-50 hover:text-primary-600'}`}>
             {isArabic ? area.ar : area.en}
           </button>
@@ -161,7 +169,7 @@ export default function Header() {
       <div className="p-3 border-t border-b border-gray-100"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{t('header.compounds')}</p></div>
       <div className="py-1">
         {cairoCompounds.map((compound) => (
-          <button key={compound.en} onClick={() => { setSelectedLocation(compound); setShowLocationDropdown(false); router.push(`/search?location=${encodeURIComponent(compound.en)}`); }}
+          <button key={compound.en} onClick={() => handleLocationSelect(compound, compound.en)}
             className={`w-full text-left px-4 py-2 text-sm transition-colors whitespace-nowrap ${selectedLocation?.en === compound.en ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-700 hover:bg-primary-50 hover:text-primary-600'}`}>
             {isArabic ? compound.ar : compound.en}
           </button>
@@ -362,11 +370,6 @@ export default function Header() {
               </Link>
               <div className="flex-1" />
               <LanguageSwitcher />
-              {!isAuthenticated && (
-                <button onClick={openLoginModal} className="ml-1 px-3 py-1.5 text-xs font-semibold text-primary-600 border border-primary-200 rounded-lg flex-shrink-0">
-                  {t('nav.login')}
-                </button>
-              )}
             </div>
           </div>
         </div>
