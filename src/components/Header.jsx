@@ -103,9 +103,22 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const loc = router.query.location;
+    if (loc) {
+      const found = [...cairoAreas, ...cairoCompounds].find(a => a.en === loc);
+      setSelectedLocation(found || { en: loc, ar: loc });
+    } else if (router.pathname !== '/search') {
+      setSelectedLocation(null);
+    }
+  }, [router.query.location, router.pathname]);
+
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) params.set('q', searchQuery.trim());
+    if (selectedLocation?.en) params.set('location', selectedLocation.en);
+    router.push(`/search?${params.toString()}`);
   };
 
   const handleCategoryClick = (category) => {
@@ -372,7 +385,11 @@ export default function Header() {
                   <FiBell size={22} />
                   {notifUnread > 0 && <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">{notifUnread > 9 ? '9+' : notifUnread}</span>}
                 </Link>
-              ) : null}
+              ) : (
+                <button onClick={openLoginModal} className="relative p-1.5 text-gray-600">
+                  <FiUser size={22} />
+                </button>
+              )}
             </div>
           </div>
         </div>
