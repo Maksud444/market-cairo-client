@@ -146,8 +146,15 @@ export default function Header() {
   const handleLocationSelect = (loc, locKey) => {
     setSelectedLocation(loc);
     setShowLocationDropdown(false);
-    if (router.pathname !== '/') {
-      router.push(`/search?location=${encodeURIComponent(locKey)}`);
+    if (router.pathname === '/search') {
+      // On search page: preserve existing params, just update location
+      const existing = { ...router.query };
+      if (locKey) existing.location = locKey;
+      else delete existing.location;
+      router.push({ pathname: '/search', query: existing });
+    } else {
+      // On all other pages: navigate to search with location
+      if (locKey) router.push(`/search?location=${encodeURIComponent(locKey)}`);
     }
   };
 
