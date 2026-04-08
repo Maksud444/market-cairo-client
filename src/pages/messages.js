@@ -304,42 +304,28 @@ export default function MessagesPage() {
                   {activeConversation.listing && <p style={{ fontSize: 11, color: '#9ca3af', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{activeConversation.listing.title}</p>}
                 </div>
               </Link>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                {/* Mobile block menu */}
-                <div style={{ position: 'relative' }}>
-                  <button onClick={() => setShowBlockMenu(!showBlockMenu)}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, color: '#fff', display: 'flex' }}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
-                  </button>
-                  {showBlockMenu && (
-                    <div style={{ position: 'absolute', right: 0, top: '100%', background: 'white', border: '1px solid #e5e7eb', borderRadius: 12, boxShadow: '0 10px 25px rgba(0,0,0,0.1)', zIndex: 100, minWidth: 160, overflow: 'hidden' }}>
-                      <button onClick={handleBlockUser}
-                        style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '10px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: isBlocked ? '#16a34a' : '#dc2626', textAlign: 'left' }}>
+              <div style={{ position: 'relative' }}>
+                <button onClick={() => setShowMenu(!showMenu)} style={{ color: '#fff', background: 'none', border: 'none', cursor: 'pointer', padding: 8, display: 'flex' }}>
+                  <FiMoreVertical size={22} />
+                </button>
+                {showMenu && (
+                  <>
+                    <div style={{ position: 'fixed', inset: 0, zIndex: 10 }} onClick={() => setShowMenu(false)} />
+                    <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: 4, width: 190, backgroundColor: '#fff', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.15)', border: '1px solid #f3f4f6', padding: '4px 0', zIndex: 20 }}>
+                      {activeConversation.listing && (
+                        <Link href={`/listing/${activeConversation.listing._id}`} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', fontSize: 14, color: '#374151', textDecoration: 'none' }} onClick={() => setShowMenu(false)}>
+                          <FiImage size={16} /> View Listing
+                        </Link>
+                      )}
+                      <button onClick={() => { handleBlockUser(); setShowMenu(false); }} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', fontSize: 14, color: isBlocked ? '#16a34a' : '#dc2626', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
                         {isBlocked ? '✓ Unblock User' : '🚫 Block User'}
                       </button>
+                      <button onClick={() => { handleDeleteConversation(); setShowMenu(false); }} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', fontSize: 14, color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
+                        <FiTrash2 size={16} /> Delete Chat
+                      </button>
                     </div>
-                  )}
-                </div>
-                <div style={{ position: 'relative' }}>
-                  <button onClick={() => setShowMenu(!showMenu)} style={{ color: '#fff', background: 'none', border: 'none', cursor: 'pointer', padding: 8, display: 'flex' }}>
-                    <FiMoreVertical size={20} />
-                  </button>
-                  {showMenu && (
-                    <>
-                      <div style={{ position: 'fixed', inset: 0, zIndex: 10 }} onClick={() => setShowMenu(false)} />
-                      <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: 4, width: 180, backgroundColor: '#fff', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.15)', border: '1px solid #f3f4f6', padding: '4px 0', zIndex: 20 }}>
-                        {activeConversation.listing && (
-                          <Link href={`/listing/${activeConversation.listing._id}`} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', fontSize: 13, color: '#374151', textDecoration: 'none' }} onClick={() => setShowMenu(false)}>
-                            <FiImage size={15} /> View Listing
-                          </Link>
-                        )}
-                        <button onClick={handleDeleteConversation} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', fontSize: 13, color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', width: '100%' }}>
-                          <FiTrash2 size={15} /> Delete
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -497,7 +483,7 @@ export default function MessagesPage() {
             <button
               type="submit"
               disabled={!newMessage.trim() || isSending}
-              style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: '#dc2626', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: (!newMessage.trim() || isSending) ? 0.4 : 1 }}
+              style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: '#dc2626', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
             >
               <FiSend size={16} />
             </button>
