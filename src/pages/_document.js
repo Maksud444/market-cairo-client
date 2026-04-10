@@ -8,7 +8,7 @@ export default function Document(props) {
     <Html lang={isAr ? 'ar' : 'en'} dir={isAr ? 'rtl' : 'ltr'}>
       <Head>
         {/* Google Tag Manager */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KBP4TB5S');` }} />
+        <script dangerouslySetInnerHTML={{ __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TSXZSFLS');` }} />
         {/* Hreflang alternates */}
         <link rel="alternate" hrefLang="en" href="https://mysouqify.com" />
         <link rel="alternate" hrefLang="ar-EG" href="https://mysouqify.com/ar" />
@@ -25,7 +25,7 @@ export default function Document(props) {
       </Head>
       <body>
         {/* Google Tag Manager (noscript) */}
-        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KBP4TB5S" height="0" width="0" style={{ display: 'none', visibility: 'hidden' }}></iframe></noscript>
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TSXZSFLS" height="0" width="0" style={{ display: 'none', visibility: 'hidden' }}></iframe></noscript>
         <Main />
         <NextScript />
         {/* Meta Pixel */}
