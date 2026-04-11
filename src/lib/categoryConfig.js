@@ -11,7 +11,7 @@ export const categoryConfig = {
         'Philips','Prestigio','Sharp','TCL','Ulefone','Umidigi','Vertu','Wiko','Yota','Other'
       ] },
       { key: 'model', label: 'Model', labelAr: 'الموديل', type: 'text', placeholder: 'e.g. iPhone 14 Pro' },
-      { key: 'storage', label: 'Storage', labelAr: 'المساحة', type: 'select', options: ['16GB', '32GB', '64GB', '128GB', '256GB', '512GB', '1TB'] },
+      { key: 'storage', label: 'Storage', labelAr: 'المساحة', type: 'select', options: ['8GB', '16GB', '32GB', '64GB', '128GB', '256GB', '512GB', '1TB'] },
       { key: 'ram', label: 'RAM', labelAr: 'الرام', type: 'select', options: ['2GB', '3GB', '4GB', '6GB', '8GB', '12GB', '16GB', 'Other'] },
     ]
   },
