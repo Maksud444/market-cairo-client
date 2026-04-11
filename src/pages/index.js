@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { FiShield, FiArrowRight, FiPackage, FiMonitor, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal, FiGift, FiHeart, FiCamera } from 'react-icons/fi';
+import { FiShield, FiArrowRight, FiPackage, FiMonitor, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal, FiGift, FiHeart, FiCamera, FiMail, FiCheck } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
@@ -9,7 +9,7 @@ import ListingCard from '../components/ListingCard';
 import DonateCard from '../components/DonateCard';
 import BannerSlider from '../components/BannerSlider';
 import PromoBanner from '../components/PromoBanner';
-import { listingsAPI, categoriesAPI } from '../lib/api';
+import { listingsAPI, categoriesAPI, newsletterAPI } from '../lib/api';
 import RentCard from '../components/RentCard';
 
 const categoryIcons = {
@@ -40,6 +40,21 @@ export default function Home() {
   const [rentListings, setRentListings] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState('idle'); // idle | loading | success | error
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    if (!newsletterEmail.trim()) return;
+    setNewsletterStatus('loading');
+    try {
+      await newsletterAPI.subscribe(newsletterEmail.trim());
+      setNewsletterStatus('success');
+      setNewsletterEmail('');
+    } catch {
+      setNewsletterStatus('error');
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -423,6 +438,45 @@ export default function Home() {
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">{t('home.how_step3_title')}</h3>
             <p className="text-sm text-gray-600">{t('home.how_step3_desc')}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="bg-primary-600 py-12 lg:py-16">
+        <div className="container-app text-center">
+          <div className="max-w-xl mx-auto">
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FiMail className="text-white" size={22} />
+            </div>
+            <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2">Stay Updated</h2>
+            <p className="text-primary-100 mb-6 text-sm lg:text-base">Get the best deals and new listings straight to your inbox.</p>
+            {newsletterStatus === 'success' ? (
+              <div className="flex items-center justify-center gap-2 text-white font-medium">
+                <FiCheck size={20} /> Subscribed successfully! Thank you.
+              </div>
+            ) : (
+              <form onSubmit={handleNewsletterSubmit} className="flex gap-2 max-w-md mx-auto">
+                <input
+                  type="email"
+                  value={newsletterEmail}
+                  onChange={e => { setNewsletterEmail(e.target.value); setNewsletterStatus('idle'); }}
+                  placeholder="Enter your email address"
+                  required
+                  className="flex-1 px-4 py-3 rounded-xl text-sm focus:outline-none text-gray-900"
+                />
+                <button
+                  type="submit"
+                  disabled={newsletterStatus === 'loading'}
+                  className="px-5 py-3 bg-white text-primary-600 font-bold rounded-xl text-sm hover:bg-primary-50 transition-colors disabled:opacity-70 whitespace-nowrap"
+                >
+                  {newsletterStatus === 'loading' ? '...' : 'Subscribe'}
+                </button>
+              </form>
+            )}
+            {newsletterStatus === 'error' && (
+              <p className="text-red-200 text-sm mt-2">Something went wrong. Please try again.</p>
+            )}
           </div>
         </div>
       </section>

@@ -184,4 +184,9 @@ export const adminAPI = {
   seedCategories: () => api.post('/admin/categories/seed'),
 };
 
+// Newsletter API
+export const newsletterAPI = {
+  subscribe: (email) => api.post('/newsletter/subscribe', { email }),
+};
+
 export default api;
