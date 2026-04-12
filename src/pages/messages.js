@@ -410,7 +410,11 @@ export default function MessagesPage() {
                         )}
                         <div style={{ display: 'flex', alignItems: 'center', gap: 3, marginTop: 2, fontSize: 10, color: '#9ca3af', justifyContent: isOwn ? 'flex-end' : 'flex-start' }}>
                           {format(new Date(message.createdAt), 'h:mm a')}
-                          {isOwn && (message.read ? <FiCheckCircle size={10} style={{ color: '#f87171' }} /> : <FiCheck size={10} />)}
+                          {isOwn && (
+                            message.read
+                              ? <span style={{ color: '#60a5fa', fontSize: 11, fontWeight: 700, letterSpacing: -1 }}>✓✓</span>
+                              : <span style={{ color: '#9ca3af', fontSize: 11, fontWeight: 700 }}>✓</span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -640,17 +644,17 @@ export default function MessagesPage() {
         }`}>
           {activeConversation ? (
             <>
-              {/* Chat Header - dark on mobile (Dubizzle style), light on desktop */}
-              <header className="flex items-center gap-3 px-4 py-3 lg:border-b lg:border-gray-100 bg-gray-950 lg:bg-white">
+              {/* Chat Header */}
+              <header className="flex items-center gap-3 px-4 py-3 border-b border-gray-200 bg-gray-950 lg:bg-gray-50">
                 <button
                   onClick={() => { setActiveConversation(null); router.push('/messages', undefined, { shallow: true }); }}
-                  className="lg:hidden p-1 -ml-1 text-white lg:text-gray-700"
+                  className="lg:hidden p-1 -ml-1 text-white"
                 >
                   <FiArrowLeft size={22} />
                 </button>
 
                 <Link href={`/user/${getOtherParticipant(activeConversation)._id}`} className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-10 h-10 bg-primary-700 lg:bg-primary-100 rounded-full flex items-center justify-center text-white lg:text-primary-600 font-bold flex-shrink-0 text-lg">
+                  <div className="w-10 h-10 bg-primary-700 lg:bg-primary-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 text-lg">
                     {getOtherParticipant(activeConversation).name?.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0">
@@ -658,31 +662,44 @@ export default function MessagesPage() {
                       {getOtherParticipant(activeConversation).name}
                     </p>
                     {activeConversation.listing && (
-                      <p className="text-xs text-gray-400 lg:text-gray-500 truncate">{activeConversation.listing.title}</p>
+                      <p className="text-xs text-gray-400 lg:text-gray-600 truncate">{activeConversation.listing.title}</p>
                     )}
                   </div>
                 </Link>
 
                 <div className="flex items-center gap-1">
                   <button className="lg:hidden p-2 text-white"><FiPhone size={20} /></button>
-                  {/* Single menu with all options */}
+                  {/* Menu */}
                   <div className="relative">
-                    <button onClick={() => setShowMenu(!showMenu)} className="p-2 text-white lg:text-gray-500 hover:text-gray-300 lg:hover:text-gray-700">
-                      <FiMoreVertical size={20} />
+                    <button
+                      onClick={() => setShowMenu(!showMenu)}
+                      className="p-2 rounded-lg text-white lg:text-gray-600 hover:bg-white/10 lg:hover:bg-gray-200 transition-colors"
+                    >
+                      <FiMoreVertical size={22} />
                     </button>
                     {showMenu && (
                       <>
                         <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
-                        <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                        <div className="absolute right-0 top-full mt-1 w-52 bg-white rounded-xl shadow-xl border border-gray-200 py-1 z-50">
                           {activeConversation.listing && (
-                            <Link href={`/listing/${activeConversation.listing._id}`} className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onClick={() => setShowMenu(false)}>
-                              <FiImage size={16} /> {t('messages_page.view_listing')}
+                            <Link href={`/listing/${activeConversation.listing._id}`} className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50" onClick={() => setShowMenu(false)}>
+                              <FiImage size={16} className="text-gray-400" /> {t('messages_page.view_listing')}
                             </Link>
                           )}
-                          <button onClick={() => { handleBlockUser(); setShowMenu(false); }} className="flex items-center gap-2 px-4 py-2 text-sm w-full text-left hover:bg-gray-50" style={{ color: isBlocked ? '#16a34a' : '#dc2626', background: 'none', border: 'none', cursor: 'pointer' }}>
-                            {isBlocked ? '✓ Unblock User' : '🚫 Block User'}
+                          <button
+                            onClick={() => { handleBlockUser(); setShowMenu(false); }}
+                            className="flex items-center gap-3 px-4 py-3 text-sm w-full text-left hover:bg-gray-50"
+                            style={{ color: isBlocked ? '#16a34a' : '#dc2626', background: 'none', border: 'none', cursor: 'pointer' }}
+                          >
+                            <span>{isBlocked ? '✓' : '🚫'}</span>
+                            {isBlocked ? 'Unblock User' : 'Block User'}
                           </button>
-                          <button onClick={() => { handleDeleteConversation(); setShowMenu(false); }} className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                          <div className="border-t border-gray-100 my-1" />
+                          <button
+                            onClick={() => { handleDeleteConversation(); setShowMenu(false); }}
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 w-full text-left"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                          >
                             <FiTrash2 size={16} /> {t('messages_page.delete_conversation')}
                           </button>
                         </div>
@@ -783,11 +800,9 @@ export default function MessagesPage() {
                             <div className={`flex items-center gap-1 mt-1 text-xs text-gray-400 ${isOwn ? 'justify-end' : ''}`}>
                               {format(new Date(message.createdAt), 'h:mm a')}
                               {isOwn && (
-                                message.read ? (
-                                  <FiCheckCircle size={12} className="text-primary-500" />
-                                ) : (
-                                  <FiCheck size={12} />
-                                )
+                                message.read
+                                  ? <span style={{ color: '#60a5fa', fontSize: 12, fontWeight: 700, letterSpacing: -1 }}>✓✓</span>
+                                  : <span style={{ color: '#9ca3af', fontSize: 12, fontWeight: 700 }}>✓</span>
                               )}
                             </div>
                           </div>
