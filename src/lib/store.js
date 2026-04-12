@@ -153,7 +153,13 @@ export const useMessagesStore = create((set, get) => ({
     try {
       const { data } = await messagesAPI.getConversations();
       if (data.success) {
-        set({ conversations: data.conversations });
+        set((state) => {
+          // Merge: keep any conversations already in state that the API didn't return
+          // (e.g. a just-created conversation that isn't in the list yet)
+          const apiIds = new Set(data.conversations.map(c => c._id));
+          const extra = state.conversations.filter(c => !apiIds.has(c._id));
+          return { conversations: [...data.conversations, ...extra] };
+        });
       }
     } catch (error) {
       console.error('Failed to fetch conversations:', error);
