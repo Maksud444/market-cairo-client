@@ -88,28 +88,24 @@ export default function MessagesPage() {
 
   // Set active conversation from URL
   useEffect(() => {
-    if (!conversationId) return;
-    const conv = conversations.find(c => c._id === conversationId);
-    if (conv) {
-      setActiveConversation(conv);
-      fetchConversation(conversationId);
-      messagesAPI.getConversation(conversationId).then(res => {
-        if (res.data?.conversation?.isBlocked !== undefined) {
-          setIsBlocked(res.data.conversation.isBlocked);
-        }
-      }).catch(() => {});
-    } else if (conversationId) {
-      // Conversation not in list yet (e.g. just created) — fetch it directly
-      messagesAPI.getConversation(conversationId).then(res => {
+    if (!conversationId || !isAuthenticated) return;
+    const openConversation = async () => {
+      // First ensure conversations list is fresh
+      await fetchConversations();
+      // Now try to find it in store (store is updated by fetchConversations)
+      // Use API directly to be safe
+      try {
+        const res = await messagesAPI.getConversation(conversationId);
         const freshConv = res.data?.conversation;
         if (freshConv) {
           setActiveConversation(freshConv);
           fetchConversation(conversationId);
           if (freshConv.isBlocked !== undefined) setIsBlocked(freshConv.isBlocked);
         }
-      }).catch(() => {});
-    }
-  }, [conversationId, conversations, setActiveConversation, fetchConversation]);
+      } catch {}
+    };
+    openConversation();
+  }, [conversationId, isAuthenticated]);
 
   // Scroll to bottom on new messages
   useEffect(() => {

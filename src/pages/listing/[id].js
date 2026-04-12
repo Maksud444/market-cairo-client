@@ -397,6 +397,38 @@ export default function ListingDetailPage({ initialListing }) {
 
           {/* Details - Right Side */}
           <div className="lg:col-span-2 space-y-4">
+
+            {/* Seller Profile — top of panel */}
+            <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
+              <Link href={`/user/${listing.seller._id}`} className="flex items-center gap-3 flex-1 min-w-0 group">
+                <div className="w-11 h-11 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 font-bold text-lg flex-shrink-0">
+                  {listing.seller.name?.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate">{listing.seller.name}</p>
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    {listing.seller.rating?.average > 0 && (
+                      <span className="flex items-center gap-0.5">
+                        <FiStar className="text-yellow-400 fill-current" size={11} />
+                        {listing.seller.rating.average.toFixed(1)}
+                      </span>
+                    )}
+                    <span>{listing.seller.salesCount || 0} {t('listing_detail.sales')}</span>
+                  </div>
+                </div>
+              </Link>
+              {!isOwner && (
+                <button
+                  onClick={handleSendMessage}
+                  disabled={isSending}
+                  className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 flex-shrink-0"
+                >
+                  <FiMessageCircle size={15} />
+                  {isSending ? t('listing_detail.sending') : t('listing_detail.send_message')}
+                </button>
+              )}
+            </div>
+
             {/* Soft-deleted status banner */}
             {listing.deleteInfo?.isDeleted && (
               <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
