@@ -472,7 +472,7 @@ export default function PostListingPage() {
       'image/png': ['.png'],
       'image/webp': ['.webp'],
     },
-    maxSize: MAX_FILE_SIZE,
+    maxSize: 50 * 1024 * 1024, // accept up to 50MB — compression handles reduction to ~150KB
     maxFiles: MAX_IMAGES - images.length - existingImages.length,
   });
 
@@ -972,7 +972,7 @@ export default function PostListingPage() {
                     {existingImages.map((url, index) => (
                       <div key={`existing-${index}`} className="relative group">
                         <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 relative">
-                          <Image src={url} alt="" fill className="object-cover" />
+                          <Image src={url} alt="" fill className="object-contain" />
                         </div>
                         <button
                           type="button"
@@ -991,7 +991,7 @@ export default function PostListingPage() {
                     {images.map((image, index) => (
                       <div key={`new-${index}`} className="relative group">
                         <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 relative">
-                          <Image src={image.preview} alt="" fill className="object-cover" />
+                          <Image src={image.preview} alt="" fill className="object-contain" />
                         </div>
                         <button
                           type="button"

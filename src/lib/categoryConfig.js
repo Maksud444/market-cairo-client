@@ -18,10 +18,9 @@ export const categoryConfig = {
   'Electronics': {
     icon: '💻',
     fields: [
-      { key: 'type', label: 'Type', labelAr: 'النوع', type: 'select', options: ['Laptop', 'TV', 'Camera', 'Printer', 'Monitor', 'Gaming Console', 'Headphones', 'Speaker', 'Smart Watch', 'Smart Band', 'Other'] },
-      { key: 'brand', label: 'Brand', labelAr: 'الماركة', type: 'text', placeholder: 'e.g. Sony, LG, Dell' },
-      { key: 'model', label: 'Model', labelAr: 'الموديل', type: 'text', placeholder: 'e.g. WH-1000XM5' },
-      { key: 'year', label: 'Year', labelAr: 'السنة', type: 'select', options: ['2024', '2023', '2022', '2021', '2020', '2019', 'Older'] },
+      { key: 'type', label: 'Type', labelAr: 'النوع', type: 'select', options: ['Laptop', 'Desktop', 'Monitor', 'Printer', 'Gaming PC', 'Graphics Card', 'Processor', 'RAM', 'Hard Drive / SSD', 'Keyboard', 'Mouse', 'Accessories', 'Other'] },
+      { key: 'brand', label: 'Brand', labelAr: 'الماركة', type: 'text', placeholder: 'e.g. Dell, HP, Asus' },
+      { key: 'model', label: 'Model', labelAr: 'الموديل', type: 'text', placeholder: 'e.g. Inspiron 15 3000' },
     ]
   },
   'Fashion & Beauty': {

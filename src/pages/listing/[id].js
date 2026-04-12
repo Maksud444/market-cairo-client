@@ -633,10 +633,6 @@ export default function ListingDetailPage({ initialListing }) {
 
                   <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
                     <span className="flex items-center gap-1">
-                      <FiMapPin size={14} />
-                      {listing.location?.area}, {listing.location?.city}
-                    </span>
-                    <span className="flex items-center gap-1">
                       <FiEye size={14} />
                       {listing.views} {t('common.views')}
                     </span>
@@ -647,10 +643,52 @@ export default function ListingDetailPage({ initialListing }) {
                   </div>
                 </div>
 
-                {/* Description - Mobile */}
-                <div className="lg:hidden bg-white rounded-xl border border-gray-100 p-4">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-3">{t('listing_detail.description')}</h2>
-                  <p className="text-gray-600 whitespace-pre-wrap">{listing.description}</p>
+                {/* Details — attributes table */}
+                {listing.attributes && Object.keys(listing.attributes).length > 0 && (
+                  <div className="bg-white rounded-xl border border-gray-100 p-4 lg:p-5">
+                    <h2 className="text-base font-semibold text-gray-900 mb-3">{t('listing_detail.details') || 'Details'}</h2>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-0 divide-y divide-gray-100">
+                      {Object.entries(listing.attributes).map(([key, val]) => (
+                        val ? (
+                          <div key={key} className="col-span-2 grid grid-cols-2 py-2.5">
+                            <span className="text-sm text-gray-500 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                            <span className="text-sm font-medium text-gray-900 text-right">{String(val)}</span>
+                          </div>
+                        ) : null
+                      ))}
+                      <div className="col-span-2 grid grid-cols-2 py-2.5">
+                        <span className="text-sm text-gray-500">Condition</span>
+                        <span className="text-sm font-medium text-gray-900 text-right">{listing.condition}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Description */}
+                <div className="bg-white rounded-xl border border-gray-100 p-4 lg:p-5">
+                  <h2 className="text-base font-semibold text-gray-900 mb-3">{t('listing_detail.description')}</h2>
+                  <p className="text-gray-600 whitespace-pre-wrap text-sm leading-relaxed">{listing.description}</p>
+                </div>
+
+                {/* Location */}
+                <div className="bg-white rounded-xl border border-gray-100 p-4 lg:p-5">
+                  <h2 className="text-base font-semibold text-gray-900 mb-3">{t('listing_detail.location') || 'Location'}</h2>
+                  <div className="flex items-center gap-2 text-gray-700 mb-3">
+                    <FiMapPin size={16} className="text-primary-600 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium">{listing.location?.area}</p>
+                      <p className="text-sm text-gray-500">{listing.location?.city}</p>
+                    </div>
+                  </div>
+                  <a
+                    href={`https://maps.google.com/?q=${encodeURIComponent(`${listing.location?.area}, ${listing.location?.city}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                  >
+                    <FiMapPin size={16} />
+                    See location
+                  </a>
                 </div>
 
                 {/* Seller Card */}
@@ -696,9 +734,9 @@ export default function ListingDetailPage({ initialListing }) {
                           {t('listing_detail.call_seller')}
                         </a>
                       )}
-                      {listing.seller.phone && (
+                      {(listing.whatsappPhone || listing.seller.phone) && (
                         <a
-                          href={`https://wa.me/${listing.seller.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(t('listing_detail.whatsapp_message', { title: listing.title }))}`}
+                          href={`https://wa.me/${(listing.whatsappPhone || listing.seller.phone).replace(/[^0-9]/g, '')}?text=${encodeURIComponent(t('listing_detail.whatsapp_message', { title: listing.title }))}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="w-full flex items-center justify-center gap-2 py-2.5 border border-emerald-500 text-emerald-500 rounded-lg hover:bg-emerald-50 transition-colors font-semibold"

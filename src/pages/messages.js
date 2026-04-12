@@ -456,7 +456,7 @@ export default function MessagesPage() {
           {/* Input - always pinned at bottom */}
           <form
             onSubmit={handleSendMessage}
-            style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 64, display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', borderTop: '1px solid #e5e7eb', backgroundColor: '#fff' }}
+            style={{ position: 'absolute', bottom: 0, left: 0, right: 0, minHeight: 64, display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', paddingBottom: 'max(12px, env(safe-area-inset-bottom))', borderTop: '1px solid #e5e7eb', backgroundColor: '#fff', boxSizing: 'border-box' }}
           >
             {/* Quick replies toggle */}
             <button type="button" onClick={() => setShowQuickReplies(!showQuickReplies)}
@@ -483,9 +483,9 @@ export default function MessagesPage() {
             <button
               type="submit"
               disabled={!newMessage.trim() || isSending}
-              style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: '#dc2626', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+              style={{ width: 44, height: 44, borderRadius: '50%', backgroundColor: newMessage.trim() ? '#dc2626' : '#f3f4f6', color: newMessage.trim() ? '#fff' : '#9ca3af', border: 'none', cursor: newMessage.trim() ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.2s' }}
             >
-              <FiSend size={16} />
+              <FiSend size={18} />
             </button>
           </form>
         </div>
