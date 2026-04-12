@@ -162,6 +162,14 @@ export const useMessagesStore = create((set, get) => ({
     }
   },
 
+  upsertConversation: (conv) => {
+    set((state) => {
+      const exists = state.conversations.some(c => c._id === conv._id);
+      if (exists) return { conversations: state.conversations.map(c => c._id === conv._id ? conv : c) };
+      return { conversations: [conv, ...state.conversations] };
+    });
+  },
+
   fetchConversation: async (id) => {
     set({ isLoading: true });
     try {

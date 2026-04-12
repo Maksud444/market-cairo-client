@@ -27,6 +27,7 @@ export default function MessagesPage() {
     setActiveConversation,
     fetchConversations,
     fetchConversation,
+    upsertConversation,
     sendMessage: storeSendMessage,
     setupSocketListeners
   } = useMessagesStore();
@@ -90,14 +91,12 @@ export default function MessagesPage() {
   useEffect(() => {
     if (!conversationId || !isAuthenticated) return;
     const openConversation = async () => {
-      // First ensure conversations list is fresh
-      await fetchConversations();
-      // Now try to find it in store (store is updated by fetchConversations)
-      // Use API directly to be safe
       try {
         const res = await messagesAPI.getConversation(conversationId);
         const freshConv = res.data?.conversation;
         if (freshConv) {
+          // Ensure it appears in the sidebar even if fetchConversations missed it
+          upsertConversation(freshConv);
           setActiveConversation(freshConv);
           fetchConversation(conversationId);
           if (freshConv.isBlocked !== undefined) setIsBlocked(freshConv.isBlocked);
