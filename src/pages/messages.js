@@ -311,7 +311,7 @@ export default function MessagesPage() {
                 {showMenu && (
                   <>
                     <div style={{ position: 'fixed', inset: 0, zIndex: 10 }} onClick={() => setShowMenu(false)} />
-                    <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: 4, width: 190, backgroundColor: '#fff', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.15)', border: '1px solid #f3f4f6', padding: '4px 0', zIndex: 20 }}>
+                    <div style={{ position: 'fixed', right: 8, top: 56, width: 190, backgroundColor: '#fff', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.2)', border: '1px solid #f3f4f6', padding: '4px 0', zIndex: 9999 }}>
                       {activeConversation.listing && (
                         <Link href={`/listing/${activeConversation.listing._id}`} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', fontSize: 14, color: '#374151', textDecoration: 'none' }} onClick={() => setShowMenu(false)}>
                           <FiImage size={16} /> View Listing
@@ -456,38 +456,38 @@ export default function MessagesPage() {
           {/* Input - always pinned at bottom */}
           <form
             onSubmit={handleSendMessage}
-            style={{ position: 'absolute', bottom: 0, left: 0, right: 0, minHeight: 64, display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', paddingBottom: 'max(12px, env(safe-area-inset-bottom))', borderTop: '1px solid #e5e7eb', backgroundColor: '#fff', boxSizing: 'border-box' }}
+            style={{ position: 'absolute', bottom: 0, left: 0, right: 0, display: 'flex', alignItems: 'center', gap: 6, padding: '10px 12px', borderTop: '1px solid #e5e7eb', backgroundColor: '#fff' }}
           >
             {/* Quick replies toggle */}
             <button type="button" onClick={() => setShowQuickReplies(!showQuickReplies)}
-              title="Quick Replies"
-              style={{ flexShrink: 0, padding: 8, background: showQuickReplies ? '#fef2f2' : 'none', border: 'none', cursor: 'pointer', color: showQuickReplies ? '#dc2626' : '#6b7280', borderRadius: 8, display: 'flex', alignItems: 'center' }}>
+              style={{ flexShrink: 0, width: 32, height: 32, background: 'none', border: 'none', cursor: 'pointer', color: showQuickReplies ? '#dc2626' : '#6b7280', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               ⚡
             </button>
             {/* Make offer */}
-            <button type="button" onClick={() => setShowOfferModal(true)}
-              title="Make an Offer"
-              disabled={isBlocked}
-              style={{ flexShrink: 0, padding: 8, background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 8, display: 'flex', alignItems: 'center' }}>
+            <button type="button" onClick={() => setShowOfferModal(true)} disabled={isBlocked}
+              style={{ flexShrink: 0, width: 32, height: 32, background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               🏷️
             </button>
-            <input
-              ref={inputRef}
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type a message..."
-              disabled={isSending || isBlocked}
-              style={{ flex: 1, padding: '10px 16px', backgroundColor: '#f3f4f6', borderRadius: 999, fontSize: 14, border: 'none', outline: 'none' }}
-            />
-            <button
-              type="submit"
-              disabled={isSending}
-              onClick={(e) => { if (!newMessage.trim()) e.preventDefault(); }}
-              style={{ width: 44, height: 44, borderRadius: '50%', backgroundColor: '#dc2626', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: newMessage.trim() ? 1 : 0.5 }}
-            >
-              <FiSend size={18} />
-            </button>
+            {/* Input + Send button together */}
+            <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <input
+                ref={inputRef}
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type a message..."
+                disabled={isSending || isBlocked}
+                style={{ width: '100%', padding: '10px 52px 10px 16px', backgroundColor: '#f3f4f6', borderRadius: 999, fontSize: 14, border: 'none', outline: 'none', boxSizing: 'border-box' }}
+              />
+              <button
+                type="submit"
+                disabled={isSending}
+                onClick={(e) => { if (!newMessage.trim()) e.preventDefault(); }}
+                style={{ position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)', width: 40, height: 40, borderRadius: '50%', backgroundColor: '#dc2626', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: newMessage.trim() ? 1 : 0.5 }}
+              >
+                <FiSend size={16} />
+              </button>
+            </div>
           </form>
         </div>
       )}
@@ -665,35 +665,24 @@ export default function MessagesPage() {
 
                 <div className="flex items-center gap-1">
                   <button className="lg:hidden p-2 text-white"><FiPhone size={20} /></button>
-                  {/* Block menu */}
+                  {/* Single menu with all options */}
                   <div className="relative">
-                    <button onClick={() => setShowBlockMenu(!showBlockMenu)}
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, color: '#fff', display: 'flex' }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
-                    </button>
-                    {showBlockMenu && (
-                      <div style={{ position: 'absolute', right: 0, top: '100%', background: 'white', border: '1px solid #e5e7eb', borderRadius: 12, boxShadow: '0 10px 25px rgba(0,0,0,0.1)', zIndex: 100, minWidth: 160, overflow: 'hidden' }}>
-                        <button onClick={handleBlockUser}
-                          style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '10px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: isBlocked ? '#16a34a' : '#dc2626', textAlign: 'left' }}>
-                          {isBlocked ? '✓ Unblock User' : '🚫 Block User'}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  <div className="relative">
-                    <button onClick={() => setShowMenu(!showMenu)} className="p-2 text-white lg:text-gray-400 hover:text-gray-300 lg:hover:text-gray-600">
+                    <button onClick={() => setShowMenu(!showMenu)} className="p-2 text-white lg:text-gray-500 hover:text-gray-300 lg:hover:text-gray-700">
                       <FiMoreVertical size={20} />
                     </button>
                     {showMenu && (
                       <>
                         <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
-                        <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-dropdown border border-gray-100 py-1 z-20">
+                        <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
                           {activeConversation.listing && (
                             <Link href={`/listing/${activeConversation.listing._id}`} className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onClick={() => setShowMenu(false)}>
                               <FiImage size={16} /> {t('messages_page.view_listing')}
                             </Link>
                           )}
-                          <button onClick={handleDeleteConversation} className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full">
+                          <button onClick={() => { handleBlockUser(); setShowMenu(false); }} className="flex items-center gap-2 px-4 py-2 text-sm w-full text-left hover:bg-gray-50" style={{ color: isBlocked ? '#16a34a' : '#dc2626', background: 'none', border: 'none', cursor: 'pointer' }}>
+                            {isBlocked ? '✓ Unblock User' : '🚫 Block User'}
+                          </button>
+                          <button onClick={() => { handleDeleteConversation(); setShowMenu(false); }} className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                             <FiTrash2 size={16} /> {t('messages_page.delete_conversation')}
                           </button>
                         </div>
