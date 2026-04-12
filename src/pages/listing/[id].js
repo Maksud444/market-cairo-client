@@ -53,8 +53,6 @@ export default function ListingDetailPage({ initialListing }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
-  const [showContactModal, setShowContactModal] = useState(false);
-  const [message, setMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteReason, setDeleteReason] = useState('');
@@ -159,22 +157,12 @@ export default function ListingDetailPage({ initialListing }) {
       toast.error(t('listing_detail.login_to_message'));
       return;
     }
-
-    if (!message.trim()) {
-      toast.error(t('listing_detail.failed_to_send'));
-      return;
-    }
-
     setIsSending(true);
     try {
       await messagesAPI.createConversation({
         listingId: id,
         sellerId: listing.seller._id,
-        message: message.trim(),
       });
-      toast.success(t('listing_detail.message_sent'));
-      setShowContactModal(false);
-      setMessage('');
       router.push('/messages');
     } catch (error) {
       toast.error(t('listing_detail.failed_to_send'));
@@ -585,11 +573,12 @@ export default function ListingDetailPage({ initialListing }) {
                       </a>
                     )}
                     <button
-                      onClick={() => setShowContactModal(true)}
-                      className="btn btn-outline w-full flex items-center justify-center gap-2"
+                      onClick={handleSendMessage}
+                      disabled={isSending}
+                      className="btn btn-outline w-full flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       <FiMessageCircle size={18} />
-                      {t('listing_detail.send_message')}
+                      {isSending ? t('listing_detail.sending') : t('listing_detail.send_message')}
                     </button>
                   </div>
                 ) : (
@@ -719,11 +708,12 @@ export default function ListingDetailPage({ initialListing }) {
                   {!isOwner ? (
                     <div className="space-y-2">
                       <button
-                        onClick={() => setShowContactModal(true)}
-                        className="btn btn-primary w-full flex items-center justify-center gap-2"
+                        onClick={handleSendMessage}
+                        disabled={isSending}
+                        className="btn btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50"
                       >
                         <FiMessageCircle size={18} />
-                        {t('listing_detail.send_message')}
+                        {isSending ? t('listing_detail.sending') : t('listing_detail.send_message')}
                       </button>
                       {listing.seller.phone && (
                         <a
@@ -829,49 +819,6 @@ export default function ListingDetailPage({ initialListing }) {
           </section>
         )}
       </div>
-
-      {/* Contact Modal */}
-      {showContactModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setShowContactModal(false)} />
-          <div className="relative bg-white rounded-xl w-full max-w-md p-5 animate-fade-in">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">{t('listing_detail.contact_seller')}</h3>
-              <button onClick={() => setShowContactModal(false)} className="p-1 text-gray-400 hover:text-gray-600">
-                <FiX size={20} />
-              </button>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg mb-4">
-              <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden relative flex-shrink-0">
-                {listing.images?.[0] && (
-                  <img src={getImageUrl(listing.images[0])} alt="" className="w-full h-full object-cover" />
-                )}
-              </div>
-              <div className="min-w-0">
-                <p className="font-medium text-gray-900 truncate">{listing.title}</p>
-                <p className="text-primary-600 font-semibold">{listing.price.toLocaleString()} {t('common.egp')}</p>
-              </div>
-            </div>
-
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder={t('listing_detail.contact_placeholder', { title: listing.title })}
-              rows={4}
-              className="input w-full resize-none mb-4"
-            />
-
-            <button
-              onClick={handleSendMessage}
-              disabled={isSending}
-              className="btn btn-primary w-full disabled:opacity-50"
-            >
-              {isSending ? t('listing_detail.sending') : t('listing_detail.send_message')}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Report Modal */}
       {showReportModal && (
