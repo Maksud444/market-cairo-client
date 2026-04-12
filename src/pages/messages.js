@@ -88,17 +88,26 @@ export default function MessagesPage() {
 
   // Set active conversation from URL
   useEffect(() => {
-    if (conversationId && conversations.length > 0) {
-      const conv = conversations.find(c => c._id === conversationId);
-      if (conv) {
-        setActiveConversation(conv);
-        fetchConversation(conversationId);
-        messagesAPI.getConversation(conversationId).then(res => {
-          if (res.data?.conversation?.isBlocked !== undefined) {
-            setIsBlocked(res.data.conversation.isBlocked);
-          }
-        }).catch(() => {});
-      }
+    if (!conversationId) return;
+    const conv = conversations.find(c => c._id === conversationId);
+    if (conv) {
+      setActiveConversation(conv);
+      fetchConversation(conversationId);
+      messagesAPI.getConversation(conversationId).then(res => {
+        if (res.data?.conversation?.isBlocked !== undefined) {
+          setIsBlocked(res.data.conversation.isBlocked);
+        }
+      }).catch(() => {});
+    } else if (conversationId) {
+      // Conversation not in list yet (e.g. just created) — fetch it directly
+      messagesAPI.getConversation(conversationId).then(res => {
+        const freshConv = res.data?.conversation;
+        if (freshConv) {
+          setActiveConversation(freshConv);
+          fetchConversation(conversationId);
+          if (freshConv.isBlocked !== undefined) setIsBlocked(freshConv.isBlocked);
+        }
+      }).catch(() => {});
     }
   }, [conversationId, conversations, setActiveConversation, fetchConversation]);
 

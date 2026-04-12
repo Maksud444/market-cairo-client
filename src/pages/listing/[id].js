@@ -159,11 +159,12 @@ export default function ListingDetailPage({ initialListing }) {
     }
     setIsSending(true);
     try {
-      await messagesAPI.createConversation({
+      const res = await messagesAPI.createConversation({
         listingId: id,
         sellerId: listing.seller._id,
       });
-      router.push('/messages');
+      const convId = res?.data?.conversation?._id;
+      router.push(convId ? `/messages?conversationId=${convId}` : '/messages');
     } catch (error) {
       toast.error(t('listing_detail.failed_to_send'));
     } finally {
