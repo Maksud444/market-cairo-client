@@ -482,8 +482,9 @@ export default function MessagesPage() {
             />
             <button
               type="submit"
-              disabled={!newMessage.trim() || isSending}
-              style={{ width: 44, height: 44, borderRadius: '50%', backgroundColor: newMessage.trim() ? '#dc2626' : '#f3f4f6', color: newMessage.trim() ? '#fff' : '#9ca3af', border: 'none', cursor: newMessage.trim() ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.2s' }}
+              disabled={isSending}
+              onClick={(e) => { if (!newMessage.trim()) e.preventDefault(); }}
+              style={{ width: 44, height: 44, borderRadius: '50%', backgroundColor: '#dc2626', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: newMessage.trim() ? 1 : 0.5 }}
             >
               <FiSend size={18} />
             </button>
