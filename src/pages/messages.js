@@ -37,6 +37,9 @@ export default function MessagesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [filter, setFilter] = useState('all'); // 'all' | 'unread' | 'important'
+  const [convMenuId, setConvMenuId] = useState(null); // sidebar three-dot menu
+  const [longPressConvId, setLongPressConvId] = useState(null); // mobile long-press menu
+  const longPressTimer = useRef(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -538,7 +541,7 @@ export default function MessagesPage() {
       )}
 
       <Layout hideFooter>
-        <div className="h-[calc(100vh-64px)] lg:h-[calc(100vh-108px)] flex bg-gray-50">
+        <div className="h-[calc(100vh-64px)] lg:h-[calc(100vh-108px)] flex bg-gray-50 lg:pt-4">
         {/* Conversations List - Desktop always visible, Mobile only when no active */}
         <aside className={`w-full lg:w-80 xl:w-96 bg-white border-r border-gray-100 flex flex-col ${
           activeConversation ? 'hidden lg:flex' : 'flex'
@@ -593,49 +596,115 @@ export default function MessagesPage() {
                 const unread = conv.unreadCount?.[user?._id] || 0;
                 const isActive = activeConversation?._id === conv._id;
 
+                const isMenuOpen = convMenuId === conv._id;
+                const isLongPressed = longPressConvId === conv._id;
+
                 return (
-                  <button
-                    key={conv._id}
-                    onClick={() => selectConversation(conv)}
-                    className={`w-full flex items-start gap-3 p-4 text-left hover:bg-gray-50 transition-colors ${
-                      isActive ? 'bg-primary-50 border-r-2 border-primary-600' : ''
-                    }`}
-                  >
-                    <div className="relative flex-shrink-0">
-                      <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 font-bold">
-                        {other.name?.charAt(0).toUpperCase()}
-                      </div>
-                      {unread > 0 && (
-                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center">
-                          {unread > 9 ? '9+' : unread}
-                        </span>
-                      )}
-                    </div>
+                  <div key={conv._id} className="relative">
+                    {/* Close menus backdrop */}
+                    {(isMenuOpen || isLongPressed) && (
+                      <div className="fixed inset-0 z-10" onClick={() => { setConvMenuId(null); setLongPressConvId(null); }} />
+                    )}
 
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <span className={`font-medium truncate ${unread > 0 ? 'text-gray-900' : 'text-gray-700'}`}>
-                          {other.name}
-                        </span>
-                        <span className="text-xs text-gray-400 flex-shrink-0">
-                          {formatMessageDate(conv.updatedAt)}
-                        </span>
-                      </div>
-                      
-                      {conv.listing && (
-                        <p className="text-xs text-primary-600 truncate mb-1">
-                          {t('messages_page.re')}: {conv.listing.title}
-                        </p>
-                      )}
-
-                      <p className={`text-sm truncate ${unread > 0 ? 'text-gray-900 font-medium' : 'text-gray-500'}`}>
-                        {conv.lastMessage?.sender === user?._id && (
-                          <span className="text-gray-400">{t('messages_page.you')}: </span>
+                    <div
+                      className={`w-full flex items-start gap-3 p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer ${
+                        isActive ? 'bg-primary-50 border-r-2 border-primary-600' : ''
+                      }`}
+                      onClick={() => selectConversation(conv)}
+                      onTouchStart={() => {
+                        longPressTimer.current = setTimeout(() => setLongPressConvId(conv._id), 600);
+                      }}
+                      onTouchEnd={() => clearTimeout(longPressTimer.current)}
+                      onTouchMove={() => clearTimeout(longPressTimer.current)}
+                    >
+                      <div className="relative flex-shrink-0">
+                        <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 font-bold">
+                          {other.name?.charAt(0).toUpperCase()}
+                        </div>
+                        {unread > 0 && (
+                          <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center">
+                            {unread > 9 ? '9+' : unread}
+                          </span>
                         )}
-                        {conv.lastMessage?.content || t('messages_page.no_messages')}
-                      </p>
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <span className={`font-medium truncate ${unread > 0 ? 'text-gray-900' : 'text-gray-700'}`}>
+                            {other.name}
+                          </span>
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            <span className="text-xs text-gray-400">{formatMessageDate(conv.updatedAt)}</span>
+                            {/* Three-dot menu — desktop only */}
+                            <button
+                              className="hidden lg:flex w-6 h-6 items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition-colors"
+                              onClick={(e) => { e.stopPropagation(); setConvMenuId(isMenuOpen ? null : conv._id); }}
+                            >
+                              <FiMoreVertical size={14} />
+                            </button>
+                          </div>
+                        </div>
+
+                        {conv.listing && (
+                          <p className="text-xs text-primary-600 truncate mb-1">
+                            {t('messages_page.re')}: {conv.listing.title}
+                          </p>
+                        )}
+
+                        <p className={`text-sm truncate ${unread > 0 ? 'text-gray-900 font-medium' : 'text-gray-500'}`}>
+                          {conv.lastMessage?.sender === user?._id && (
+                            <span className="text-gray-400">{t('messages_page.you')}: </span>
+                          )}
+                          {conv.lastMessage?.content || t('messages_page.no_messages')}
+                        </p>
+                      </div>
                     </div>
-                  </button>
+
+                    {/* Desktop three-dot dropdown */}
+                    {isMenuOpen && (
+                      <div style={{ position: 'absolute', right: 8, top: 40, width: 200, backgroundColor: '#fff', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.15)', border: '1px solid #e5e7eb', zIndex: 20 }}>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setConvMenuId(null); setActiveConversation(conv); handleBlockUser(); }}
+                          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', fontSize: 14, color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}
+                        >
+                          🚫 Block User
+                        </button>
+                        <div style={{ borderTop: '1px solid #f3f4f6' }} />
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setConvMenuId(null); setActiveConversation(conv); handleDeleteConversation(); }}
+                          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', fontSize: 14, color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}
+                        >
+                          <FiTrash2 size={15} /> Delete Conversation
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Mobile long-press bottom sheet */}
+                    {isLongPressed && (
+                      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, backgroundColor: '#fff', borderRadius: '16px 16px 0 0', boxShadow: '0 -4px 24px rgba(0,0,0,0.15)', zIndex: 50, padding: '8px 0 24px' }}>
+                        <div style={{ width: 40, height: 4, backgroundColor: '#e5e7eb', borderRadius: 2, margin: '8px auto 16px' }} />
+                        <p style={{ padding: '0 16px 12px', fontWeight: 600, fontSize: 15, color: '#111827' }}>{other.name}</p>
+                        <button
+                          onClick={() => { setLongPressConvId(null); setActiveConversation(conv); handleBlockUser(); }}
+                          style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', fontSize: 15, color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left', borderTop: '1px solid #f3f4f6' }}
+                        >
+                          🚫 Block User
+                        </button>
+                        <button
+                          onClick={() => { setLongPressConvId(null); setActiveConversation(conv); handleDeleteConversation(); }}
+                          style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', fontSize: 15, color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left', borderTop: '1px solid #f3f4f6' }}
+                        >
+                          <FiTrash2 size={16} /> Delete Conversation
+                        </button>
+                        <button
+                          onClick={() => setLongPressConvId(null)}
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '14px 16px', fontSize: 15, color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', width: '100%', borderTop: '1px solid #f3f4f6', fontWeight: 500 }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
