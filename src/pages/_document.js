@@ -8,33 +8,18 @@ export default function Document(props) {
   return (
     <Html lang={isAr ? 'ar' : 'en'} dir={isAr ? 'rtl' : 'ltr'}>
       <Head>
-        {/* Preconnect to speed up Google Fonts & GTM */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
 
-        {/* Font — non-blocking: preload then swap in */}
+        {/* Font with display=swap — browser shows fallback text immediately, no render block */}
         <link
-          rel="preload"
-          as="style"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-        />
-        <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          media="print"
-          // @ts-ignore
-          onLoad="this.media='all'"
         />
-        <noscript>
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
-        </noscript>
 
-        {/* Hreflang */}
         <link rel="alternate" hrefLang="en" href="https://mysouqify.com" />
         <link rel="alternate" hrefLang="ar-EG" href="https://mysouqify.com/ar" />
         <link rel="alternate" hrefLang="x-default" href="https://mysouqify.com" />
-
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <link rel="icon" href="/favicon.ico" />
         <meta name="theme-color" content="#dc2626" />
@@ -50,7 +35,6 @@ export default function Document(props) {
         <Main />
         <NextScript />
 
-        {/* GTM — afterInteractive: runs after page is interactive, not render-blocking */}
         <Script
           id="gtm-init"
           strategy="afterInteractive"
@@ -58,7 +42,6 @@ export default function Document(props) {
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TSXZSFLS');`,
           }}
         />
-        {/* GA4 — afterInteractive */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-Z6B6SETLPM"
           strategy="afterInteractive"
@@ -70,7 +53,6 @@ export default function Document(props) {
             __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z6B6SETLPM');`,
           }}
         />
-        {/* Meta Pixel — lazyOnload: loads after everything else */}
         <Script
           id="fb-pixel"
           strategy="lazyOnload"

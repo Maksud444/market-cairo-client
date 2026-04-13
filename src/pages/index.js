@@ -402,7 +402,7 @@ export async function getStaticProps({ locale }) {
 
   const safeFetch = async (url) => {
     try {
-      const res = await fetch(url, { next: { revalidate: 60 } });
+      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
       if (!res.ok) return null;
       return res.json();
     } catch {

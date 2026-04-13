@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { useTranslation } from 'next-i18next';
 
@@ -150,15 +149,13 @@ export default function BannerSlider() {
       {/* Mobile */}
       <div className="lg:hidden mx-3 mt-3 mb-1">
         <div className="relative overflow-hidden rounded-2xl" style={{ height: '155px' }}>
-          <Image
+          <img
             src={banner.image}
             alt={banner.tag}
-            fill
-            priority={current === 0}
-            sizes="100vw"
-            quality={80}
-            className="object-cover"
+            className="absolute inset-0 w-full h-full object-cover"
             style={{ opacity: fading ? 0 : 1, transition: 'opacity 0.25s ease' }}
+            loading="eager"
+            fetchPriority="high"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10" />
           {content(true)}
@@ -170,15 +167,13 @@ export default function BannerSlider() {
       {/* Desktop */}
       <div className="hidden lg:block container-app mt-4 mb-2">
         <div className="relative overflow-hidden rounded-2xl" style={{ height: '360px' }}>
-          <Image
+          <img
             src={banner.image}
             alt={banner.tag}
-            fill
-            priority={current === 0}
-            sizes="(max-width: 1280px) 100vw, 1280px"
-            quality={80}
-            className="object-cover object-center"
+            className="absolute inset-0 w-full h-full object-cover object-center"
             style={{ opacity: fading ? 0 : 1, transition: 'opacity 0.25s ease' }}
+            loading="eager"
+            fetchPriority="high"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-transparent" />
           {content(false)}
