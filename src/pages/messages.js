@@ -559,7 +559,7 @@ export default function MessagesPage() {
             ))}
           </div>
 
-          {isLoading ? (
+          {isLoading && conversations.length === 0 ? (
             <div className="flex-1 p-4 space-y-3">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="flex gap-3 p-3">
