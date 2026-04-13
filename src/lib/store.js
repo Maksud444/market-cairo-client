@@ -140,7 +140,9 @@ export const useAuthStore = create(
 );
 
 // Messages Store
-export const useMessagesStore = create((set, get) => ({
+export const useMessagesStore = create(
+  persist(
+    (set, get) => ({
   conversations: [],
   activeConversation: null,
   messages: [],
@@ -274,20 +276,17 @@ export const useMessagesStore = create((set, get) => ({
     console.log('[MESSAGES] Socket listeners setup complete');
   },
 
-  /**
-   * Emit typing event to other user
-   * @param {String} receiverId - ID of the user receiving typing indicator
-   */
   emitTyping: (receiverId) => {
-    // Get socket from socket store
     const socketStore = require('./socket').useSocketStore;
     const { emit } = socketStore.getState();
-
-    if (emit) {
-      emit('typing', { receiverId });
-    }
+    if (emit) emit('typing', { receiverId });
   },
-}));
+}),
+{
+  name: 'messages-storage',
+  partialize: (state) => ({ conversations: state.conversations }),
+}
+));
 
 // Filters Store
 export const useFiltersStore = create((set) => ({

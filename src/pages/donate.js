@@ -115,25 +115,7 @@ export default function DonatePage() {
         </div>
       </section>
 
-      {/* ── Stats ── */}
-      <section className="bg-white border-b border-gray-100">
-        <div className="container-app py-8">
-          <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto text-center">
-            <div>
-              <p className="text-2xl lg:text-3xl font-extrabold text-primary-600">1,240+</p>
-              <p className="text-xs lg:text-sm text-gray-500 mt-0.5">{t('donate.stat_donors')}</p>
-            </div>
-            <div className="border-x border-gray-100">
-              <p className="text-2xl lg:text-3xl font-extrabold text-primary-600">8,500+</p>
-              <p className="text-xs lg:text-sm text-gray-500 mt-0.5">{t('donate.stat_items')}</p>
-            </div>
-            <div>
-              <p className="text-2xl lg:text-3xl font-extrabold text-primary-600">3,200+</p>
-              <p className="text-xs lg:text-sm text-gray-500 mt-0.5">{t('donate.stat_families')}</p>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* ── How it works ── */}
       <section className="bg-primary-50 py-10">

@@ -389,7 +389,9 @@
     "item_sold_reason": "Reason",
     "sales": "sales",
     "no_image": "No image",
-    "featured": "Featured"
+    "featured": "Featured",
+    "details": "Details",
+    "location": "Location"
   },
   "promo": {
     "sell_anything_title": "Sell anything in Cairo",

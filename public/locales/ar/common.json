@@ -389,7 +389,9 @@
     "item_sold_reason": "السبب",
     "sales": "بيعة",
     "no_image": "مفيش صورة",
-    "featured": "مميز"
+    "featured": "مميز",
+    "details": "التفاصيل",
+    "location": "الموقع"
   },
   "promo": {
     "sell_anything_title": "بيع أي حاجة في القاهرة",
