@@ -165,8 +165,8 @@ export default function BannerSlider() {
       </div>
 
       {/* Desktop */}
-      <div className="hidden lg:block container-app mt-4 mb-2">
-        <div className="relative overflow-hidden rounded-2xl" style={{ height: '360px' }}>
+      <div className="hidden lg:block container-app mt-8 mb-4">
+        <div className="relative overflow-hidden rounded-2xl" style={{ height: '420px' }}>
           <img
             src={banner.image}
             alt={banner.tag}
