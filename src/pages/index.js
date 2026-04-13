@@ -32,46 +32,9 @@ const catKeyMap = {
   'Other': 'other',
 };
 
-export default function Home() {
+export default function Home({ featuredListings = [], recentListings = [], donationListings = [], rentListings = [], categories = [] }) {
   const { t } = useTranslation('common');
-  const [featuredListings, setFeaturedListings] = useState([]);
-  const [recentListings, setRecentListings] = useState([]);
-  const [donationListings, setDonationListings] = useState([]);
-  const [rentListings, setRentListings] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const [featuredRes, recentRes, categoriesRes, donationsRes, rentRes] = await Promise.all([
-          listingsAPI.getFeatured(),
-          listingsAPI.getRecent(8),
-          categoriesAPI.getAll(),
-          listingsAPI.getDonations(4),
-          listingsAPI.getRentListings({ limit: 6 }),
-        ]);
-
-        const featured = featuredRes.data.success ? featuredRes.data.listings : [];
-        if (featured.length) setFeaturedListings(featured);
-
-        if (recentRes.data.success) {
-          const featuredIds = new Set(featured.map(l => l._id));
-          setRecentListings(recentRes.data.listings.filter(l => !featuredIds.has(l._id)));
-        }
-        if (categoriesRes.data.success) setCategories(categoriesRes.data.categories);
-        if (donationsRes.data.success) setDonationListings(donationsRes.data.listings);
-        if (rentRes.data.success) setRentListings(rentRes.data.listings);
-      } catch (error) {
-        console.error('Failed to fetch homepage data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const [isLoading] = useState(false);
 
   const organizationSchema = {
     '@context': 'https://schema.org',
@@ -432,9 +395,44 @@ export default function Home() {
 }
 
 export async function getStaticProps({ locale }) {
+  const API = process.env.INTERNAL_API_URL ||
+    (process.env.NEXT_PUBLIC_API_URL
+      ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api$/, '')
+      : 'http://localhost:5000');
+
+  const safeFetch = async (url) => {
+    try {
+      const res = await fetch(url, { next: { revalidate: 60 } });
+      if (!res.ok) return null;
+      return res.json();
+    } catch {
+      return null;
+    }
+  };
+
+  const [featuredData, recentData, categoriesData, donationsData, rentData] = await Promise.all([
+    safeFetch(`${API}/api/listings/featured`),
+    safeFetch(`${API}/api/listings/recent?limit=8`),
+    safeFetch(`${API}/api/categories`),
+    safeFetch(`${API}/api/listings/donations?limit=4`),
+    safeFetch(`${API}/api/listings/rent?limit=6`),
+  ]);
+
+  const featured = featuredData?.success ? featuredData.listings : [];
+  const featuredIds = new Set(featured.map(l => l._id));
+  const recent = recentData?.success
+    ? recentData.listings.filter(l => !featuredIds.has(l._id))
+    : [];
+
   return {
     props: {
       ...(await getI18nProps(locale)),
+      featuredListings: featured,
+      recentListings: recent,
+      donationListings: donationsData?.success ? donationsData.listings : [],
+      rentListings: rentData?.success ? rentData.listings : [],
+      categories: categoriesData?.success ? categoriesData.categories : [],
     },
+    revalidate: 60, // ISR — rebuild every 60 seconds
   };
 }
