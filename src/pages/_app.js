@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import '../styles/globals.css';
 import Head from 'next/head';
-import { Toaster } from 'react-hot-toast';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { appWithTranslation } from 'next-i18next';
 import nextI18NextConfig from '../../next-i18next.config';
 import { useRouter } from 'next/router';
-import AuthModal from '../components/AuthModal';
-import SplashScreen from '../components/SplashScreen';
 import { useAuthStore, useUIStore } from '../lib/store';
 import { useSocketStore } from '../lib/socket';
 import Cookies from 'js-cookie';
+
+// Lazy load non-critical components — not needed for first paint
+const Toaster = dynamic(() => import('react-hot-toast').then(m => ({ default: m.Toaster })), { ssr: false });
+const AuthModal = dynamic(() => import('../components/AuthModal'), { ssr: false });
+const SplashScreen = dynamic(() => import('../components/SplashScreen'), { ssr: false });
 
 function MyApp({ Component, pageProps }) {
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
