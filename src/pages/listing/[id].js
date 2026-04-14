@@ -649,8 +649,11 @@ export default function ListingDetailPage({ initialListing }) {
                     </div>
                   </div>
 
-                  <p className="text-2xl lg:text-3xl font-bold text-primary-600 mb-4">
-                    {listing.price.toLocaleString()} {t('common.egp')}
+                  <p className="text-2xl lg:text-3xl font-bold mb-4">
+                    {(listing.price === 0 || listing.isDonation)
+                      ? <span className="text-green-600">{t('donate.free_badge') || 'FREE'}</span>
+                      : <span className="text-primary-600">{listing.price.toLocaleString()} {t('common.egp')}</span>
+                    }
                   </p>
 
                   <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">

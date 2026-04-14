@@ -18,7 +18,7 @@ export const categoryConfig = {
   'Electronics': {
     icon: '💻',
     fields: [
-      { key: 'type', label: 'Type', labelAr: 'النوع', type: 'select', options: ['Laptop', 'Desktop', 'Monitor', 'Printer', 'Gaming PC', 'Graphics Card', 'Processor', 'RAM', 'Hard Drive / SSD', 'Keyboard', 'Mouse', 'Accessories', 'Other'] },
+      { key: 'type', label: 'Type', labelAr: 'النوع', type: 'select', options: ['Laptop', 'Desktop', 'TV', 'Monitor', 'Printer', 'Gaming PC', 'Graphics Card', 'Processor', 'RAM', 'Hard Drive / SSD', 'Keyboard', 'Mouse', 'Fridge', 'Washing Machine', 'Air Condition', 'Air Cooler', 'Blender', 'Air Fryer', 'Sound System', 'Camera', 'Accessories', 'Other'] },
       { key: 'brand', label: 'Brand', labelAr: 'الماركة', type: 'text', placeholder: 'e.g. Dell, HP, Asus' },
       { key: 'model', label: 'Model', labelAr: 'الموديل', type: 'text', placeholder: 'e.g. Inspiron 15 3000' },
     ]
@@ -73,6 +73,20 @@ export const categoryConfig = {
       { key: 'connectivity', label: 'Connectivity', labelAr: 'الاتصال', type: 'select', options: ['Bluetooth', 'Cellular + Bluetooth', 'GPS + Cellular', 'WiFi + Bluetooth'] },
     ]
   },
+};
+
+// Maps Electronics subcategory → relevant Type options
+export const subcategoryTypeMap = {
+  'TV, Audio & Video': ['TV', 'Sound System', 'Speaker', 'Headphones', 'Home Theater', 'Projector', 'Amplifier', 'Other'],
+  'Computers & Laptops': ['Laptop', 'Desktop', 'Monitor', 'Printer', 'Gaming PC', 'Graphics Card', 'Processor', 'RAM', 'Hard Drive / SSD', 'Keyboard', 'Mouse', 'Accessories', 'Other'],
+  'Video Games': ['PlayStation', 'Xbox', 'Nintendo Switch', 'PC Games', 'Game Controller', 'VR Headset', 'Other'],
+  'Cameras': ['DSLR Camera', 'Mirrorless Camera', 'Action Camera', 'Drone', 'Camera Lens', 'Camera Accessories', 'Other'],
+  'Washing Machine': ['Front Load', 'Top Load', 'Semi-Automatic', 'Twin Tub', 'Other'],
+  'Fridge': ['Single Door', 'Double Door', 'Side by Side', 'Mini Fridge', 'No Frost', 'Other'],
+  'Air Cooler': ['Evaporative Air Cooler', 'Portable AC', 'Window AC', 'Split AC', 'Other'],
+  'Air Condition': ['Split AC', 'Window AC', 'Portable AC', 'Central AC', 'Cassette AC', 'Other'],
+  'Blender': ['Countertop Blender', 'Hand Blender', 'Food Processor', 'Juicer', 'Other'],
+  'Air Fryer': ['Air Fryer', 'Oven Air Fryer', 'Multi-cooker', 'Other'],
 };
 
 // 3-level location hierarchy for Cairo & Giza

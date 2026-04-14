@@ -13,7 +13,7 @@ import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
 import { listingsAPI, categoriesAPI } from '../lib/api';
 import { useAuthStore } from '../lib/store';
-import { categoryConfig, locationHierarchy } from '../lib/categoryConfig';
+import { categoryConfig, locationHierarchy, subcategoryTypeMap } from '../lib/categoryConfig';
 
 const MAX_IMAGES = 10;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -737,8 +737,12 @@ export default function PostListingPage() {
     );
   }
 
-  // Current category's fields from config
-  const currentCategoryFields = categoryConfig[selectedCategory]?.fields || [];
+  // Current category's fields — Type options adjust based on selected subcategory
+  const baseFields = categoryConfig[selectedCategory]?.fields || [];
+  const subcatTypes = selectedSubcategory ? subcategoryTypeMap[selectedSubcategory] : null;
+  const currentCategoryFields = subcatTypes
+    ? baseFields.map(f => f.key === 'type' ? { ...f, options: subcatTypes } : f)
+    : baseFields;
 
   return (
     <Layout>

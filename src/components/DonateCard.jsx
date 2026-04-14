@@ -63,31 +63,31 @@ export default function DonateCard({ listing }) {
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between mt-1 pt-2 border-t border-gray-50">
+        <div className="mt-2 pt-2 border-t border-gray-50 space-y-2">
           <div className="flex items-center gap-1.5">
             {listing.seller?.avatar ? (
-              <img src={listing.seller.avatar} alt="" className="w-5 h-5 rounded-full object-cover" />
+              <img src={listing.seller.avatar} alt="" className="w-5 h-5 rounded-full object-cover flex-shrink-0" />
             ) : (
-              <div className="w-5 h-5 rounded-full bg-primary-50 flex items-center justify-center">
+              <div className="w-5 h-5 rounded-full bg-primary-50 flex items-center justify-center flex-shrink-0">
                 <FiUser size={10} className="text-primary-600" />
               </div>
             )}
-            <span className="text-xs text-gray-500 truncate max-w-[80px]">{listing.seller?.name || t('donate.anonymous')}</span>
+            <span className="text-xs text-gray-500 truncate">{listing.seller?.name || t('donate.anonymous')}</span>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex gap-1.5">
             {listing.whatsappPhone && (
               <a
                 href={`https://wa.me/${listing.whatsappPhone.replace(/[^0-9]/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 text-xs font-semibold text-white bg-green-500 hover:bg-green-600 px-2 py-0.5 rounded-full transition-colors"
+                className="flex-1 flex items-center justify-center gap-1 text-xs font-semibold text-white bg-green-500 hover:bg-green-600 py-1.5 rounded-lg transition-colors"
               >
-                <FiPhone size={10} />
+                <FiPhone size={11} />
                 WhatsApp
               </a>
             )}
-            <span className="text-xs font-semibold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
+            <span className="flex-1 flex items-center justify-center text-xs font-semibold text-primary-600 bg-primary-50 py-1.5 rounded-lg text-center">
               {t('donate.request_item')}
             </span>
           </div>

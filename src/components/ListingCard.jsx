@@ -99,8 +99,11 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
         <div className="p-2.5">
           {/* Price + Heart */}
           <div className="flex items-center justify-between gap-1">
-            <p className="font-bold text-gray-900 text-sm lg:text-base leading-tight">
-              {t('common.egp')} {listing.price?.toLocaleString()}
+            <p className="font-bold text-sm lg:text-base leading-tight">
+              {(listing.price === 0 || listing.isDonation)
+                ? <span className="text-green-600">FREE</span>
+                : <span className="text-gray-900">{t('common.egp')} {listing.price?.toLocaleString()}</span>
+              }
             </p>
             <button
               onClick={handleFavorite}
@@ -193,8 +196,11 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
         {/* Details */}
         <Link href={`/listing/${listing._id}`} className="block p-3">
           {/* Price */}
-          <p className="text-lg font-bold text-primary-600">
-            {t('common.egp')} {listing.price?.toLocaleString()}
+          <p className="text-lg font-bold">
+            {(listing.price === 0 || listing.isDonation)
+              ? <span className="text-green-600">FREE</span>
+              : <span className="text-primary-600">{t('common.egp')} {listing.price?.toLocaleString()}</span>
+            }
           </p>
 
           {/* Condition */}
@@ -296,8 +302,11 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
               </h3>
             </Link>
             <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-              <span className="text-primary-600 font-bold text-2xl">
-                {t('common.egp')} {listing.price?.toLocaleString()}
+              <span className="font-bold text-2xl">
+                {(listing.price === 0 || listing.isDonation)
+                  ? <span className="text-green-600">FREE</span>
+                  : <span className="text-primary-600">{t('common.egp')} {listing.price?.toLocaleString()}</span>
+                }
               </span>
               {listing.condition && (
                 <span className={`text-sm px-2.5 py-0.5 rounded-full font-semibold ${conditionColors[listing.condition] || 'badge-fair'}`}>
