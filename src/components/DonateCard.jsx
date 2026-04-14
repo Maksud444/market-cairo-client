@@ -74,23 +74,18 @@ export default function DonateCard({ listing }) {
             )}
             <span className="text-xs text-gray-500 truncate">{listing.seller?.name || t('donate.anonymous')}</span>
           </div>
-          <div className="flex gap-1.5">
-            {listing.whatsappPhone && (
-              <a
-                href={`https://wa.me/${listing.whatsappPhone.replace(/[^0-9]/g, '')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="flex-1 flex items-center justify-center gap-1 text-xs font-semibold text-white bg-green-500 hover:bg-green-600 py-1.5 rounded-lg transition-colors"
-              >
-                <FiPhone size={11} />
-                WhatsApp
-              </a>
-            )}
-            <span className="flex-1 flex items-center justify-center text-xs font-semibold text-primary-600 bg-primary-50 py-1.5 rounded-lg text-center">
-              {t('donate.request_item')}
-            </span>
-          </div>
+          {listing.whatsappPhone && (
+            <a
+              href={`https://wa.me/${listing.whatsappPhone.replace(/[^0-9]/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="flex w-full items-center justify-center gap-1.5 text-xs font-semibold text-white bg-green-500 hover:bg-green-600 py-1.5 rounded-lg transition-colors"
+            >
+              <FiPhone size={11} />
+              WhatsApp
+            </a>
+          )}
         </div>
       </div>
     </Link>
