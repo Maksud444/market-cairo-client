@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -58,6 +58,64 @@ export default function ListingDetailPage({ initialListing }) {
   const [deleteReason, setDeleteReason] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+
+  // Gallery / Lightbox state
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [zoom, setZoom] = useState(1);
+  const [dragStart, setDragStart] = useState(null);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const imgRef = useRef(null);
+
+  const openGallery = (idx = 0) => {
+    setLightboxIndex(idx);
+    setGalleryOpen(true);
+    document.body.style.overflow = 'hidden';
+  };
+  const openLightbox = (idx) => {
+    setLightboxIndex(idx);
+    setZoom(1);
+    setOffset({ x: 0, y: 0 });
+    setLightboxOpen(true);
+  };
+  const closeLightbox = () => { setLightboxOpen(false); setZoom(1); setOffset({ x: 0, y: 0 }); };
+  const closeGallery = () => { setGalleryOpen(false); document.body.style.overflow = ''; };
+  const closeAll = () => { setLightboxOpen(false); setGalleryOpen(false); setZoom(1); setOffset({ x: 0, y: 0 }); document.body.style.overflow = ''; };
+
+  const lbPrev = () => { setZoom(1); setOffset({ x: 0, y: 0 }); setLightboxIndex(i => (i - 1 + (listing?.images?.length || 1)) % (listing?.images?.length || 1)); };
+  const lbNext = () => { setZoom(1); setOffset({ x: 0, y: 0 }); setLightboxIndex(i => (i + 1) % (listing?.images?.length || 1)); };
+
+  const handleWheel = (e) => {
+    e.preventDefault();
+    setZoom(z => Math.min(4, Math.max(1, z - e.deltaY * 0.002)));
+  };
+
+  // Touch pinch-to-zoom
+  const lastTouchDist = useRef(null);
+  const handleTouchStart = (e) => {
+    if (e.touches.length === 2) {
+      lastTouchDist.current = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    } else if (e.touches.length === 1 && zoom > 1) {
+      setDragStart({ x: e.touches[0].clientX - offset.x, y: e.touches[0].clientY - offset.y });
+      setDragging(true);
+    }
+  };
+  const handleTouchMove = (e) => {
+    if (e.touches.length === 2 && lastTouchDist.current) {
+      const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      setZoom(z => Math.min(4, Math.max(1, z * (dist / lastTouchDist.current))));
+      lastTouchDist.current = dist;
+    } else if (e.touches.length === 1 && dragging && zoom > 1) {
+      setOffset({ x: e.touches[0].clientX - dragStart.x, y: e.touches[0].clientY - dragStart.y });
+    }
+  };
+  const handleTouchEnd = () => { lastTouchDist.current = null; setDragging(false); };
+
+  const handleMouseDown = (e) => { if (zoom > 1) { setDragStart({ x: e.clientX - offset.x, y: e.clientY - offset.y }); setDragging(true); } };
+  const handleMouseMove = (e) => { if (dragging && zoom > 1) setOffset({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y }); };
+  const handleMouseUp = () => setDragging(false);
 
   const deleteReasons = [
     { value: 'Item Sold', label: t('delete_reasons.item_sold') },
@@ -304,7 +362,7 @@ export default function ListingDetailPage({ initialListing }) {
         <div className="grid lg:grid-cols-5 gap-6 lg:gap-8">
           {/* Image Gallery - Left Side */}
           <div className="lg:col-span-3">
-            <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
+            <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden cursor-pointer" onClick={() => openGallery(currentImageIndex)}>
               {listing.images && listing.images.length > 0 ? (
                 <>
                   <img
@@ -312,33 +370,20 @@ export default function ListingDetailPage({ initialListing }) {
                     alt={listing.title}
                     className="w-full h-full object-cover"
                   />
-                  
                   {listing.images.length > 1 && (
                     <>
                       <button
-                        onClick={prevImage}
+                        onClick={(e) => { e.stopPropagation(); prevImage(); }}
                         className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors"
                       >
                         <FiChevronLeft size={20} />
                       </button>
                       <button
-                        onClick={nextImage}
+                        onClick={(e) => { e.stopPropagation(); nextImage(); }}
                         className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors"
                       >
                         <FiChevronRight size={20} />
                       </button>
-                      
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-                        {listing.images.map((_, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setCurrentImageIndex(index)}
-                            className={`w-2 h-2 rounded-full transition-colors ${
-                              index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                            }`}
-                          />
-                        ))}
-                      </div>
                     </>
                   )}
                 </>
@@ -348,10 +393,11 @@ export default function ListingDetailPage({ initialListing }) {
                 </div>
               )}
 
-              {/* Image counter */}
+              {/* Photos badge — bottom left */}
               {listing.images && listing.images.length > 0 && (
-                <div className="absolute bottom-3 left-3 bg-black/50 text-white text-xs font-semibold px-2 py-0.5 rounded-md">
-                  {currentImageIndex + 1}/{listing.images.length}
+                <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-black/60 text-white text-xs font-semibold px-2.5 py-1 rounded-lg backdrop-blur-sm">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  Photos ({listing.images.length})
                 </div>
               )}
               {/* For Rent badge */}
@@ -360,7 +406,6 @@ export default function ListingDetailPage({ initialListing }) {
                   <span className="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg">For Rent</span>
                 </div>
               )}
-              {/* Badges */}
               {listing.featured && !listing.isRent && (
                 <span className="absolute top-3 left-3 badge badge-featured">{t('listing_detail.featured')}</span>
               )}
@@ -377,7 +422,7 @@ export default function ListingDetailPage({ initialListing }) {
                 {listing.images.map((image, index) => (
                   <button
                     key={index}
-                    onClick={() => setCurrentImageIndex(index)}
+                    onClick={() => { setCurrentImageIndex(index); openGallery(index); }}
                     className={`relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
                       index === currentImageIndex ? 'border-primary-600' : 'border-transparent'
                     }`}
@@ -942,6 +987,109 @@ export default function ListingDetailPage({ initialListing }) {
                 {t('buttons.cancel')}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* ── Gallery Modal ── */}
+      {galleryOpen && listing?.images?.length > 0 && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9000, backgroundColor: 'rgba(0,0,0,0.92)', display: 'flex', flexDirection: 'column' }}>
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}>
+            <span style={{ color: '#fff', fontWeight: 700, fontSize: 15 }}>
+              Photos ({listing.images.length})
+            </span>
+            <button onClick={closeGallery} style={{ color: '#fff', background: 'none', border: 'none', cursor: 'pointer', fontSize: 28, lineHeight: 1, padding: 4 }}>×</button>
+          </div>
+
+          {/* Main preview */}
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', position: 'relative', minHeight: 0 }}>
+            <img
+              src={getImageUrl(listing.images[lightboxIndex])}
+              alt=""
+              onClick={() => openLightbox(lightboxIndex)}
+              style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', borderRadius: 8, cursor: 'zoom-in' }}
+            />
+            {listing.images.length > 1 && (
+              <>
+                <button onClick={() => setLightboxIndex(i => (i - 1 + listing.images.length) % listing.images.length)}
+                  style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>‹</button>
+                <button onClick={() => setLightboxIndex(i => (i + 1) % listing.images.length)}
+                  style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>›</button>
+              </>
+            )}
+            <div style={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>
+              {lightboxIndex + 1} / {listing.images.length} — click image to zoom
+            </div>
+          </div>
+
+          {/* Thumbnail strip */}
+          <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}>
+            {listing.images.map((img, i) => (
+              <button key={i} onClick={() => setLightboxIndex(i)}
+                style={{ flexShrink: 0, width: 64, height: 64, borderRadius: 8, overflow: 'hidden', border: i === lightboxIndex ? '2px solid #ef4444' : '2px solid transparent', padding: 0, cursor: 'pointer', background: 'none' }}>
+                <img src={getImageUrl(img)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Lightbox (zoom view) ── */}
+      {lightboxOpen && listing?.images?.length > 0 && (
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 9100, backgroundColor: '#000', display: 'flex', flexDirection: 'column' }}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', flexShrink: 0, zIndex: 2 }}>
+            <button onClick={closeLightbox}
+              style={{ color: '#fff', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, fontWeight: 600 }}>
+              ← Back to gallery
+            </button>
+            <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, marginLeft: 'auto' }}>{lightboxIndex + 1} / {listing.images.length}</span>
+          </div>
+
+          {/* Image container */}
+          <div
+            style={{ flex: 1, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: zoom > 1 ? 'grab' : 'zoom-in', position: 'relative' }}
+            onWheel={handleWheel}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onClick={() => { if (zoom === 1) setZoom(2.5); }}
+          >
+            <img
+              ref={imgRef}
+              src={getImageUrl(listing.images[lightboxIndex])}
+              alt=""
+              onMouseDown={handleMouseDown}
+              draggable={false}
+              style={{
+                maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', userSelect: 'none',
+                transform: `scale(${zoom}) translate(${offset.x / zoom}px, ${offset.y / zoom}px)`,
+                transition: dragging ? 'none' : 'transform 0.2s ease',
+                transformOrigin: 'center',
+              }}
+            />
+          </div>
+
+          {/* Zoom controls + nav */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, padding: '14px 16px', flexShrink: 0 }}>
+            {listing.images.length > 1 && (
+              <button onClick={lbPrev}
+                style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
+            )}
+            <button onClick={() => { setZoom(z => Math.max(1, z - 0.5)); if (zoom <= 1.5) setOffset({ x: 0, y: 0 }); }}
+              style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(255,255,255,0.12)', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>−</button>
+            <span style={{ color: '#fff', fontSize: 13, minWidth: 40, textAlign: 'center' }}>{Math.round(zoom * 100)}%</span>
+            <button onClick={() => setZoom(z => Math.min(4, z + 0.5))}
+              style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(255,255,255,0.12)', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>+</button>
+            {listing.images.length > 1 && (
+              <button onClick={lbNext}
+                style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+            )}
           </div>
         </div>
       )}
