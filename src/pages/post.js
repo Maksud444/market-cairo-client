@@ -690,7 +690,30 @@ export default function PostListingPage() {
         toast.success(t('post.updated_success'));
       } else {
         res = await listingsAPI.create(data);
-        toast.success(t('post.success'));
+        toast.custom((toastObj) => (
+          <div
+            style={{
+              display: 'flex', alignItems: 'flex-start', gap: 12,
+              background: '#fff', borderRadius: 14, padding: '14px 16px',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.14)', border: '1px solid #e5e7eb',
+              maxWidth: 340, width: '100%',
+              opacity: toastObj.visible ? 1 : 0,
+              transition: 'opacity 0.25s ease',
+            }}
+          >
+            <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#fef3c7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 20 }}>
+              ⏳
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: '#111827' }}>
+                {t('post.approval_toast_title')}
+              </p>
+              <p style={{ margin: '3px 0 0', fontSize: 12, color: '#6b7280', lineHeight: 1.5 }}>
+                {t('post.approval_toast_desc')}
+              </p>
+            </div>
+          </div>
+        ), { duration: 6000 });
       }
 
       if (res.data.success) {
