@@ -76,7 +76,7 @@ export default function DonateCard({ listing }) {
           </div>
           {listing.whatsappPhone && (
             <a
-              href={`https://wa.me/${listing.whatsappPhone.replace(/[^0-9]/g, '')}`}
+              href={`https://wa.me/${listing.whatsappPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I am interested in "${listing.title}". Is it still available?\nhttps://mysouqify.com/listing/${listing._id}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}

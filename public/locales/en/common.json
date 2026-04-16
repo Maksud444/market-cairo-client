@@ -344,7 +344,7 @@
     "send_message": "Send Message",
     "call_seller": "Call Seller",
     "whatsapp_seller": "WhatsApp Seller",
-    "whatsapp_message": "Hi, I am interested in \"{title}\". Is it still available?",
+    "whatsapp_message": "Hi, I am interested in \"{title}\". Is it still available?\n{url}",
     "edit_listing": "Edit Listing",
     "mark_as_sold": "Mark as Sold",
     "sold": "Sold",

@@ -58,8 +58,10 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
   const formatWhatsApp = (phone) =>
     phone ? phone.replace(/[\s\-\(\)]/g, '').replace(/^\+/, '') : null;
 
-  const sellerPhone = listing.seller?.phone;
+  const sellerPhone = listing.seller?.whatsappPhone || listing.seller?.phone;
   const whatsappNumber = formatWhatsApp(sellerPhone);
+  const listingUrl = `https://mysouqify.com/listing/${listing._id}`;
+  const whatsappText = encodeURIComponent(`Hi, I am interested in "${listing.title}". Is it still available?\n${listingUrl}`);
   const locationText = listing.location?.area
     ? `${listing.location.area}${listing.location?.city ? `, ${listing.location.city}` : ''}`
     : 'Cairo';
@@ -237,7 +239,7 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
           <div className="flex border-t border-gray-100">
             {whatsappNumber && (
               <a
-                href={`https://wa.me/${whatsappNumber}`}
+                href={`https://wa.me/${whatsappNumber}?text=${whatsappText}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
@@ -344,7 +346,7 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
                   <FiMessageCircle size={14} /> Chat
                 </Link>
                 {whatsappNumber && (
-                  <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer"
+                  <a href={`https://wa.me/${whatsappNumber}?text=${whatsappText}`} target="_blank" rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
                     className="flex items-center gap-1.5 px-4 py-1.5 border border-green-300 text-green-600 rounded-lg text-sm font-medium hover:bg-green-50 transition-colors">
                     <WhatsAppIcon size={14} /> WhatsApp

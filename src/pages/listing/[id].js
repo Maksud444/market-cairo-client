@@ -597,7 +597,7 @@ export default function ListingDetailPage({ initialListing }) {
                     {/* WhatsApp — primary green button */}
                     {(listing.whatsappPhone || listing.seller?.phone) && (
                       <a
-                        href={`https://wa.me/${(listing.whatsappPhone || listing.seller.phone).replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I'm interested in renting "${listing.title}". Is it available?`)}`}
+                        href={`https://wa.me/${(listing.whatsappPhone || listing.seller.phone).replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I'm interested in renting "${listing.title}". Is it available?\nhttps://mysouqify.com/listing/${listing._id}`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-[#25D366] text-white rounded-xl font-bold text-base hover:bg-[#1ebe5d] transition-colors shadow-md"
@@ -762,7 +762,7 @@ export default function ListingDetailPage({ initialListing }) {
                       )}
                       {(listing.whatsappPhone || listing.seller.phone) && (
                         <a
-                          href={`https://wa.me/${(listing.whatsappPhone || listing.seller.phone).replace(/[^0-9]/g, '')}?text=${encodeURIComponent(t('listing_detail.whatsapp_message', { title: listing.title }))}`}
+                          href={`https://wa.me/${(listing.whatsappPhone || listing.seller.phone).replace(/[^0-9]/g, '')}?text=${encodeURIComponent(t('listing_detail.whatsapp_message', { title: listing.title, url: `https://mysouqify.com/listing/${listing._id}` }))}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="w-full flex items-center justify-center gap-2 py-2.5 border border-emerald-500 text-emerald-500 rounded-lg hover:bg-emerald-50 transition-colors font-semibold"
