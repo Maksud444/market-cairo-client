@@ -6,6 +6,7 @@ import {
   FiEdit2, FiPlusCircle, FiMessageCircle, FiHeart, FiLogOut,
   FiSettings, FiStar
 } from 'react-icons/fi';
+import VerifiedBadge from '../components/VerifiedBadge';
 import toast from 'react-hot-toast';
 import { getI18nProps } from '../lib/i18n';
 import Layout from '../components/Layout';
@@ -111,7 +112,10 @@ export default function ProfilePage() {
               
               {/* Info */}
               <div>
-                <h1 className="text-xl lg:text-2xl font-bold text-gray-900">{user?.name}</h1>
+                <h1 className="text-xl lg:text-2xl font-bold text-gray-900 flex items-center gap-2">
+                  {user?.name}
+                  {user?.verification?.status === 'approved' && <VerifiedBadge size={20} />}
+                </h1>
                 <p className="text-gray-500 text-sm mb-2">
                   Member since {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'June 2023'}
                 </p>

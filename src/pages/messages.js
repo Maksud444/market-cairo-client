@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
+import VerifiedBadge from '../components/VerifiedBadge';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import { FiArrowLeft, FiSend, FiMoreVertical, FiTrash2, FiImage, FiCheck, FiCheckCircle, FiPhone } from 'react-icons/fi';
@@ -307,7 +308,10 @@ export default function MessagesPage() {
                   {getOtherParticipant(activeConversation).name?.charAt(0).toUpperCase()}
                 </div>
                 <div style={{ minWidth: 0 }}>
-                  <p style={{ fontWeight: 600, color: '#fff', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 15 }}>{getOtherParticipant(activeConversation).name}</p>
+                  <p style={{ fontWeight: 600, color: '#fff', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 15, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    {getOtherParticipant(activeConversation).name}
+                    {getOtherParticipant(activeConversation).verification?.status === 'approved' && <VerifiedBadge size={14} />}
+                  </p>
                   {activeConversation.listing && <p style={{ fontSize: 11, color: '#9ca3af', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{activeConversation.listing.title}</p>}
                 </div>
               </Link>
@@ -630,8 +634,9 @@ export default function MessagesPage() {
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-1">
-                          <span className={`font-medium truncate ${unread > 0 ? 'text-gray-900' : 'text-gray-700'}`}>
+                          <span className={`font-medium truncate flex items-center gap-1 ${unread > 0 ? 'text-gray-900' : 'text-gray-700'}`}>
                             {other.name}
+                            {other.verification?.status === 'approved' && <VerifiedBadge size={13} />}
                           </span>
                           <div className="flex items-center gap-1 flex-shrink-0">
                             <span className="text-xs text-gray-400">{formatMessageDate(conv.updatedAt)}</span>
@@ -732,8 +737,9 @@ export default function MessagesPage() {
                     {getOtherParticipant(activeConversation).name?.charAt(0).toUpperCase()}
                   </div>
                   <div style={{ minWidth: 0 }}>
-                    <p style={{ fontWeight: 600, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>
+                    <p style={{ fontWeight: 600, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
                       {getOtherParticipant(activeConversation).name}
+                      {getOtherParticipant(activeConversation).verification?.status === 'approved' && <VerifiedBadge size={14} />}
                     </p>
                     {activeConversation.listing && (
                       <p style={{ fontSize: 12, color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{activeConversation.listing.title}</p>

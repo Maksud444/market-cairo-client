@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FiMapPin, FiStar, FiClock, FiShoppingBag, FiMessageCircle } from 'react-icons/fi';
+import VerifiedBadge from '../../components/VerifiedBadge';
 import { formatDistanceToNow } from 'date-fns';
 import { getI18nProps } from '../../lib/i18n';
 import Layout from '../../components/Layout';
@@ -112,8 +113,9 @@ export default function UserProfilePage() {
             </div>
 
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl lg:text-2xl font-bold text-gray-900 truncate">
+              <h1 className="text-xl lg:text-2xl font-bold text-gray-900 flex items-center gap-2 flex-wrap">
                 {seller.name}
+                {seller.verification?.status === 'approved' && <VerifiedBadge size={20} />}
               </h1>
               
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-gray-500">

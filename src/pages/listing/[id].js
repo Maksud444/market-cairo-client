@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import VerifiedBadge from '../../components/VerifiedBadge';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -450,7 +451,10 @@ export default function ListingDetailPage({ initialListing }) {
                   {listing.seller.name?.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <p className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate">{listing.seller.name}</p>
+                  <p className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate flex items-center gap-1">
+                  {listing.seller.name}
+                  {listing.seller.verification?.status === 'approved' && <VerifiedBadge size={15} />}
+                </p>
                   <div className="flex items-center gap-2 text-xs text-gray-500">
                     {listing.seller.rating?.average > 0 && (
                       <span className="flex items-center gap-0.5">
@@ -770,8 +774,9 @@ export default function ListingDetailPage({ initialListing }) {
                       {listing.seller.name?.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
+                      <p className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors flex items-center gap-1">
                         {listing.seller.name}
+                        {listing.seller.verification?.status === 'approved' && <VerifiedBadge size={15} />}
                       </p>
                       <div className="flex items-center gap-2 text-sm text-gray-500">
                         {listing.seller.rating?.average > 0 && (
