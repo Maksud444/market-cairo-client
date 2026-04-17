@@ -185,10 +185,7 @@
     "verification_rejected": "Verification Rejected",
     "verification_rejected_desc": "Your verification was rejected. Please resubmit.",
     "verify_now": "Verify Now",
-    "resubmit": "Resubmit",
-    "verify_banner_text": "Verify your identity to build trust and post listings",
-    "verify_banner_cta": "Verify Now",
-    "verify_banner_pending": "Your verification is under review — we'll notify you once approved"
+    "resubmit": "Resubmit"
   },
   "verify": {
     "title": "Identity Verification",
@@ -481,5 +478,8 @@
     "photos": "Photos",
     "approval_notice": "Your listing will be reviewed by our team before going live. This usually takes a few hours.",
     "submit_listing": "Submit Rent Listing"
-  }
+  },
+  "verify_banner_text": "Join us in building a safer community. Get verified to boost your credibility and assist us in creating trust amongst our users!",
+  "verify_banner_cta": "Verify now",
+  "verify_banner_pending": "Your verification is under review — we'll notify you once approved"
 }
