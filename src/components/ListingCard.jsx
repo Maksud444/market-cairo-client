@@ -61,7 +61,11 @@ export default function ListingCard({ listing, onFavoriteToggle, viewMode = 'gri
   const sellerPhone = listing.seller?.whatsappPhone || listing.seller?.phone;
   const whatsappNumber = formatWhatsApp(sellerPhone);
   const listingUrl = `https://mysouqify.com/listing/${listing._id}`;
-  const whatsappText = encodeURIComponent(`Hi, I am interested in "${listing.title}". Is it still available?\n${listingUrl}`);
+  const priceLabel = listing.price === 0 || listing.isDonation ? 'FREE' : `${listing.price?.toLocaleString()} EGP`;
+  const locationLabel = listing.location?.area ? `📍 ${listing.location.area}${listing.location?.city ? `, ${listing.location.city}` : ''}` : '';
+  const whatsappText = encodeURIComponent(
+    `Hi! I'm interested in your listing:\n\n*${listing.title}*\n\n${locationLabel ? locationLabel + '\n' : ''}💰 ${priceLabel}\n\nView: ${listingUrl}`
+  );
   const locationText = listing.location?.area
     ? `${listing.location.area}${listing.location?.city ? `, ${listing.location.city}` : ''}`
     : 'Cairo';
