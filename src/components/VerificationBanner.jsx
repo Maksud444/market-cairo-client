@@ -1,18 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { FiShield, FiX } from 'react-icons/fi';
 
+const DISMISS_KEY = 'verify_banner_dismissed_until';
+const DISMISS_HOURS = 24;
+
 export default function VerificationBanner({ status }) {
   const { t } = useTranslation('common');
-  const [dismissed, setDismissed] = useState(false);
+  const [visible, setVisible] = useState(false);
   const router = useRouter();
 
+  useEffect(() => {
+    const until = localStorage.getItem(DISMISS_KEY);
+    if (until && Date.now() < Number(until)) {
+      setVisible(false);
+    } else {
+      setVisible(true);
+    }
+  }, []);
+
   if (router.pathname.startsWith('/admin')) return null;
-  if (dismissed) return null;
+  if (!visible) return null;
 
   const isPending = status === 'pending';
+
+  const handleDismiss = () => {
+    const until = Date.now() + DISMISS_HOURS * 60 * 60 * 1000;
+    localStorage.setItem(DISMISS_KEY, String(until));
+    setVisible(false);
+  };
 
   return (
     <div className="w-full bg-blue-500 px-4 py-2.5 flex items-center gap-3">
@@ -31,7 +49,7 @@ export default function VerificationBanner({ status }) {
         )}
       </div>
       <button
-        onClick={() => setDismissed(true)}
+        onClick={handleDismiss}
         className="text-white/80 hover:text-white transition-colors flex-shrink-0 p-0.5"
         aria-label="Dismiss"
       >
