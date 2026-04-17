@@ -7,6 +7,7 @@ import { useAuthStore, useMessagesStore, useUIStore } from '../lib/store';
 import { authAPI, categoriesAPI } from '../lib/api';
 import LanguageSwitcher from './LanguageSwitcher';
 import { cairoAreas, cairoCompounds } from '../lib/cairoLocations';
+import VerificationBanner from './VerificationBanner';
 
 const categoryIcons = {
   'Mobile & Tablets': FiShoppingBag,
@@ -187,6 +188,10 @@ export default function Header() {
 
   return (
     <header className={`z-50 bg-white transition-shadow duration-200 lg:fixed lg:top-0 lg:left-0 lg:right-0 ${isScrolled ? 'shadow-md' : 'shadow-sm'}`}>
+
+      {user && user.verification?.status !== 'approved' && (
+        <VerificationBanner status={user.verification?.status} />
+      )}
 
       {/* ───── DESKTOP HEADER ───── */}
       <div className="hidden lg:block">
