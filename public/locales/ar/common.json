@@ -185,7 +185,10 @@
     "verification_rejected": "التحقق مرفوض",
     "verification_rejected_desc": "التحقق بتاعك اترفض. ابعت تاني من فضلك.",
     "verify_now": "اتحقق دلوقتي",
-    "resubmit": "ابعت تاني"
+    "resubmit": "ابعت تاني",
+    "verify_banner_text": "اتحقق من هويتك عشان تبني ثقة وتنشر إعلانات",
+    "verify_banner_cta": "اتحقق دلوقتي",
+    "verify_banner_pending": "طلب التحقق بتاعك قيد المراجعة — هنبلغك لما يتم"
   },
   "verify": {
     "title": "التحقق من الهوية",

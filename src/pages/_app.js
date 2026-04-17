@@ -14,6 +14,7 @@ import Cookies from 'js-cookie';
 const Toaster = dynamic(() => import('react-hot-toast').then(m => ({ default: m.Toaster })), { ssr: false });
 const AuthModal = dynamic(() => import('../components/AuthModal'), { ssr: false });
 const SplashScreen = dynamic(() => import('../components/SplashScreen'), { ssr: false });
+const VerificationBanner = dynamic(() => import('../components/VerificationBanner'), { ssr: false });
 
 function MyApp({ Component, pageProps }) {
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
@@ -69,6 +70,9 @@ function MyApp({ Component, pageProps }) {
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
       {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
+      {user && user.verification?.status !== 'approved' && (
+        <VerificationBanner status={user.verification?.status} />
+      )}
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#E00000" />

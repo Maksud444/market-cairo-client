@@ -185,7 +185,10 @@
     "verification_rejected": "Verification Rejected",
     "verification_rejected_desc": "Your verification was rejected. Please resubmit.",
     "verify_now": "Verify Now",
-    "resubmit": "Resubmit"
+    "resubmit": "Resubmit",
+    "verify_banner_text": "Verify your identity to build trust and post listings",
+    "verify_banner_cta": "Verify Now",
+    "verify_banner_pending": "Your verification is under review — we'll notify you once approved"
   },
   "verify": {
     "title": "Identity Verification",
