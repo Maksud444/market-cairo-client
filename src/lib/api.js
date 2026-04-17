@@ -78,6 +78,7 @@ export const listingsAPI = {
   toggleFavorite: (id) => api.post(`/listings/${id}/favorite`),
   report: (id, reason) => api.post(`/listings/${id}/report`, { reason }),
   markSold: (id) => api.put(`/listings/${id}/sold`),
+  markDonated: (id) => api.patch(`/listings/${id}/mark-donated`),
 };
 
 // Users API

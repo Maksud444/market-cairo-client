@@ -144,6 +144,17 @@ export default function ListingDetailPage({ initialListing }) {
     }
   };
 
+  const handleMarkDonated = async () => {
+    try {
+      await listingsAPI.markDonated(id);
+      toast.success('Marked as donated! The post will remain visible.');
+      setShowDeleteModal(false);
+      router.reload();
+    } catch (error) {
+      toast.error('Failed to update donation status');
+    }
+  };
+
   useEffect(() => {
     if (!id) return;
     if (initialListing) {
@@ -698,12 +709,17 @@ export default function ListingDetailPage({ initialListing }) {
                     </div>
                   </div>
 
-                  <p className="text-2xl lg:text-3xl font-bold mb-4">
+                  <p className="text-2xl lg:text-3xl font-bold mb-2">
                     {(listing.price === 0 || listing.isDonation)
                       ? <span className="text-green-600">{t('donate.free_badge') || 'FREE'}</span>
                       : <span className="text-primary-600">{listing.price.toLocaleString()} {t('common.egp')}</span>
                     }
                   </p>
+                  {listing.isDonated && (
+                    <div className="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full mb-3">
+                      ✓ This item has been donated
+                    </div>
+                  )}
 
                   <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
                     <span className="flex items-center gap-1">
@@ -952,46 +968,88 @@ export default function ListingDetailPage({ initialListing }) {
       {/* Delete Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold mb-4">{t('listing_detail.delete_modal_title')}</h3>
-            <p className="text-gray-600 mb-4">
-              {t('listing_detail.delete_modal_desc')}
-            </p>
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
 
-            <div className="space-y-2 mb-6">
-              {deleteReasons.map(reason => (
-                <label key={reason.value} className="flex items-center p-3 border rounded hover:bg-gray-50 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="deleteReason"
-                    value={reason.value}
-                    checked={deleteReason === reason.value}
-                    onChange={(e) => setDeleteReason(e.target.value)}
-                    className="mr-3"
-                  />
-                  <span>{reason.label}</span>
-                </label>
-              ))}
-            </div>
+            {/* ── Donate listing — 2-choice modal ── */}
+            {listing.isDonation && !listing.isDonated ? (
+              <>
+                <div className="text-center mb-5">
+                  <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">🎁</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">What would you like to do?</h3>
+                  <p className="text-sm text-gray-500">Your donation post will be affected by this choice.</p>
+                </div>
 
-            <div className="flex gap-3">
-              <button
-                onClick={handleDelete}
-                className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 disabled:opacity-50"
-                disabled={!deleteReason}
-              >
-                {t('listing_detail.confirm_delete')}
-              </button>
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setDeleteReason('');
-                }}
-                className="flex-1 bg-gray-200 py-2 rounded hover:bg-gray-300"
-              >
-                {t('buttons.cancel')}
-              </button>
-            </div>
+                {/* Option 1 — Mark as Donated */}
+                <button
+                  onClick={handleMarkDonated}
+                  className="w-full flex items-start gap-4 p-4 border-2 border-green-400 rounded-xl mb-3 hover:bg-green-50 transition-colors text-left"
+                >
+                  <span className="text-2xl mt-0.5">✅</span>
+                  <div>
+                    <p className="font-semibold text-gray-900">Mark as Donated</p>
+                    <p className="text-sm text-gray-500 mt-0.5">Keep the post visible with a "Donated" badge — lets the community know it was given away.</p>
+                  </div>
+                </button>
+
+                {/* Option 2 — Delete permanently */}
+                <div className="border-2 border-red-200 rounded-xl mb-4 overflow-hidden">
+                  <div className="flex items-start gap-4 p-4 bg-red-50">
+                    <span className="text-2xl mt-0.5">🗑️</span>
+                    <div>
+                      <p className="font-semibold text-gray-900">Delete Post</p>
+                      <p className="text-sm text-gray-500 mt-0.5">Permanently remove this post. Please select a reason below.</p>
+                    </div>
+                  </div>
+                  <div className="divide-y divide-gray-100 max-h-48 overflow-y-auto">
+                    {deleteReasons.map(reason => (
+                      <label key={reason.value} className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+                        <input type="radio" name="deleteReason" value={reason.value}
+                          checked={deleteReason === reason.value}
+                          onChange={(e) => setDeleteReason(e.target.value)} />
+                        <span className="text-sm">{reason.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div className="p-3 border-t border-gray-100">
+                    <button onClick={handleDelete} disabled={!deleteReason}
+                      className="w-full bg-red-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-red-700 disabled:opacity-40 transition-colors">
+                      Confirm Delete
+                    </button>
+                  </div>
+                </div>
+
+                <button onClick={() => { setShowDeleteModal(false); setDeleteReason(''); }}
+                  className="w-full text-sm text-gray-500 hover:text-gray-700 py-1">
+                  Cancel
+                </button>
+              </>
+            ) : (
+              /* ── Normal listing delete modal ── */
+              <>
+                <h3 className="text-xl font-bold mb-4">{t('listing_detail.delete_modal_title')}</h3>
+                <p className="text-gray-600 mb-4">{t('listing_detail.delete_modal_desc')}</p>
+                <div className="space-y-2 mb-6">
+                  {deleteReasons.map(reason => (
+                    <label key={reason.value} className="flex items-center p-3 border rounded hover:bg-gray-50 cursor-pointer">
+                      <input type="radio" name="deleteReason" value={reason.value}
+                        checked={deleteReason === reason.value}
+                        onChange={(e) => setDeleteReason(e.target.value)} className="mr-3" />
+                      <span>{reason.label}</span>
+                    </label>
+                  ))}
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={handleDelete} disabled={!deleteReason}
+                    className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 disabled:opacity-50">
+                    {t('listing_detail.confirm_delete')}
+                  </button>
+                  <button onClick={() => { setShowDeleteModal(false); setDeleteReason(''); }}
+                    className="flex-1 bg-gray-200 py-2 rounded hover:bg-gray-300">
+                    {t('buttons.cancel')}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

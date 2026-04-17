@@ -37,6 +37,14 @@ export default function DonateCard({ listing }) {
         <div className="absolute top-2 left-2 bg-primary-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
           {t('donate.free_badge')}
         </div>
+        {/* Donated overlay */}
+        {listing.isDonated && (
+          <div className="absolute inset-0 bg-black/55 flex items-center justify-center">
+            <div className="bg-green-500 text-white font-bold text-sm px-4 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
+              ✓ Donated
+            </div>
+          </div>
+        )}
         {/* Condition badge */}
         {listing.condition && (
           <div className={`absolute top-2 right-2 text-xs font-semibold px-2 py-0.5 rounded-full ${conditionClass}`}>

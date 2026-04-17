@@ -13,6 +13,7 @@ import { useAuthStore, useUIStore } from '../lib/store';
 const RENT_CATEGORIES = [
   { key: 'all', label: 'All', icon: '🎬' },
   { key: 'camera', label: 'Camera', icon: '📷' },
+  { key: 'car', label: 'Car', icon: '🚗' },
   { key: 'wedding', label: 'Wedding', icon: '💍' },
   { key: 'azhar', label: 'Azhar Collection', icon: '🕌' },
 ];

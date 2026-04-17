@@ -17,8 +17,23 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 const RENT_CATEGORIES = [
   { key: 'camera', label: 'Camera Rental', icon: '📷', description: 'DSLR, mirrorless, video cameras & accessories' },
+  { key: 'car', label: 'Car Rental', icon: '🚗', description: 'Daily, weekly & monthly car hire' },
   { key: 'wedding', label: 'Wedding Dress Rental', icon: '💍', description: 'Bridal gowns, suits & wedding attire' },
   { key: 'azhar', label: 'Azhar Dress Rental', icon: '🕌', description: 'Traditional Azhar religious clothing' },
+];
+
+const CAR_MAKES = [
+  'Toyota', 'Hyundai', 'Kia', 'Chevrolet', 'Nissan', 'Honda', 'Ford',
+  'Mitsubishi', 'Suzuki', 'Volkswagen', 'BMW', 'Mercedes-Benz',
+  'Peugeot', 'Renault', 'Fiat', 'Lada', 'Other',
+];
+
+const CAR_SUB_CATEGORIES = [
+  { key: 'economy', label: 'Economy', icon: '🚗', labelAr: 'اقتصادية' },
+  { key: 'suv', label: 'SUV / Crossover', icon: '🚙', labelAr: 'دفع رباعي' },
+  { key: 'minivan', label: 'Minivan / Van', icon: '🚐', labelAr: 'ميكروباص' },
+  { key: 'luxury', label: 'Luxury', icon: '🏎️', labelAr: 'فاخرة' },
+  { key: 'pickup', label: 'Pickup Truck', icon: '🛻', labelAr: 'بيك أب' },
 ];
 
 const CAMERA_MODELS = [
@@ -89,10 +104,13 @@ export default function PostRentPage() {
     ? WEDDING_SUB_CATEGORIES
     : formData.rentCategory === 'azhar'
     ? AZHAR_SUB_CATEGORIES
+    : formData.rentCategory === 'car'
+    ? CAR_SUB_CATEGORIES
     : [];
 
   const showSizesColors = formData.rentCategory === 'wedding' || formData.rentCategory === 'azhar';
   const showModel = formData.rentCategory === 'camera';
+  const showCarFields = formData.rentCategory === 'car';
 
   useEffect(() => {
     if (_hasHydrated && !isAuthenticated) openLoginModal();
@@ -349,6 +367,26 @@ export default function PostRentPage() {
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Or type model name</label>
                 <input type="text" value={formData.rentModel} onChange={(e) => handleChange('rentModel', e.target.value)}
                   placeholder="e.g. Canon EOS R5" className="input w-full" maxLength={80} />
+              </div>
+            </div>
+          )}
+
+          {/* ── 3b. Car-specific fields ── */}
+          {showCarFields && (
+            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm space-y-4">
+              <h2 className="font-bold text-gray-900">Car Details</h2>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Car Make</label>
+                <select value={formData.rentModel} onChange={(e) => handleChange('rentModel', e.target.value)} className="input w-full">
+                  <option value="">Select Make</option>
+                  {CAR_MAKES.map(make => <option key={make} value={make}>{make}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Model / Year (optional)</label>
+                <input type="text" value={formData.description.includes('Model:') ? '' : ''} placeholder="e.g. Corolla 2022 — add in description"
+                  className="input w-full" readOnly style={{ background: '#f9fafb', color: '#9ca3af', cursor: 'default' }} />
+                <p className="text-xs text-gray-400 mt-1">Add model year in the description field below.</p>
               </div>
             </div>
           )}
