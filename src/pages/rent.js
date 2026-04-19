@@ -144,8 +144,16 @@ export default function RentPage() {
   return (
     <Layout>
       <Head>
-        <title>Rent Items in Cairo – MySouqify</title>
-        <meta name="description" content="Rent cameras, wedding dresses, and Azhar clothing in Cairo. Browse top rental stores." />
+        <title>Rent Items in Cairo — Cameras, Cars, Wedding & More | MySouqify</title>
+        <meta name="description" content="Rent cameras, cars, wedding dresses, and Azhar clothing in Cairo. Browse top rental stores on MySouqify — Egypt's rental marketplace." />
+        <link rel="canonical" href="https://mysouqify.com/rent" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="MySouqify" />
+        <meta property="og:title" content="Rent Items in Cairo — Cameras, Cars, Wedding & More | MySouqify" />
+        <meta property="og:description" content="Rent cameras, cars, wedding dresses and more in Cairo. Find the best rental stores on MySouqify." />
+        <meta property="og:url" content="https://mysouqify.com/rent" />
+        <meta property="og:image" content="https://mysouqify.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Head>
 
       {/* Hero Banner */}

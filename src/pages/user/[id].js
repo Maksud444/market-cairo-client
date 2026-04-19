@@ -101,7 +101,15 @@ export default function UserProfilePage() {
   return (
     <Layout>
       <Head>
-        <title>{seller.name} - MySouqify</title>
+        <title>{seller.name} — Seller Profile | MySouqify Cairo</title>
+        <meta name="description" content={`View ${seller.name}'s listings on MySouqify. Browse second-hand items for sale in Cairo.`} />
+        <link rel="canonical" href={`https://mysouqify.com/user/${seller._id}`} />
+        <meta property="og:type" content="profile" />
+        <meta property="og:site_name" content="MySouqify" />
+        <meta property="og:title" content={`${seller.name} — MySouqify`} />
+        <meta property="og:description" content={`Browse ${seller.name}'s second-hand listings on MySouqify Cairo marketplace.`} />
+        <meta property="og:url" content={`https://mysouqify.com/user/${seller._id}`} />
+        <meta name="twitter:card" content="summary" />
       </Head>
 
       <div className="container-app py-6 lg:py-10">

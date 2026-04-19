@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { FiShield, FiArrowRight, FiPackage, FiMonitor, FiBook, FiTool, FiShoppingBag, FiMoreHorizontal, FiGift, FiHeart, FiCamera } from 'react-icons/fi';
@@ -35,6 +35,14 @@ const catKeyMap = {
 export default function Home({ featuredListings = [], recentListings = [], donationListings = [], rentListings = [], categories = [] }) {
   const { t } = useTranslation('common');
   const [isLoading] = useState(false);
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
+
+  useEffect(() => {
+    try {
+      const items = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+      setRecentlyViewed(items.slice(0, 6));
+    } catch {}
+  }, []);
 
   const organizationSchema = {
     '@context': 'https://schema.org',
@@ -48,7 +56,11 @@ export default function Home({ featuredListings = [], recentListings = [], donat
       addressLocality: 'Cairo',
       addressCountry: 'EG',
     },
-    sameAs: [],
+    sameAs: [
+      'https://www.facebook.com/mysouqify',
+      'https://www.instagram.com/mysouqify',
+      'https://www.tiktok.com/@mysouqify',
+    ],
   };
 
   const websiteSchema = {
@@ -389,6 +401,34 @@ export default function Home({ featuredListings = [], recentListings = [], donat
           </div>
         </div>
       </section>
+
+      {/* Recently Viewed */}
+      {recentlyViewed.length > 0 && (
+        <section className="container-app py-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg lg:text-xl font-bold text-gray-900">Recently Viewed</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {recentlyViewed.map((item) => (
+              <Link key={item._id} href={`/listing/${item._id}`} className="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-all">
+                <div className="relative bg-gray-100" style={{ aspectRatio: '1' }}>
+                  {item.images?.[0]?.url ? (
+                    <img src={item.images[0].url} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-300 text-2xl">📦</div>
+                  )}
+                </div>
+                <div className="p-2">
+                  <p className="text-xs font-medium text-gray-800 line-clamp-1">{item.title}</p>
+                  <p className="text-xs font-bold text-primary-600 mt-0.5">
+                    {item.isDonation || item.price === 0 ? 'FREE' : `${item.price?.toLocaleString()} EGP`}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
     </Layout>
   );

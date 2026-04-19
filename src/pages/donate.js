@@ -76,8 +76,16 @@ export default function DonatePage() {
   return (
     <Layout>
       <Head>
-        <title>{t('donate.page_title')} — MySouqify</title>
-        <meta name="description" content={t('donate.page_desc')} />
+        <title>Free Items in Cairo — Sadaqah & Donations | MySouqify</title>
+        <meta name="description" content="Give and receive free items in Cairo. Browse donation listings — clothes, furniture, electronics and more. MySouqify Sadaqah Market." />
+        <link rel="canonical" href="https://mysouqify.com/donate" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="MySouqify" />
+        <meta property="og:title" content="Free Items in Cairo — Sadaqah & Donations | MySouqify" />
+        <meta property="og:description" content="Give and receive free items in Cairo. Browse donation listings on MySouqify Sadaqah Market." />
+        <meta property="og:url" content="https://mysouqify.com/donate" />
+        <meta property="og:image" content="https://mysouqify.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Head>
 
       {/* ── Hero Section ── */}

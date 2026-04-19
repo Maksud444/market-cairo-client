@@ -143,7 +143,17 @@ export default function SearchPage() {
   return (
     <Layout>
       <Head>
-        <title>{currentSearch ? `Search: ${currentSearch}` : currentCategory || 'Browse All'} - MySouqify</title>
+        <title>{currentSearch ? `"${currentSearch}" — Buy & Sell in Cairo` : currentCategory ? `${currentCategory} for Sale in Cairo` : 'Browse All Listings in Cairo'} | MySouqify</title>
+        <meta name="description" content={currentSearch ? `Find ${currentSearch} for sale in Cairo. Browse second-hand listings on MySouqify — Egypt's trusted marketplace.` : currentCategory ? `Browse second-hand ${currentCategory} for sale in Cairo. Best deals on MySouqify.` : 'Browse thousands of second-hand items for sale in Cairo. Electronics, furniture, fashion and more on MySouqify.'} />
+        <link rel="canonical" href={`https://mysouqify.com/search${currentSearch ? `?q=${encodeURIComponent(currentSearch)}` : currentCategory ? `?category=${encodeURIComponent(currentCategory)}` : ''}`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="MySouqify" />
+        <meta property="og:title" content={currentSearch ? `"${currentSearch}" results — MySouqify Cairo` : currentCategory ? `${currentCategory} — MySouqify Cairo` : 'Browse Listings — MySouqify Cairo'} />
+        <meta property="og:description" content="Find amazing deals on second-hand items in Cairo. Buy & sell furniture, electronics, fashion and more." />
+        <meta property="og:url" content="https://mysouqify.com/search" />
+        <meta property="og:image" content="https://mysouqify.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="robots" content="noindex, follow" />
       </Head>
 
       <div className="container-app py-4 lg:py-8">

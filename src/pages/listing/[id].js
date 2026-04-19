@@ -173,8 +173,16 @@ export default function ListingDetailPage({ initialListing }) {
         ]);
 
         if (listingRes.data.success) {
-          setListing(listingRes.data.listing);
-          setIsFavorite(listingRes.data.listing.isFavorite || false);
+          const l = listingRes.data.listing;
+          setListing(l);
+          setIsFavorite(l.isFavorite || false);
+          // Track recently viewed
+          try {
+            const recent = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+            const entry = { _id: l._id, title: l.title, price: l.price, isDonation: l.isDonation, images: l.images, location: l.location };
+            const filtered = recent.filter(r => r._id !== l._id).slice(0, 9);
+            localStorage.setItem('recentlyViewed', JSON.stringify([entry, ...filtered]));
+          } catch {}
         }
         if (similarRes.data.success) {
           setSimilarListings(similarRes.data.listings);
