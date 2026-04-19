@@ -14,7 +14,7 @@ export default function BannerSlider() {
   const banners = [
     {
       id: 1,
-      image: '/images/hero1.png',
+      image: '/images/hero1.webp',
       title: t('banner.slide1_title'),
       subtitle: t('banner.slide1_subtitle'),
       cta: t('banner.browse_all'),
@@ -24,7 +24,7 @@ export default function BannerSlider() {
     },
     {
       id: 2,
-      image: '/images/hero2.png',
+      image: '/images/hero2.webp',
       title: t('banner.slide2_title'),
       subtitle: t('banner.slide2_subtitle'),
       cta: t('banner.shop_now'),
@@ -34,7 +34,7 @@ export default function BannerSlider() {
     },
     {
       id: 3,
-      image: '/images/hero3.png',
+      image: '/images/hero3.webp',
       title: t('banner.slide3_title'),
       subtitle: t('banner.slide3_subtitle'),
       cta: t('banner.explore'),
