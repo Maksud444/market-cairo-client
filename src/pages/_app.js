@@ -72,6 +72,7 @@ function MyApp({ Component, pageProps }) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#E00000" />
+        <meta name="google-site-verification" content="5wKoOXEbSY2TxTA4H6qetAeAPPZK7Nm8grFUN7GEi-A" />
         <link rel="icon" href="/favicon.ico" />
         <title>MySouqify - Buy & Sell Used Items in Cairo</title>
       </Head>
