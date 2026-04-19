@@ -5,6 +5,7 @@ import { FiSearch, FiHeart, FiMessageSquare, FiUser, FiPlus, FiMenu, FiMapPin, F
 import { useTranslation } from 'next-i18next';
 import { useAuthStore, useMessagesStore, useUIStore } from '../lib/store';
 import { authAPI, categoriesAPI } from '../lib/api';
+import Image from 'next/image';
 import LanguageSwitcher from './LanguageSwitcher';
 import { cairoAreas, cairoCompounds } from '../lib/cairoLocations';
 import VerificationBanner from './VerificationBanner';
@@ -201,7 +202,7 @@ export default function Header() {
           <div className="container-app">
             <div className="flex items-center h-16 gap-6">
               <Link href="/" className="flex items-center flex-shrink-0">
-                <img src="/logo.png" alt="MySouqify" className="h-32 w-auto object-contain" />
+                <Image src="/logo.png" alt="MySouqify" width={240} height={96} className="h-32 w-auto object-contain" style={{width:'auto'}} priority />
               </Link>
               <Link href="/rent" className="flex flex-col items-center gap-0.5 px-5 py-2 text-gray-700 hover:text-primary-600 transition-colors group border-b-2 border-transparent hover:border-primary-500">
                 <FiCamera size={22} />
@@ -370,7 +371,7 @@ export default function Header() {
                 {isMobileMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
               </button>
               <Link href="/" className="flex items-center flex-shrink-0">
-                <img src="/logo.png" alt="MySouqify" className="h-24 w-auto object-contain" />
+                <Image src="/logo.png" alt="MySouqify" width={200} height={80} className="h-24 w-auto object-contain" style={{width:'auto'}} priority />
               </Link>
               <Link href="/rent" className="flex flex-col items-center gap-0 px-3 py-1 text-gray-700 hover:text-primary-600 transition-colors flex-shrink-0">
                 <FiCamera size={20} />
@@ -465,7 +466,7 @@ export default function Header() {
           <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setMobileMenuOpen(false)} />
           <div className="fixed top-0 left-0 w-72 h-full bg-white z-50 lg:hidden overflow-y-auto">
             <div className="p-4 border-b border-gray-100 flex items-center gap-3">
-              <img src="/logo.png" alt="MySouqify" className="h-16 w-auto object-contain" />
+              <Image src="/logo.png" alt="MySouqify" width={160} height={64} className="h-16 w-auto object-contain" style={{width:'auto'}} priority />
             </div>
             <nav className="p-4 space-y-1">
               {isAuthenticated ? (

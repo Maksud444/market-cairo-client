@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 
 const FacebookIcon = () => (
@@ -63,7 +64,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="mb-4">
-              <img src="/logoFooter.jpeg" alt="MySouqify" className="h-20 w-auto object-contain" />
+              <Image src="/logoFooter.jpeg" alt="MySouqify" width={200} height={80} className="h-20 w-auto object-contain" style={{width:'auto'}} />
             </div>
             <p className="text-sm text-gray-400 leading-relaxed mb-5">
               {t('footer.tagline')}
