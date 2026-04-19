@@ -3,13 +3,12 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { getI18nProps } from '../../lib/i18n';
 import { withAdmin } from '../../hoc/withAdmin';
-import { useAuthStore } from '../../lib/store';
 import { adminAPI } from '../../lib/api';
-import { FiEye, FiTrash2, FiLogOut, FiAlertCircle, FiFlag } from 'react-icons/fi';
+import { FiEye, FiTrash2, FiAlertCircle, FiFlag } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import AdminLayout from '../../components/AdminLayout';
 
 function AdminReports() {
-  const { user, logout } = useAuthStore();
   const [reports, setReports] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [pagination, setPagination] = useState({
@@ -58,73 +57,16 @@ function AdminReports() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    toast.success('Logged out successfully');
-    window.location.href = '/';
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
         <title>Reports - Admin - MySouqify</title>
       </Head>
 
-      {/* Admin Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="container-app py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
-              <span className="px-3 py-1 bg-primary-100 text-primary-700 text-sm font-medium rounded-full">
-                Admin
-              </span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">Welcome, {user?.name}</span>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-              >
-                <FiLogOut size={18} />
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Admin Navigation */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container-app">
-          <nav className="flex gap-6">
-            <Link href="/cp-x4m9k2" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900">
-              Dashboard
-            </Link>
-            <Link href="/cp-x4m9k2/users" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900">
-              Users
-            </Link>
-            <Link href="/cp-x4m9k2/listings" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900">
-              Listings
-            </Link>
-            <Link href="/cp-x4m9k2/verifications" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900">
-              Verifications
-            </Link>
-            <Link href="/cp-x4m9k2/reports" className="py-4 border-b-2 border-primary-600 text-primary-600 font-medium">
-              Reports
-            </Link>
-            <Link href="/cp-x4m9k2/admins" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900">
-              Admins
-            </Link>
-            <Link href="/" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900">
-              View Site
-            </Link>
-          </nav>
-        </div>
-      </div>
+      <AdminLayout title="Reports" />
 
       {/* Main Content */}
-      <div className="container-app py-8">
+      <div className="container-app py-6 sm:py-8">
         <div className="mb-4 text-sm text-gray-600">
           {pagination.totalReports} reported listing{pagination.totalReports !== 1 ? 's' : ''}
         </div>
@@ -147,43 +89,43 @@ function AdminReports() {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Listing</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Seller</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reports</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reasons</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Listing</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Seller</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reports</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Reasons</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {reports.map((listing) => (
                     <tr key={listing._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                             {listing.images?.[0] ? (
                               <img src={typeof listing.images[0] === 'object' ? listing.images[0].url : listing.images[0]} alt="" className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                <FiAlertCircle size={20} />
+                                <FiAlertCircle size={18} />
                               </div>
                             )}
                           </div>
-                          <div>
+                          <div className="min-w-0">
                             <p className="font-medium text-gray-900 line-clamp-1">{listing.title}</p>
-                            <p className="text-sm text-gray-500">{listing.price} EGP</p>
+                            <p className="text-xs text-gray-500">{listing.price} EGP</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-600 hidden sm:table-cell">
                         {listing.seller?.name || 'Unknown'}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4">
                         <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-100 text-red-700 text-sm rounded-full">
                           <FiFlag size={12} />
                           {listing.reports?.length || 0}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
                         <div className="space-y-1">
                           {listing.reports?.slice(0, 3).map((report, i) => (
                             <p key={i} className="text-sm text-gray-600">{report.reason}</p>
@@ -193,22 +135,22 @@ function AdminReports() {
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="flex items-center gap-1 sm:gap-2">
                           <Link
                             href={`/listing/${listing._id}`}
                             target="_blank"
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg"
                             title="View"
                           >
-                            <FiEye size={18} />
+                            <FiEye size={16} />
                           </Link>
                           <button
                             onClick={() => handleDelete(listing._id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg"
                             title="Delete"
                           >
-                            <FiTrash2 size={18} />
+                            <FiTrash2 size={16} />
                           </button>
                         </div>
                       </td>

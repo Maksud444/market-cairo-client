@@ -5,12 +5,13 @@ import { getI18nProps } from '../../lib/i18n';
 import { withAdmin } from '../../hoc/withAdmin';
 import { useAuthStore } from '../../lib/store';
 import { adminAPI } from '../../lib/api';
-import { FiSearch, FiShield, FiUser, FiCheck, FiX, FiLogOut, FiEye, FiMail, FiPhone, FiMapPin, FiCalendar, FiShoppingBag, FiExternalLink } from 'react-icons/fi';
+import { FiSearch, FiShield, FiUser, FiCheck, FiX, FiEye, FiMail, FiPhone, FiMapPin, FiCalendar, FiShoppingBag, FiExternalLink } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
+import AdminLayout from '../../components/AdminLayout';
 
 function AdminUsers() {
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -77,12 +78,6 @@ function AdminUsers() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    toast.success('Logged out successfully');
-    window.location.href = '/';
-  };
-
   const openUserDetail = async (u) => {
     setSelectedUser(u);
     setDetailLoading(true);
@@ -103,87 +98,15 @@ function AdminUsers() {
         <title>User Management - Admin - MySouqify</title>
       </Head>
 
-      {/* Admin Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="container-app py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-              <span className="px-3 py-1 bg-primary-100 text-primary-700 text-sm font-medium rounded-full">
-                Admin
-              </span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">Welcome, {user?.name}</span>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-              >
-                <FiLogOut size={18} />
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Admin Navigation */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container-app">
-          <nav className="flex gap-6">
-            <Link
-              href="/cp-x4m9k2"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/cp-x4m9k2/users"
-              className="py-4 border-b-2 border-primary-600 text-primary-600 font-medium"
-            >
-              Users
-            </Link>
-            <Link
-              href="/cp-x4m9k2/listings"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Listings
-            </Link>
-            <Link
-              href="/cp-x4m9k2/verifications"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Verifications
-            </Link>
-            <Link
-              href="/cp-x4m9k2/reports"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Reports
-            </Link>
-            <Link
-              href="/cp-x4m9k2/admins"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Admins
-            </Link>
-            <Link
-              href="/"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              View Site
-            </Link>
-          </nav>
-        </div>
-      </div>
+      <AdminLayout title="User Management" />
 
       {/* Main Content */}
-      <div className="container-app py-8">
+      <div className="container-app py-6 sm:py-8">
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
+          <div className="flex flex-wrap gap-3">
             {/* Search */}
-            <div className="relative">
+            <div className="relative flex-1 min-w-[200px]">
               <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
@@ -198,7 +121,7 @@ function AdminUsers() {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="input"
+              className="input min-w-[130px]"
             >
               <option value="all">All Roles</option>
               <option value="admin">Admins Only</option>
@@ -209,7 +132,7 @@ function AdminUsers() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="input"
+              className="input min-w-[130px]"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -240,46 +163,47 @@ function AdminUsers() {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Joined</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Contact</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Status</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">Joined</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {users.map((u) => (
                     <tr key={u._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-semibold">
+                          <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
                             {u.name?.charAt(0).toUpperCase()}
                           </div>
-                          <div>
-                            <p className="font-medium text-gray-900">{u.name}</p>
-                            <p className="text-sm text-gray-500">{u.location?.area ? `${u.location.area}, ${u.location.city}` : 'No location'}</p>
+                          <div className="min-w-0">
+                            <p className="font-medium text-gray-900 truncate">{u.name}</p>
+                            <p className="text-xs text-gray-500 truncate sm:hidden">{u.email}</p>
+                            <p className="text-sm text-gray-500 hidden sm:block">{u.location?.area ? `${u.location.area}, ${u.location.city}` : 'No location'}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4 hidden sm:table-cell">
                         <p className="text-sm text-gray-900">{u.email}</p>
                         <p className="text-sm text-gray-500">{u.phone || 'No phone'}</p>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4">
                         {u.isAdmin ? (
-                          <span className="inline-flex items-center gap-1 px-3 py-1 bg-primary-100 text-primary-700 text-sm font-medium rounded-full">
-                            <FiShield size={14} />
-                            Admin
+                          <span className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-primary-100 text-primary-700 text-xs sm:text-sm font-medium rounded-full">
+                            <FiShield size={12} />
+                            <span className="hidden sm:inline">Admin</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                            <FiUser size={14} />
-                            User
+                          <span className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-gray-100 text-gray-700 text-xs sm:text-sm rounded-full">
+                            <FiUser size={12} />
+                            <span className="hidden sm:inline">User</span>
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
                         {u.isActive ? (
                           <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 text-sm rounded-full">
                             <FiCheck size={14} />
@@ -292,28 +216,30 @@ function AdminUsers() {
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-600 hidden lg:table-cell">
                         {new Date(u.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="flex items-center gap-1 sm:gap-2">
                           <button
                             onClick={() => openUserDetail(u)}
-                            className="px-3 py-1 text-sm bg-primary-50 text-primary-600 hover:bg-primary-100 rounded-lg flex items-center gap-1"
+                            className="p-1.5 sm:px-3 sm:py-1 text-sm bg-primary-50 text-primary-600 hover:bg-primary-100 rounded-lg flex items-center gap-1"
+                            title="View"
                           >
-                            <FiEye size={13} /> View
+                            <FiEye size={14} />
+                            <span className="hidden sm:inline">View</span>
                           </button>
                           <button
                             onClick={() => toggleUserRole(u._id)}
                             disabled={u._id === user._id}
-                            className="px-3 py-1 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="hidden sm:block px-3 py-1 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {u.isAdmin ? 'Remove Admin' : 'Make Admin'}
                           </button>
                           <button
                             onClick={() => toggleUserStatus(u._id)}
                             disabled={u._id === user._id}
-                            className="px-3 py-1 text-sm bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="hidden sm:block px-3 py-1 text-sm bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {u.isActive ? 'Deactivate' : 'Activate'}
                           </button>
@@ -354,9 +280,9 @@ function AdminUsers() {
       {/* User Detail Modal */}
       {selectedUser && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setSelectedUser(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+            <div className="flex items-center justify-between p-5 sm:p-6 border-b border-gray-100">
               <h2 className="text-xl font-bold text-gray-900">User Profile</h2>
               <button onClick={() => setSelectedUser(null)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
                 <FiX size={20} />
@@ -368,13 +294,13 @@ function AdminUsers() {
                 <div className="w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (
-              <div className="p-6 space-y-6">
+              <div className="p-5 sm:p-6 space-y-6">
                 {/* User Info */}
                 <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-xl sm:text-2xl flex-shrink-0">
                     {selectedUser.name?.charAt(0).toUpperCase()}
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="text-lg font-bold text-gray-900">{selectedUser.name}</h3>
                       {selectedUser.isAdmin && (
@@ -387,7 +313,7 @@ function AdminUsers() {
                       </span>
                     </div>
                     <div className="mt-2 space-y-1 text-sm text-gray-600">
-                      <p className="flex items-center gap-2"><FiMail size={14} /> {selectedUser.email}</p>
+                      <p className="flex items-center gap-2"><FiMail size={14} /> <span className="truncate">{selectedUser.email}</span></p>
                       {selectedUser.phone && <p className="flex items-center gap-2"><FiPhone size={14} /> {selectedUser.phone}</p>}
                       {selectedUser.location?.area && <p className="flex items-center gap-2"><FiMapPin size={14} /> {selectedUser.location.area}, {selectedUser.location.city}</p>}
                       <p className="flex items-center gap-2"><FiCalendar size={14} /> Joined {formatDistanceToNow(new Date(selectedUser.createdAt), { addSuffix: true })}</p>

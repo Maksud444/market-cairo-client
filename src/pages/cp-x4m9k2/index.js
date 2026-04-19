@@ -3,13 +3,12 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { getI18nProps } from '../../lib/i18n';
 import { withAdmin } from '../../hoc/withAdmin';
-import { useAuthStore } from '../../lib/store';
 import { adminAPI } from '../../lib/api';
-import { FiUsers, FiShoppingBag, FiAlertCircle, FiTrendingUp, FiLogOut } from 'react-icons/fi';
+import { FiUsers, FiShoppingBag, FiAlertCircle, FiTrendingUp } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import AdminLayout from '../../components/AdminLayout';
 
 function AdminDashboard() {
-  const { user, logout } = useAuthStore();
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -31,100 +30,16 @@ function AdminDashboard() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    toast.success('Logged out successfully');
-    window.location.href = '/';
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
         <title>Admin Dashboard - MySouqify</title>
       </Head>
 
-      {/* Admin Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="container-app py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-              <span className="px-3 py-1 bg-primary-100 text-primary-700 text-sm font-medium rounded-full">
-                Admin
-              </span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">Welcome, {user?.name}</span>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-              >
-                <FiLogOut size={18} />
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Admin Navigation */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container-app">
-          <nav className="flex gap-6">
-            <Link
-              href="/cp-x4m9k2"
-              className="py-4 border-b-2 border-primary-600 text-primary-600 font-medium"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/cp-x4m9k2/users"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Users
-            </Link>
-            <Link
-              href="/cp-x4m9k2/listings"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Listings
-            </Link>
-            <Link
-              href="/cp-x4m9k2/verifications"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Verifications
-            </Link>
-            <Link
-              href="/cp-x4m9k2/reports"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Reports
-            </Link>
-            <Link
-              href="/cp-x4m9k2/categories"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Categories
-            </Link>
-            <Link
-              href="/cp-x4m9k2/admins"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Admins
-            </Link>
-            <Link
-              href="/"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              View Site
-            </Link>
-          </nav>
-        </div>
-      </div>
+      <AdminLayout title="Admin Dashboard" />
 
       {/* Main Content */}
-      <div className="container-app py-8">
+      <div className="container-app py-6 sm:py-8">
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
@@ -135,7 +50,7 @@ function AdminDashboard() {
         ) : (
           <>
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
               {/* Total Users */}
               <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-2">
@@ -189,11 +104,11 @@ function AdminDashboard() {
                 <div className="space-y-3">
                   {stats?.recentUsers?.slice(0, 5).map((user) => (
                     <div key={user._id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                      <div>
-                        <p className="font-medium text-gray-900">{user.name}</p>
-                        <p className="text-sm text-gray-500">{user.email}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-gray-900 truncate">{user.name}</p>
+                        <p className="text-sm text-gray-500 truncate">{user.email}</p>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right flex-shrink-0 ml-2">
                         {user.isAdmin && (
                           <span className="px-2 py-1 bg-primary-100 text-primary-700 text-xs rounded-full">
                             Admin
@@ -220,11 +135,11 @@ function AdminDashboard() {
                 <div className="space-y-3">
                   {stats?.recentListings?.slice(0, 5).map((listing) => (
                     <div key={listing._id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <p className="font-medium text-gray-900 truncate">{listing.title}</p>
                         <p className="text-sm text-gray-500">by {listing.seller?.name}</p>
                       </div>
-                      <div className="text-right ml-4">
+                      <div className="text-right ml-4 flex-shrink-0">
                         <p className="font-semibold text-gray-900">{listing.price} EGP</p>
                         <p className="text-xs text-gray-500">{listing.category}</p>
                       </div>

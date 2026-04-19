@@ -4,13 +4,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getI18nProps } from '../../lib/i18n';
 import { withAdmin } from '../../hoc/withAdmin';
-import { useAuthStore } from '../../lib/store';
 import { adminAPI } from '../../lib/api';
-import { FiSearch, FiCheck, FiX, FiEye, FiTrash2, FiLogOut, FiClock, FiAlertCircle, FiGift, FiCamera } from 'react-icons/fi';
+import { FiSearch, FiCheck, FiX, FiEye, FiTrash2, FiClock, FiAlertCircle, FiGift, FiCamera } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import AdminLayout from '../../components/AdminLayout';
 
 function AdminListings() {
-  const { user, logout } = useAuthStore();
   const [listings, setListings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -120,12 +119,6 @@ function AdminListings() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    toast.success('Logged out successfully');
-    window.location.href = '/';
-  };
-
   const getModerationBadge = (status) => {
     switch (status) {
       case 'approved':
@@ -171,82 +164,10 @@ function AdminListings() {
         <title>Listings Management - Admin - MySouqify</title>
       </Head>
 
-      {/* Admin Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="container-app py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-gray-900">Listings Management</h1>
-              <span className="px-3 py-1 bg-primary-100 text-primary-700 text-sm font-medium rounded-full">
-                Admin
-              </span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">Welcome, {user?.name}</span>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-              >
-                <FiLogOut size={18} />
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Admin Navigation */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container-app">
-          <nav className="flex gap-6">
-            <Link
-              href="/cp-x4m9k2"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/cp-x4m9k2/users"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Users
-            </Link>
-            <Link
-              href="/cp-x4m9k2/listings"
-              className="py-4 border-b-2 border-primary-600 text-primary-600 font-medium"
-            >
-              Listings
-            </Link>
-            <Link
-              href="/cp-x4m9k2/verifications"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Verifications
-            </Link>
-            <Link
-              href="/cp-x4m9k2/reports"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Reports
-            </Link>
-            <Link
-              href="/cp-x4m9k2/admins"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              Admins
-            </Link>
-            <Link
-              href="/"
-              className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900"
-            >
-              View Site
-            </Link>
-          </nav>
-        </div>
-      </div>
+      <AdminLayout title="Listings Management" />
 
       {/* Main Content */}
-      <div className="container-app py-8">
+      <div className="container-app py-6 sm:py-8">
 
         {/* Type Tabs */}
         <div className="flex gap-2 mb-5 flex-wrap">
@@ -285,9 +206,7 @@ function AdminListings() {
               onClick={() => { setTypeFilter(key); setPagination(p => ({ ...p, currentPage: 1 })); }}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 typeFilter === key
-                  ? key === 'donations'
-                    ? 'bg-primary-600 text-white shadow'
-                    : 'bg-primary-600 text-white shadow'
+                  ? 'bg-primary-600 text-white shadow'
                   : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-300'
               }`}
             >
@@ -297,10 +216,10 @@ function AdminListings() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
+          <div className="flex flex-wrap gap-3">
             {/* Search */}
-            <div className="relative">
+            <div className="relative flex-1 min-w-[200px]">
               <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
@@ -315,7 +234,7 @@ function AdminListings() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="input"
+              className="input min-w-[130px]"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -326,7 +245,7 @@ function AdminListings() {
             <select
               value={moderationFilter}
               onChange={(e) => setModerationFilter(e.target.value)}
-              className="input"
+              className="input min-w-[150px]"
             >
               <option value="all">All Moderation</option>
               <option value="pending">Pending Review</option>
@@ -359,21 +278,21 @@ function AdminListings() {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Listing</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Seller</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Moderation</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Posted</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Listing</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Seller</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Price</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Status</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Moderation</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">Posted</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {listings.map((listing) => (
                     <tr key={listing._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                          <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                             {listing.images?.[0] ? (
                               <img
                                 src={typeof listing.images[0] === 'object' ? listing.images[0].url : listing.images[0]}
@@ -382,11 +301,11 @@ function AdminListings() {
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                <FiAlertCircle size={24} />
+                                <FiAlertCircle size={20} />
                               </div>
                             )}
                           </div>
-                          <div>
+                          <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <p className="font-medium text-gray-900 line-clamp-1">{listing.title}</p>
                               {listing.isDonation && (
@@ -395,71 +314,68 @@ function AdminListings() {
                                 </span>
                               )}
                             </div>
-                            <p className="text-sm text-gray-500">{listing.category}</p>
-                            {listing.isDonation && listing.donationNote && (
-                              <p className="text-xs text-gray-400 italic mt-0.5 line-clamp-1">{listing.donationNote}</p>
-                            )}
+                            <p className="text-xs text-gray-500">{listing.category}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4 hidden sm:table-cell">
                         <p className="text-sm text-gray-900">{listing.seller?.name}</p>
                         <p className="text-xs text-gray-500">{listing.seller?.email}</p>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
                         {listing.isDonation ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-50 text-primary-700 text-xs font-bold rounded-full">
                             <FiGift size={11} /> FREE
                           </span>
                         ) : (
-                          <p className="font-semibold text-gray-900">{listing.price} EGP</p>
+                          <p className="font-semibold text-gray-900 text-sm">{listing.price} EGP</p>
                         )}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
                         {getStatusBadge(listing.status)}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4">
                         {getModerationBadge(listing.moderationStatus)}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-600 hidden lg:table-cell">
                         {new Date(listing.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="flex items-center gap-1 sm:gap-2">
                           <Link
                             href={`/listing/${listing._id}`}
                             target="_blank"
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg"
                             title="View"
                           >
-                            <FiEye size={18} />
+                            <FiEye size={16} />
                           </Link>
 
                           {listing.moderationStatus === 'pending' && (
                             <>
                               <button
                                 onClick={() => handleModerate(listing._id, 'approve')}
-                                className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg"
+                                className="p-1.5 text-primary-600 hover:bg-primary-50 rounded-lg"
                                 title="Approve"
                               >
-                                <FiCheck size={18} />
+                                <FiCheck size={16} />
                               </button>
                               <button
                                 onClick={() => openRejectModal(listing._id)}
-                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                                className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg"
                                 title="Reject with reason"
                               >
-                                <FiX size={18} />
+                                <FiX size={16} />
                               </button>
                             </>
                           )}
 
                           <button
                             onClick={() => handleDelete(listing._id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg"
                             title="Delete"
                           >
-                            <FiTrash2 size={18} />
+                            <FiTrash2 size={16} />
                           </button>
                         </div>
                       </td>
@@ -495,10 +411,10 @@ function AdminListings() {
         )}
       </div>
 
-      {/* ── Reject Reason Modal ── */}
+      {/* Reject Reason Modal */}
       {rejectModal.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-5 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <FiAlertCircle className="text-red-500" size={20} />

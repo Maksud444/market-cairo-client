@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
 import { getI18nProps } from '../../lib/i18n';
 import { withAdmin } from '../../hoc/withAdmin';
-import { useAuthStore } from '../../lib/store';
 import { adminAPI } from '../../lib/api';
-import { FiCheck, FiX, FiEye, FiLogOut, FiImage } from 'react-icons/fi';
+import { FiCheck, FiX, FiEye, FiImage } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import AdminLayout from '../../components/AdminLayout';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 function AdminVerifications() {
-  const { user, logout } = useAuthStore();
   const [verifications, setVerifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('pending');
@@ -79,12 +77,6 @@ function AdminVerifications() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    toast.success('Logged out successfully');
-    window.location.href = '/';
-  };
-
   const getDocTypeBadge = (type) => {
     const types = {
       passport: { label: 'Passport', color: 'bg-blue-100 text-blue-700' },
@@ -114,68 +106,12 @@ function AdminVerifications() {
         <title>Verifications - Admin - MySouqify</title>
       </Head>
 
-      {/* Admin Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="container-app py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-gray-900">Verifications</h1>
-              <span className="px-3 py-1 bg-primary-100 text-primary-700 text-sm font-medium rounded-full">
-                Admin
-              </span>
-              {pendingCount > 0 && (
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-700 text-sm font-medium rounded-full">
-                  {pendingCount} pending
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">Welcome, {user?.name}</span>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-              >
-                <FiLogOut size={18} />
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Admin Navigation */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container-app">
-          <nav className="flex gap-6 overflow-x-auto">
-            <Link href="/cp-x4m9k2" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
-              Dashboard
-            </Link>
-            <Link href="/cp-x4m9k2/users" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
-              Users
-            </Link>
-            <Link href="/cp-x4m9k2/listings" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
-              Listings
-            </Link>
-            <Link href="/cp-x4m9k2/verifications" className="py-4 border-b-2 border-primary-600 text-primary-600 font-medium whitespace-nowrap">
-              Verifications
-            </Link>
-            <Link href="/cp-x4m9k2/reports" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
-              Reports
-            </Link>
-            <Link href="/cp-x4m9k2/admins" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
-              Admins
-            </Link>
-            <Link href="/" className="py-4 border-b-2 border-transparent hover:border-gray-300 text-gray-600 hover:text-gray-900 whitespace-nowrap">
-              View Site
-            </Link>
-          </nav>
-        </div>
-      </div>
+      <AdminLayout title="Verifications" />
 
       {/* Main Content */}
-      <div className="container-app py-8">
+      <div className="container-app py-6 sm:py-8">
         {/* Filter Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6 flex-wrap">
           {['pending', 'approved', 'rejected', 'all'].map((status) => (
             <button
               key={status}
@@ -214,9 +150,9 @@ function AdminVerifications() {
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">User</th>
-                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Document Type</th>
+                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Document Type</th>
                     <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Submitted</th>
+                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Submitted</th>
                     <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
@@ -226,16 +162,16 @@ function AdminVerifications() {
                       <td className="py-3 px-4">
                         <div>
                           <p className="font-medium text-gray-900">{v.name}</p>
-                          <p className="text-sm text-gray-500">{v.email}</p>
+                          <p className="text-xs text-gray-500 truncate max-w-[150px]">{v.email}</p>
                         </div>
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-4 hidden sm:table-cell">
                         {getDocTypeBadge(v.verification?.documentType)}
                       </td>
                       <td className="py-3 px-4">
                         {getStatusBadge(v.verification?.status)}
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-500">
+                      <td className="py-3 px-4 text-sm text-gray-500 hidden md:table-cell">
                         {v.verification?.submittedAt
                           ? new Date(v.verification.submittedAt).toLocaleDateString()
                           : '-'}
@@ -246,7 +182,7 @@ function AdminVerifications() {
                           className="flex items-center gap-1 text-sm text-primary-600 hover:text-primary-700 font-medium"
                         >
                           <FiEye size={16} />
-                          Review
+                          <span className="hidden sm:inline">Review</span>
                         </button>
                       </td>
                     </tr>
@@ -259,7 +195,7 @@ function AdminVerifications() {
 
         {/* Pagination */}
         {pagination.totalPages > 1 && (
-          <div className="flex justify-center gap-2 mt-6">
+          <div className="flex justify-center gap-2 mt-6 flex-wrap">
             {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
@@ -280,13 +216,13 @@ function AdminVerifications() {
       {/* Review Modal */}
       {reviewUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
+          <div className="bg-white rounded-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="p-5 sm:p-6 border-b border-gray-200">
               <h2 className="text-xl font-bold text-gray-900">Review Verification</h2>
               <p className="text-sm text-gray-500 mt-1">{reviewUser.name} ({reviewUser.email})</p>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div className="p-5 sm:p-6 space-y-6">
               {/* User Info */}
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
@@ -318,7 +254,7 @@ function AdminVerifications() {
               {/* Document Images */}
               <div>
                 <p className="text-sm text-gray-500 mb-3">Document Images</p>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {reviewUser.verification?.documentImages?.map((img, i) => {
                     const imgSrc = img.url?.startsWith('data:') || img.url?.startsWith('http')
                       ? img.url
@@ -362,7 +298,7 @@ function AdminVerifications() {
               )}
             </div>
 
-            <div className="p-6 border-t border-gray-200 flex gap-3 justify-end">
+            <div className="p-5 sm:p-6 border-t border-gray-200 flex gap-3 justify-end flex-wrap">
               <button
                 onClick={() => {
                   setReviewUser(null);

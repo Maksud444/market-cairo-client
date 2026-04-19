@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
 import { getI18nProps } from '../../lib/i18n';
 import { withAdmin } from '../../hoc/withAdmin';
-import { useAuthStore } from '../../lib/store';
 import { adminAPI } from '../../lib/api';
-import { FiPlus, FiEdit2, FiTrash2, FiChevronDown, FiChevronRight, FiLogOut, FiX, FiCheck, FiGift, FiGrid } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiChevronDown, FiChevronRight, FiX, FiCheck, FiGift, FiGrid } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import AdminLayout from '../../components/AdminLayout';
 
 function slugify(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -15,7 +14,6 @@ function slugify(str) {
 const ICONS = ['box', 'smartphone', 'monitor', 'shirt', 'sofa', 'utensils', 'book', 'camera', 'heart', 'star', 'tag', 'grid', 'gift', 'package', 'home', 'tool', 'baby', 'bicycle', 'car', 'music'];
 
 function AdminCategories() {
-  const { user, logout } = useAuthStore();
   const [tab, setTab] = useState('regular'); // 'regular' | 'donation'
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,8 +43,6 @@ function AdminCategories() {
     }
   };
 
-  const handleLogout = () => { logout(); window.location.href = '/'; };
-
   const handleSeedCategories = async () => {
     try {
       const res = await adminAPI.seedCategories();
@@ -57,7 +53,7 @@ function AdminCategories() {
     }
   };
 
-  // ─── Category CRUD ────────────────────────────────────────────────────────
+  // Category CRUD
 
   const openAddCategory = () => {
     setEditing(null);
@@ -109,7 +105,7 @@ function AdminCategories() {
     }
   };
 
-  // ─── Subcategory CRUD ─────────────────────────────────────────────────────
+  // Subcategory CRUD
 
   const openAddSub = (catId) => {
     setParentId(catId);
@@ -160,7 +156,7 @@ function AdminCategories() {
     }
   };
 
-  // ─── Sub-subcategory CRUD ─────────────────────────────────────────────────
+  // Sub-subcategory CRUD
 
   const openAddSubSub = (catId, subIdx) => {
     setParentId(catId);
@@ -216,64 +212,22 @@ function AdminCategories() {
 
   const toggleExpand = (id) => setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
 
-  const adminNav = [
-    { href: '/cp-x4m9k2', label: 'Dashboard' },
-    { href: '/cp-x4m9k2/users', label: 'Users' },
-    { href: '/cp-x4m9k2/listings', label: 'Listings' },
-    { href: '/cp-x4m9k2/verifications', label: 'Verifications' },
-    { href: '/cp-x4m9k2/reports', label: 'Reports' },
-    { href: '/cp-x4m9k2/categories', label: 'Categories', active: true },
-    { href: '/cp-x4m9k2/admins', label: 'Admins' },
-    { href: '/', label: 'View Site' },
-  ];
-
   const isDonationTab = tab === 'donation';
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Head><title>Categories - Admin</title></Head>
 
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="container-app py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-              <span className="px-3 py-1 bg-primary-100 text-primary-700 text-sm font-medium rounded-full">Admin</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">Welcome, {user?.name}</span>
-              <button onClick={handleLogout} className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-                <FiLogOut size={18} /> Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Nav */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container-app">
-          <nav className="flex gap-6 overflow-x-auto">
-            {adminNav.map(n => (
-              <Link key={n.href} href={n.href}
-                className={`py-4 border-b-2 whitespace-nowrap text-sm font-medium transition-colors ${
-                  n.active ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
-                }`}
-              >{n.label}</Link>
-            ))}
-          </nav>
-        </div>
-      </div>
+      <AdminLayout title="Categories" />
 
       {/* Content */}
-      <div className="container-app py-8">
-        <div className="flex items-center justify-between mb-6">
+      <div className="container-app py-6 sm:py-8">
+        <div className="flex items-start sm:items-center justify-between mb-6 gap-3 flex-wrap">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Category Management</h2>
             <p className="text-sm text-gray-500 mt-1">Add categories, subcategories, and sub-subcategories</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {!isDonationTab && (
               <button onClick={handleSeedCategories}
                 className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
@@ -293,25 +247,25 @@ function AdminCategories() {
         <div className="flex gap-1 p-1 bg-gray-100 rounded-xl mb-6 w-fit">
           <button
             onClick={() => setTab('regular')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
               tab === 'regular'
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-500 hover:text-gray-700'
             }`}
           >
             <FiGrid size={16} />
-            Regular Categories
+            <span className="hidden sm:inline">Regular </span>Categories
           </button>
           <button
             onClick={() => setTab('donation')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
               tab === 'donation'
                 ? 'bg-white text-primary-600 shadow-sm'
                 : 'text-gray-500 hover:text-gray-700'
             }`}
           >
             <FiGift size={16} />
-            Donation Categories
+            <span className="hidden sm:inline">Donation </span>Categories
           </button>
         </div>
 
@@ -347,15 +301,15 @@ function AdminCategories() {
             {categories.map((cat) => (
               <div key={cat._id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                 {/* Category row */}
-                <div className="flex items-center gap-3 px-4 py-3">
-                  <button onClick={() => toggleExpand(cat._id)} className="text-gray-400 hover:text-gray-600">
+                <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3">
+                  <button onClick={() => toggleExpand(cat._id)} className="text-gray-400 hover:text-gray-600 flex-shrink-0">
                     {expanded[cat._id] ? <FiChevronDown size={18} /> : <FiChevronRight size={18} />}
                   </button>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-semibold text-gray-900">{cat.name}</span>
-                      <span className="text-xs text-gray-400">/{cat.slug}</span>
-                      <span className="text-xs px-2 py-0.5 bg-gray-100 rounded text-gray-500">{cat.icon}</span>
+                      <span className="text-xs text-gray-400 hidden sm:inline">/{cat.slug}</span>
+                      <span className="text-xs px-2 py-0.5 bg-gray-100 rounded text-gray-500 hidden sm:inline">{cat.icon}</span>
                       {isDonationTab && (
                         <span className="text-xs px-2 py-0.5 bg-primary-100 text-primary-600 rounded font-medium">Donation</span>
                       )}
@@ -365,14 +319,14 @@ function AdminCategories() {
                     </div>
                     <p className="text-xs text-gray-400 mt-0.5">{cat.subcategories?.length || 0} subcategories</p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                     <button onClick={() => toggleActive(cat)}
                       className={`text-xs px-2 py-1 rounded ${cat.isActive ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}`}
                     >
                       {cat.isActive ? 'Active' : 'Inactive'}
                     </button>
                     <button onClick={() => openAddSub(cat._id)}
-                      className="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100"
+                      className="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 hidden sm:block"
                     >
                       + Sub
                     </button>
@@ -388,21 +342,28 @@ function AdminCategories() {
                 {/* Subcategories */}
                 {expanded[cat._id] && (
                   <div className="border-t border-gray-100 bg-gray-50">
+                    <div className="px-4 py-2 sm:hidden">
+                      <button onClick={() => openAddSub(cat._id)}
+                        className="text-xs px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 w-full"
+                      >
+                        + Add Subcategory
+                      </button>
+                    </div>
                     {cat.subcategories?.length === 0 && (
                       <p className="px-12 py-3 text-sm text-gray-400">No subcategories</p>
                     )}
                     {cat.subcategories?.map((sub, subIdx) => (
                       <div key={subIdx}>
                         {/* Subcategory row */}
-                        <div className="flex items-center gap-3 px-8 py-2.5 border-b border-gray-100 last:border-b-0">
-                          <button onClick={() => toggleExpand(`${cat._id}-${subIdx}`)} className="text-gray-400 hover:text-gray-600">
+                        <div className="flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-2.5 border-b border-gray-100 last:border-b-0">
+                          <button onClick={() => toggleExpand(`${cat._id}-${subIdx}`)} className="text-gray-400 hover:text-gray-600 flex-shrink-0">
                             {expanded[`${cat._id}-${subIdx}`] ? <FiChevronDown size={15} /> : <FiChevronRight size={15} />}
                           </button>
-                          <span className="flex-1 text-sm text-gray-700">{sub.name}</span>
-                          <span className="text-xs text-gray-400">{sub.subcategories?.length || 0} sub-sub</span>
+                          <span className="flex-1 text-sm text-gray-700 min-w-0 truncate">{sub.name}</span>
+                          <span className="text-xs text-gray-400 hidden sm:block">{sub.subcategories?.length || 0} sub-sub</span>
                           <div className="flex items-center gap-1">
                             <button onClick={() => openAddSubSub(cat._id, subIdx)}
-                              className="text-xs px-2 py-1 bg-purple-50 text-purple-600 rounded hover:bg-purple-100"
+                              className="text-xs px-2 py-1 bg-purple-50 text-purple-600 rounded hover:bg-purple-100 hidden sm:block"
                             >
                               + Sub-sub
                             </button>
@@ -418,12 +379,19 @@ function AdminCategories() {
                         {/* Sub-subcategories */}
                         {expanded[`${cat._id}-${subIdx}`] && (
                           <div className="bg-white">
+                            <div className="px-10 py-2 sm:hidden">
+                              <button onClick={() => openAddSubSub(cat._id, subIdx)}
+                                className="text-xs px-3 py-1.5 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 w-full"
+                              >
+                                + Add Sub-subcategory
+                              </button>
+                            </div>
                             {sub.subcategories?.length === 0 && (
                               <p className="px-16 py-2 text-xs text-gray-400">No sub-subcategories</p>
                             )}
                             {sub.subcategories?.map((subsub, subsubIdx) => (
-                              <div key={subsubIdx} className="flex items-center gap-3 px-16 py-2 border-b border-gray-50 last:border-b-0">
-                                <span className="flex-1 text-xs text-gray-600">{subsub.name}</span>
+                              <div key={subsubIdx} className="flex items-center gap-3 px-12 sm:px-16 py-2 border-b border-gray-50 last:border-b-0">
+                                <span className="flex-1 text-xs text-gray-600 min-w-0 truncate">{subsub.name}</span>
                                 <div className="flex items-center gap-1">
                                   <button onClick={() => openEditSubSub(cat._id, subIdx, subsubIdx, subsub)} className="p-1 text-gray-400 hover:text-primary-600">
                                     <FiEdit2 size={12} />
@@ -449,7 +417,7 @@ function AdminCategories() {
       {/* Modal */}
       {modal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
               <h3 className="font-semibold text-gray-900">
                 {modal === 'category'
